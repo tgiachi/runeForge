@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src\Runeforge.Core\Runeforge.Core.csproj" Type="Classic C#" />
+  <Project Path="src\Runeforge.Data\Runeforge.Data.csproj" Type="Classic C#" />
+  <Project Path="src\Runeforge.Gui\Runeforge.Gui.csproj" Type="Classic C#" />
+</Solution>
