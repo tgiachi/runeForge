@@ -1,7 +1,7 @@
 using Runeforge.Data.Colors;
 using Runeforge.Data.Entities.Base;
 
-namespace Runeforge.Data.Entities;
+namespace Runeforge.Data.Entities.Common;
 
 public class JsonColorData : BaseJsonEntityData
 {
