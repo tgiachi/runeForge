@@ -1,6 +1,6 @@
 namespace Runeforge.Engine.Interfaces.Services.Base;
 
-public interface IStartableRuneforgeService : IRuneforgeService
+public interface IRuneforgeStartableService : IRuneforgeService
 {
     Task StartAsync(CancellationToken cancellationToken = default);
 

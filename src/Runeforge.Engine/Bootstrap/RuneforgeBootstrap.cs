@@ -3,6 +3,7 @@ using Runeforge.Core.Directories;
 using Runeforge.Core.Extensions.Strings;
 using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
+using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Extensions;
@@ -100,16 +101,16 @@ public class RuneforgeBootstrap
         foreach (var serviceDef in servicesDef)
         {
             var serviceInstance = _container.Resolve(serviceDef.ServiceType);
-            if (serviceInstance is IStartableRuneforgeService startableService)
+            if (serviceInstance is IRuneforgeStartableService startableService)
             {
                 if (isStart)
                 {
-                    Log.Logger.Debug("Starting service: {ServiceType}", serviceDef.ImplementationType);
+                    Log.Logger.Debug("Starting service: {ServiceType}", serviceDef.ImplementationType.Name);
                     await startableService.StartAsync(_cancellationTokenRegistration.Token);
                 }
                 else
                 {
-                    Log.Logger.Debug("Stopping service: {ServiceType}", serviceDef.ImplementationType);
+                    Log.Logger.Debug("Stopping service: {ServiceType}", serviceDef.ImplementationType.Name);
                     await startableService.StopAsync(_cancellationTokenRegistration.Token);
                 }
             }
@@ -117,7 +118,7 @@ public class RuneforgeBootstrap
     }
 
 
-    private async Task StopAsync()
+    public async Task StopAsync()
     {
         await StartStopServiceAsync(false);
         await _cancellationTokenRegistration.DisposeAsync();
@@ -126,6 +127,21 @@ public class RuneforgeBootstrap
 
     private void RegisterServices()
     {
-        _container.RegisterService(typeof(IEventBusService), typeof(EventBusService));
+        _container
+            .RegisterService(typeof(IEventBusService), typeof(EventBusService))
+            .RegisterService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
+            .RegisterService(typeof(IDiagnosticService), typeof(DiagnosticService))
+            ;
+
+
+        // Register Configs
+
+        _container.RegisterInstance(
+            new DiagnosticServiceConfig()
+            {
+                PidFileName = $"{_runeforgeOptions.GameName.ToSnakeCase()}.pid",
+                MetricsIntervalInSeconds = 60
+            }
+        );
     }
 }

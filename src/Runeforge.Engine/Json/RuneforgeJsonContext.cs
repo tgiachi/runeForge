@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Runeforge.Engine.Data.Config;
+using Runeforge.Engine.Data.Configs;
 
 namespace Runeforge.Engine.Json;
 

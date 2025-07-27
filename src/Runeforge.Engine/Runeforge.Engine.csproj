@@ -25,4 +25,9 @@
       <EmbeddedResource Include="Assets\**\*" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Data\Events\" />
+      <Folder Include="Data\Metrics\" />
+    </ItemGroup>
+
 </Project>

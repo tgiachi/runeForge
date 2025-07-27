@@ -2,8 +2,8 @@ using Runeforge.Engine.Interfaces.Services.Base;
 
 namespace Runeforge.Engine.Services.Base;
 
-public abstract class BaseStartableRuneforgeService<TService> : BaseRuneforgeService<TService>, IStartableRuneforgeService
-    where TService : BaseStartableRuneforgeService<TService>
+public abstract class BaseRuneforgeStartableService<TService> : BaseRuneforgeService<TService>, IRuneforgeStartableService
+    where TService : BaseRuneforgeStartableService<TService>
 {
     public virtual Task StartAsync(CancellationToken cancellationToken = default)
     {

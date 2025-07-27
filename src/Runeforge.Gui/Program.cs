@@ -29,7 +29,13 @@ Builder gameStartup = new Builder()
         .IsStartingScreenFocused(true)
         .ConfigureFonts(true)
         .OnStart(StartBootstrap)
+        .OnEnd(OnEnd)
     ;
+
+void OnEnd(object? sender, GameHost e)
+{
+    bootstrap.StopAsync();
+}
 
 void StartBootstrap(object? sender, GameHost e)
 {
