@@ -1,5 +1,8 @@
 using DryIoc;
 using Runeforge.Engine.Data.Options;
+using Runeforge.Engine.Extensions;
+using Runeforge.Engine.Interfaces.Services;
+using Runeforge.Engine.Services;
 
 namespace Runeforge.Engine.Bootstrap;
 
@@ -9,6 +12,7 @@ public class RuneforgeBootstrap
 
     public RuneforgeBootstrap(RuneforgeOptions options)
     {
+        RegisterServices();
     }
 
 
@@ -20,5 +24,10 @@ public class RuneforgeBootstrap
     private Task StopAsync()
     {
         return Task.CompletedTask;
+    }
+
+    private void RegisterServices()
+    {
+        _container.RegisterService(typeof(IEventBusService), typeof(EventBusService));
     }
 }
