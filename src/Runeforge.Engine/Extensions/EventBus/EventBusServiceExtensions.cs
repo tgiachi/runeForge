@@ -14,10 +14,7 @@ public static class EventBusServiceExtensions
     /// </summary>
     public static void Subscribe<T>(this IEventBusService eventBus, Action<T> handler) where T : IEvent
     {
-        if (handler == null)
-        {
-            throw new ArgumentNullException(nameof(handler));
-        }
+        ArgumentNullException.ThrowIfNull(handler);
 
         var wrapper = new DelegateEventHandler<T>(handler);
         eventBus.Subscribe(wrapper);
