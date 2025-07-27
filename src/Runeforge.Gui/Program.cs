@@ -1,5 +1,9 @@
-﻿using Runeforge.Gui;
+﻿using Runeforge.Engine.Bootstrap;
+using Runeforge.Engine.Data.Options;
+using Runeforge.Gui;
 using SadConsole.Configuration;
+
+var bootstrap = new RuneforgeBootstrap(new RuneforgeOptions());
 
 Settings.WindowTitle = "My SadConsole Game";
 
@@ -8,7 +12,13 @@ Builder gameStartup = new Builder()
         .SetStartingScreen<RootScreen>()
         .IsStartingScreenFocused(true)
         .ConfigureFonts(true)
+        .OnStart(StartBootstrap)
     ;
+
+void StartBootstrap(object? sender, GameHost e)
+{
+    bootstrap.StartAsync();
+}
 
 Game.Create(gameStartup);
 Game.Instance.Run();

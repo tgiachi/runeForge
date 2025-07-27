@@ -4,6 +4,7 @@ public enum DirectoryType
 {
     Templates,
     Scripts,
-    Assets
+    Assets,
+    Logs
 
 }

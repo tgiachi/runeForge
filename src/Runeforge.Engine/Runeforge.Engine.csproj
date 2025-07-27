@@ -14,4 +14,9 @@
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Runeforge.Core\Runeforge.Core.csproj" />
+      <ProjectReference Include="..\Runeforge.Data\Runeforge.Data.csproj" />
+    </ItemGroup>
+
 </Project>
