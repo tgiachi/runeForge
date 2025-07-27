@@ -31,7 +31,7 @@ public class EventBus
 
         _handlers.AddOrUpdate(
             eventType,
-            new ConcurrentBag<WeakReference<IEventHandler>> { weakRef },
+            [weakRef],
             (key, existing) =>
             {
                 existing.Add(weakRef);
