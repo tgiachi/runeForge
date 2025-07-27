@@ -1,7 +1,6 @@
-using Moongate.Core.Extensions;
 using Runeforge.Core.Extensions.Strings;
 
-namespace Moongate.Core.Directories;
+namespace Runeforge.Core.Directories;
 
 public class DirectoriesConfig
 {
