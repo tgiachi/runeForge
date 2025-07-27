@@ -19,4 +19,9 @@
       <ProjectReference Include="..\Runeforge.Data\Runeforge.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\**\*" />
+      <EmbeddedResource Include="Assets\**\*" />
+    </ItemGroup>
+
 </Project>

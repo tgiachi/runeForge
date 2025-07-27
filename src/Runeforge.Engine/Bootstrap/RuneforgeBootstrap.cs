@@ -1,6 +1,7 @@
 using DryIoc;
 using Runeforge.Core.Directories;
 using Runeforge.Core.Extensions.Strings;
+using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
 using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Data.Options;
@@ -30,7 +31,15 @@ public class RuneforgeBootstrap
 
         InitializeRootDirectory();
         InitializeLogger();
+        PrintHeader();
         RegisterServices();
+    }
+
+    private static void PrintHeader()
+    {
+        var header = ResourceUtils.GetEmbeddedResourceContent("Assets/header.txt", typeof(RuneforgeBootstrap).Assembly);
+
+        Console.WriteLine(header);
     }
 
 

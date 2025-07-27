@@ -1,9 +1,25 @@
 ﻿using Runeforge.Engine.Bootstrap;
 using Runeforge.Engine.Data.Options;
+using Runeforge.Engine.Logger.Sink;
+using Runeforge.Engine.Types;
 using Runeforge.Gui;
 using SadConsole.Configuration;
 
-var bootstrap = new RuneforgeBootstrap(new RuneforgeOptions());
+var bootstrap = new RuneforgeBootstrap(
+    new RuneforgeOptions()
+    {
+        RootDirectory = "/tmp/runeforge",
+        LogLevel = LogLevelType.Debug,
+        GameName = "test-game",
+        LogEventDelegate = LogEventDelegate,
+        LogToConsole = true,
+        LogToFile = true
+    }
+);
+
+void LogEventDelegate(LogEntry logEntry)
+{
+}
 
 Settings.WindowTitle = "My SadConsole Game";
 
