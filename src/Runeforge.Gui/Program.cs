@@ -1,10 +1,11 @@
-﻿using SadConsole.Configuration;
+﻿using Runeforge.Gui;
+using SadConsole.Configuration;
 
 Settings.WindowTitle = "My SadConsole Game";
 
 Builder gameStartup = new Builder()
         .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-        .SetStartingScreen<Runeforge.Gui.Scenes.RootScreen>()
+        .SetStartingScreen<RootScreen>()
         .IsStartingScreenFocused(true)
         .ConfigureFonts(true)
     ;

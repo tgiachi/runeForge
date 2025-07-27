@@ -1,4 +1,4 @@
-﻿namespace Runeforge.Gui.Scenes;
+﻿namespace Runeforge.Gui;
 
 class RootScreen : ScreenObject
 {

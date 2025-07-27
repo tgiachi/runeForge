@@ -1,11 +1,14 @@
 using DryIoc;
 using Runeforge.Engine.Data.Internal;
+using Runeforge.Engine.Data.Internal.Services;
 
 namespace Runeforge.Engine.Extensions;
 
 public static class ServiceRegistrationExtension
 {
-    public static IContainer AddService(this IContainer container, Type serviceType, Type implementationType, int priority = 0)
+    public static IContainer AddService(
+        this IContainer container, Type serviceType, Type implementationType, int priority = 0
+    )
     {
         ArgumentNullException.ThrowIfNull(container);
 

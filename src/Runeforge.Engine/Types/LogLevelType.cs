@@ -3,38 +3,37 @@ namespace Runeforge.Engine.Types;
 public enum LogLevelType : byte
 {
     /// <summary>
-    /// No logging.
+    ///     No logging.
     /// </summary>
     None = 0,
 
     /// <summary>
-    /// Trace level logging.
+    ///     Trace level logging.
     /// </summary>
     Trace = 1,
 
     /// <summary>
-    /// Debug level logging.
+    ///     Debug level logging.
     /// </summary>
     Debug = 2,
 
     /// <summary>
-    /// Information level logging.
+    ///     Information level logging.
     /// </summary>
     Information = 3,
 
     /// <summary>
-    /// Warning level logging.
+    ///     Warning level logging.
     /// </summary>
     Warning = 4,
 
     /// <summary>
-    /// Error level logging.
+    ///     Error level logging.
     /// </summary>
     Error = 5,
 
     /// <summary>
-    /// Critical level logging.
+    ///     Critical level logging.
     /// </summary>
     Critical = 6
-
 }
