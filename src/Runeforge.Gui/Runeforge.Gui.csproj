@@ -25,6 +25,7 @@
       <ProjectReference Include="..\Runeforge.Core\Runeforge.Core.csproj" />
       <ProjectReference Include="..\Runeforge.Data\Runeforge.Data.csproj" />
       <ProjectReference Include="..\Runeforge.Engine\Runeforge.Engine.csproj" />
+      <ProjectReference Include="..\Runeforge.Ui\Runeforge.Ui.csproj" />
     </ItemGroup>
 
 </Project>

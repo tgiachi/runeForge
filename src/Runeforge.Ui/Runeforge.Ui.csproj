@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Version>0.0.1</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SadConsole" Version="10.5.0" />
+      <PackageReference Include="SadConsole.Extended" Version="10.5.0" />
+    </ItemGroup>
+
+</Project>

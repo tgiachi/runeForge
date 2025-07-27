@@ -3,5 +3,6 @@
   <Project Path="src\Runeforge.Data\Runeforge.Data.csproj" Type="Classic C#" />
   <Project Path="src\Runeforge.Engine\Runeforge.Engine.csproj" Type="Classic C#" />
   <Project Path="src\Runeforge.Gui\Runeforge.Gui.csproj" Type="Classic C#" />
+  <Project Path="src\Runeforge.Ui\Runeforge.Ui.csproj" Type="Classic C#" />
   <Project Path="tests\Runeforge.Tests\Runeforge.Tests.csproj" Type="Classic C#" />
 </Solution>

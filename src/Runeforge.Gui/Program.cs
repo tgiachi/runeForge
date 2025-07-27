@@ -35,6 +35,8 @@ Builder gameStartup = new Builder()
 void OnEnd(object? sender, GameHost e)
 {
     bootstrap.StopAsync();
+
+
 }
 
 void StartBootstrap(object? sender, GameHost e)
