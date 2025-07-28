@@ -1,4 +1,5 @@
 using System.Reflection;
+using Runeforge.Core.Extensions.Strings;
 using Runeforge.Engine.Attributes.Scripts;
 using Runeforge.Engine.Data.Internal.Scripts;
 
@@ -102,7 +103,7 @@ public static class ScriptDescriptorScanner
         var descriptor = new ScriptFunctionDescriptor
         {
             ModuleName = moduleName,
-            FunctionName = method.Name,
+            FunctionName = method.Name.ToCamelCase(),
             Help = functionAttribute.HelpText,
             ReturnType = GetFriendlyTypeName(method.ReturnType),
             RawReturnType = method.ReturnType
