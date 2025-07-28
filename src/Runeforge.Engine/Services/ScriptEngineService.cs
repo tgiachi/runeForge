@@ -1,9 +1,12 @@
+using System.Reflection;
 using DryIoc;
 using MoonSharp.Interpreter;
 using Runeforge.Core.Directories;
 using Runeforge.Core.Types;
+using Runeforge.Engine.Attributes.Scripts;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Internal.Scripts;
+using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Utils;
 using Serilog;
@@ -12,7 +15,6 @@ namespace Runeforge.Engine.Services;
 
 public class ScriptEngineService : IScriptEngineService
 {
-    private readonly Script _globalScript;
     private readonly ScriptEngineConfig _scriptEngineConfig;
 
     private readonly List<Type> _scriptModules = new List<Type>();
@@ -23,8 +25,10 @@ public class ScriptEngineService : IScriptEngineService
 
     private readonly Dictionary<string, Script> _loadedScripts = new();
     private readonly Dictionary<string, DateTime> _scriptModifiedTimes = new();
+    private readonly List<ScriptDefObject> _scriptDefObjects;
     private readonly DirectoriesConfig _directoriesConfig;
 
+    private readonly Dictionary<string, DynValue> _globalModules = new();
 
     public List<ScriptFunctionDescriptor> Functions { get; } = [];
     public List<Type> Enums { get; } = [];
@@ -33,13 +37,14 @@ public class ScriptEngineService : IScriptEngineService
 
 
     public ScriptEngineService(
-        DirectoriesConfig directoriesConfig, ScriptEngineConfig scriptEngineConfig, IContainer container
+        DirectoriesConfig directoriesConfig, ScriptEngineConfig scriptEngineConfig, IContainer container,
+        List<ScriptDefObject> scriptDefObjects
     )
     {
         _directoriesConfig = directoriesConfig;
         _scriptEngineConfig = scriptEngineConfig;
+        _scriptDefObjects = scriptDefObjects;
         _container = container;
-        _globalScript = new Script();
 
         RegisterGlobalBindings();
     }
@@ -70,6 +75,11 @@ public class ScriptEngineService : IScriptEngineService
 
         _fileSystemWatcher.Created += OnScriptChanged;
         _fileSystemWatcher.Changed += OnScriptChanged;
+
+        _logger.Information(
+            "File watcher initialized for scripts directory: {Path}",
+            _directoriesConfig[DirectoryType.Scripts]
+        );
     }
 
     /// <summary>
@@ -85,7 +95,7 @@ public class ScriptEngineService : IScriptEngineService
             var script = new Script();
 
             // Copy global bindings to new script
-            foreach (var global in _globalScript.Globals.Pairs)
+            foreach (var global in _globalModules)
             {
                 script.Globals[global.Key] = global.Value;
             }
@@ -110,6 +120,15 @@ public class ScriptEngineService : IScriptEngineService
     {
         try
         {
+
+            var fileName = Path.GetFileNameWithoutExtension(e.FullPath);
+
+            if (fileName.StartsWith("__") || fileName.StartsWith("runeforge_"))
+            {
+                _logger.Debug("Skipping internal script change event: {FilePath}", e.FullPath);
+                return; // Skip internal scripts
+            }
+
             // Debounce multiple events
             await Task.Delay(100);
 
@@ -133,6 +152,38 @@ public class ScriptEngineService : IScriptEngineService
 
     private void RegisterGlobalBindings()
     {
+        foreach (var scriptDef in _scriptDefObjects)
+        {
+            AddScriptModule(scriptDef.ModuleType);
+        }
+    }
+
+    /// <summary>
+    /// Load all Lua scripts from the scripts directory
+    /// </summary>
+    public async Task LoadAllScripts()
+    {
+        var scriptsPath = _directoriesConfig[DirectoryType.Scripts];
+
+        if (!Directory.Exists(scriptsPath))
+        {
+            _logger.Warning("Scripts directory not found: {Path}", scriptsPath);
+            return;
+        }
+
+        var luaFiles = Directory.GetFiles(scriptsPath, "*.lua", SearchOption.AllDirectories);
+
+        foreach (var filePath in luaFiles)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            if (fileName.StartsWith("__") || fileName.StartsWith("runeforge_"))
+            {
+                _logger.Debug("Skipping internal script: {FilePath}", filePath);
+                continue; // Skip internal scripts
+            }
+
+            await LoadScript(filePath);
+        }
     }
 
 
@@ -142,9 +193,12 @@ public class ScriptEngineService : IScriptEngineService
 
         EmmyLuaDefinitionGenerator.GenerateDefinitionFile(
             Functions,
-            Path.Combine(_scriptEngineConfig.DefinitionPath, "runeforge.lua"),
+            Path.Combine(_scriptEngineConfig.DefinitionPath, "__runeforge.lua"),
+            "0.0.1",
             Enums
         );
+
+        LoadAllScripts();
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
@@ -159,6 +213,8 @@ public class ScriptEngineService : IScriptEngineService
             _container.Register(moduleType, Reuse.Singleton);
         }
 
+        var moduleName = moduleType.GetCustomAttribute<ScriptModuleAttribute>().Name;
+
         var scanResult = ScriptDescriptorScanner.ScanClass(moduleType);
 
         if (scanResult.Count == 0)
@@ -172,6 +228,11 @@ public class ScriptEngineService : IScriptEngineService
 
         Functions.AddRange(scanResult);
 
-        _globalScript.Globals[moduleType.Name] = _container.Resolve(moduleType);
+        UserData.RegisterType(moduleType);
+
+        var instance = _container.Resolve(moduleType);
+        var dynValue = UserData.Create(instance);
+
+        _globalModules[moduleName] = dynValue;
     }
 }

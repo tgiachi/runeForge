@@ -11,6 +11,7 @@ using Runeforge.Engine.Extensions.Loggers;
 using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Interfaces.Services.Base;
 using Runeforge.Engine.Logger.Sink;
+using Runeforge.Engine.Modules;
 using Runeforge.Engine.Services;
 using Serilog;
 
@@ -34,6 +35,7 @@ public class RuneforgeBootstrap
         InitializeLogger();
         PrintHeader();
         RegisterServices();
+        RegisterScriptModules();
     }
 
     private static void PrintHeader()
@@ -50,6 +52,12 @@ public class RuneforgeBootstrap
         _directoriesConfig = new DirectoriesConfig(_runeforgeOptions.RootDirectory, Enum.GetNames<DirectoryType>());
 
         _container.RegisterInstance(_directoriesConfig);
+    }
+
+
+    private void RegisterScriptModules()
+    {
+        _container.AddScriptModule(typeof(LoggerModule));
     }
 
     private void InitializeLogger()
@@ -131,6 +139,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IEventBusService), typeof(EventBusService))
             .RegisterService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .RegisterService(typeof(IDiagnosticService), typeof(DiagnosticService))
+            .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
             ;
 
 
@@ -141,6 +150,13 @@ public class RuneforgeBootstrap
             {
                 PidFileName = $"{_runeforgeOptions.GameName.ToSnakeCase()}.pid",
                 MetricsIntervalInSeconds = 60
+            }
+        );
+
+        _container.RegisterInstance(
+            new ScriptEngineConfig()
+            {
+                DefinitionPath = _directoriesConfig[DirectoryType.Scripts]
             }
         );
     }
