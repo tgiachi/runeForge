@@ -3,7 +3,10 @@ using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Logger.Sink;
 using Runeforge.Engine.Types;
 using Runeforge.Gui;
+using Runeforge.UI.Screens;
 using SadConsole.Configuration;
+using Serilog.Events;
+
 
 var bootstrap = new RuneforgeBootstrap(
     new RuneforgeOptions()
@@ -11,21 +14,23 @@ var bootstrap = new RuneforgeBootstrap(
         RootDirectory = "/tmp/runeforge",
         LogLevel = LogLevelType.Debug,
         GameName = "test-game",
-        LogEventDelegate = LogEventDelegate,
         LogToConsole = true,
         LogToFile = true
     }
 );
 
-void LogEventDelegate(LogEntry logEntry)
-{
-}
 
 Settings.WindowTitle = "My SadConsole Game";
 
 Builder gameStartup = new Builder()
         .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-        .SetStartingScreen<RootScreen>()
+        .SetStartingScreen(host =>
+            {
+                var logViewer = new LogViewerScreen(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
+                bootstrap.OnLogEvent += entry => { logViewer.AddLogEntry(entry); };
+                return logViewer;
+            }
+        )
         .IsStartingScreenFocused(true)
         .ConfigureFonts(true)
         .OnStart(StartBootstrap)
@@ -35,8 +40,6 @@ Builder gameStartup = new Builder()
 void OnEnd(object? sender, GameHost e)
 {
     bootstrap.StopAsync();
-
-
 }
 
 void StartBootstrap(object? sender, GameHost e)

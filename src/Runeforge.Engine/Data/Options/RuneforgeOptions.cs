@@ -16,5 +16,5 @@ public class RuneforgeOptions
     public string GameName { get; set; }
 
 
-    public RuneforgeSink.LogEventDelegate LogEventDelegate { get; set; }
+
 }

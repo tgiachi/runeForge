@@ -12,4 +12,8 @@
       <PackageReference Include="SadConsole.Extended" Version="10.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Runeforge.Engine\Runeforge.Engine.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -23,6 +23,11 @@ public class RuneforgeBootstrap
 
     private readonly CancellationTokenRegistration _cancellationTokenRegistration = new();
 
+    //  public RuneforgeSink.LogEventDelegate LogEventDelegate { get; set; }
+
+    public event RuneforgeSink.LogEventDelegate OnLogEvent;
+
+
     private readonly RuneforgeOptions _runeforgeOptions;
 
     private DirectoriesConfig _directoriesConfig;
@@ -80,7 +85,7 @@ public class RuneforgeBootstrap
         }
 
         loggerConfiguration.WriteTo.Delegate(
-            _runeforgeOptions.LogEventDelegate,
+            entry => { OnLogEvent?.Invoke(entry); },
             _runeforgeOptions.LogLevel.ToSerilogLogLevel()
         );
 
@@ -103,7 +108,7 @@ public class RuneforgeBootstrap
         foreach (var serviceDef in servicesDef)
         {
             _container.Resolve(serviceDef.ServiceType);
-            Log.Logger.Debug("Ctor service: {ServiceType}", serviceDef.ImplementationType);
+            Log.Logger.Debug("Ctor service: {ServiceType}", serviceDef.ImplementationType.Name);
         }
 
         foreach (var serviceDef in servicesDef)
@@ -136,16 +141,16 @@ public class RuneforgeBootstrap
     private void RegisterServices()
     {
         _container
+            .RegisterService(typeof(IVersionService), typeof(VersionService))
             .RegisterService(typeof(IEventBusService), typeof(EventBusService))
             .RegisterService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .RegisterService(typeof(IDiagnosticService), typeof(DiagnosticService))
             .RegisterService(typeof(IEventDispatcherService), typeof(EventDispatcherService))
             .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
-            .RegisterService(typeof(IVersionService), typeof(VersionService))
+            .RegisterService(typeof(IDataLoaderService), typeof(DataLoaderService))
             ;
 
         // Register Configs
-
         _container.RegisterInstance(
             new DiagnosticServiceConfig()
             {
