@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Attributes\" />
       <Folder Include="Data\Events\" />
       <Folder Include="Data\Metrics\" />
     </ItemGroup>

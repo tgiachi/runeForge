@@ -1,8 +1,11 @@
+using DryIoc;
 using MoonSharp.Interpreter;
 using Runeforge.Core.Directories;
 using Runeforge.Core.Types;
 using Runeforge.Engine.Data.Configs.Services;
+using Runeforge.Engine.Data.Internal.Scripts;
 using Runeforge.Engine.Interfaces.Services;
+using Runeforge.Engine.Utils;
 using Serilog;
 
 namespace Runeforge.Engine.Services;
@@ -12,22 +15,48 @@ public class ScriptEngineService : IScriptEngineService
     private readonly Script _globalScript;
     private readonly ScriptEngineConfig _scriptEngineConfig;
 
+    private readonly List<Type> _scriptModules = new List<Type>();
+
+    private readonly IContainer _container;
+
     private readonly ILogger _logger = Log.ForContext<ScriptEngineService>();
 
     private readonly Dictionary<string, Script> _loadedScripts = new();
     private readonly Dictionary<string, DateTime> _scriptModifiedTimes = new();
     private readonly DirectoriesConfig _directoriesConfig;
 
+
+    public List<ScriptFunctionDescriptor> Functions { get; } = [];
+    public List<Type> Enums { get; } = [];
+
     private FileSystemWatcher _fileSystemWatcher;
 
 
-    public ScriptEngineService(DirectoriesConfig directoriesConfig, ScriptEngineConfig scriptEngineConfig)
+    public ScriptEngineService(
+        DirectoriesConfig directoriesConfig, ScriptEngineConfig scriptEngineConfig, IContainer container
+    )
     {
         _directoriesConfig = directoriesConfig;
         _scriptEngineConfig = scriptEngineConfig;
+        _container = container;
         _globalScript = new Script();
 
         RegisterGlobalBindings();
+    }
+
+    public void AddEnum<TEnum>() where TEnum : Enum
+    {
+        if (!Enums.Contains(typeof(TEnum)))
+        {
+            UserData.RegisterType<TEnum>();
+
+            Enums.Add(typeof(TEnum));
+            _logger.Information("Registered enum: {EnumType}", typeof(TEnum).Name);
+        }
+        else
+        {
+            _logger.Warning("Enum {EnumType} is already registered", typeof(TEnum).Name);
+        }
     }
 
     private void InitFileWatcher()
@@ -107,13 +136,42 @@ public class ScriptEngineService : IScriptEngineService
     }
 
 
-    public Task StartAsync(CancellationToken cancellationToken = default)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        return Task.CompletedTask;
+        InitFileWatcher();
+
+        EmmyLuaDefinitionGenerator.GenerateDefinitionFile(
+            Functions,
+            Path.Combine(_scriptEngineConfig.DefinitionPath, "runeforge.lua"),
+            Enums
+        );
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
     {
         return Task.CompletedTask;
+    }
+
+    public void AddScriptModule(Type moduleType)
+    {
+        if (!_container.IsRegistered(moduleType))
+        {
+            _container.Register(moduleType, Reuse.Singleton);
+        }
+
+        var scanResult = ScriptDescriptorScanner.ScanClass(moduleType);
+
+        if (scanResult.Count == 0)
+        {
+            _logger.Warning("No script functions found in module: {ModuleType}", moduleType.Name);
+            return;
+        }
+
+        _scriptModules.Add(moduleType);
+        _logger.Information("Registered script module: {ModuleType}", moduleType.Name);
+
+        Functions.AddRange(scanResult);
+
+        _globalScript.Globals[moduleType.Name] = _container.Resolve(moduleType);
     }
 }
