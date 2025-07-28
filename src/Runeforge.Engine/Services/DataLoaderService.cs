@@ -49,7 +49,7 @@ public class DataLoaderService : IDataLoaderService
 
         var dataLoader = _container.Resolve<TDataLoader>();
         var dataType = typeof(TDataType);
-        
+
         _dataLoaders[dataType] = dataLoader;
     }
 
