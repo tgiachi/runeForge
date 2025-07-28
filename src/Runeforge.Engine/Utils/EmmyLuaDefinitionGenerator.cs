@@ -1,20 +1,24 @@
+using System.Reflection;
 using System.Text;
 using Runeforge.Engine.Data.Internal.Scripts;
 
 namespace Runeforge.Engine.Utils;
 
 /// <summary>
-/// Static class for generating EmmyLua definition files from script function descriptors
+///     Static class for generating EmmyLua definition files from script function descriptors
 /// </summary>
 public static class EmmyLuaDefinitionGenerator
 {
     /// <summary>
-    /// Generates EmmyLua definition content from a list of script function descriptors
+    ///     Generates EmmyLua definition content from a list of script function descriptors
     /// </summary>
     /// <param name="descriptors">List of script function descriptors</param>
     /// <param name="enums">Optional list of enum types to include in definitions</param>
+    /// <param name="customTypes">Optional list of custom types to include in definitions</param>
     /// <returns>EmmyLua definition file content as string</returns>
-    public static string GenerateDefinitions(List<ScriptFunctionDescriptor> descriptors, List<Type>? enums = null)
+    public static string GenerateDefinitions(
+        List<ScriptFunctionDescriptor> descriptors, List<Type>? enums = null, List<Type>? customTypes = null
+    )
     {
         ArgumentNullException.ThrowIfNull(descriptors);
 
@@ -38,9 +42,16 @@ public static class EmmyLuaDefinitionGenerator
             sb.AppendLine();
         }
 
+        // Generate custom type definitions
+        if (customTypes != null && customTypes.Count > 0)
+        {
+            GenerateCustomTypeDefinitions(sb, customTypes);
+            sb.AppendLine();
+        }
+
         foreach (var moduleGroup in moduleGroups)
         {
-            GenerateModuleDefinition(sb, moduleGroup.Key, moduleGroup.ToList(), enums);
+            GenerateModuleDefinition(sb, moduleGroup.Key, moduleGroup.ToList(), enums, customTypes);
             sb.AppendLine();
         }
 
@@ -48,7 +59,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua enum definitions
+    ///     Generates EmmyLua enum definitions
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="enums">List of enum types</param>
@@ -64,7 +75,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single enum
+    ///     Generates EmmyLua definition for a single enum
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="enumType">Enum type to generate definition for</param>
@@ -80,7 +91,7 @@ public static class EmmyLuaDefinitionGenerator
         sb.AppendLine();
 
         // Add enum values
-        for (int i = 0; i < enumValues.Length; i++)
+        for (var i = 0; i < enumValues.Length; i++)
         {
             var valueName = enumValues[i];
             var numericValue = Convert.ToInt32(enumNumericValues.GetValue(i));
@@ -93,14 +104,91 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single module
+    ///     Generates EmmyLua custom type definitions
+    /// </summary>
+    /// <param name="sb">StringBuilder to append content to</param>
+    /// <param name="customTypes">List of custom types</param>
+    private static void GenerateCustomTypeDefinitions(StringBuilder sb, List<Type> customTypes)
+    {
+        sb.AppendLine("-- Custom Type Definitions");
+        sb.AppendLine();
+
+        var nonEnumTypes = customTypes.Where(t => !t.IsEnum && !t.IsPrimitive && t != typeof(string) &&
+                                                  !typeof(Delegate).IsAssignableFrom(t)
+            )
+            .OrderBy(t => t.Name);
+
+        foreach (var customType in nonEnumTypes)
+        {
+            GenerateCustomTypeDefinition(sb, customType);
+        }
+    }
+
+    /// <summary>
+    ///     Generates EmmyLua definition for a single custom type
+    /// </summary>
+    /// <param name="sb">StringBuilder to append content to</param>
+    /// <param name="customType">Custom type to generate definition for</param>
+    /// <param name="visitedTypes">HashSet to prevent infinite recursion</param>
+    private static void GenerateCustomTypeDefinition(StringBuilder sb, Type customType, HashSet<Type>? visitedTypes = null)
+    {
+        visitedTypes ??= new HashSet<Type>();
+
+        // Prevent infinite recursion
+        if (visitedTypes.Contains(customType))
+        {
+            return;
+        }
+
+        visitedTypes.Add(customType);
+
+        var typeName = customType.Name;
+
+        // Skip delegates - they're handled separately as function types
+        if (typeof(Delegate).IsAssignableFrom(customType))
+        {
+            return;
+        }
+
+        sb.AppendLine($"---@class {typeName}");
+
+        // Analyze public properties
+        var properties = customType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanRead)
+            .OrderBy(p => p.Name);
+
+        foreach (var property in properties)
+        {
+            var propertyTypeName = GetLuaTypeName(property.PropertyType);
+            sb.AppendLine($"---@field {property.Name} {propertyTypeName}");
+        }
+
+        // Analyze public fields
+        var fields = customType.GetFields(BindingFlags.Public | BindingFlags.Instance)
+            .Where(f => !f.IsStatic)
+            .OrderBy(f => f.Name);
+
+        foreach (var field in fields)
+        {
+            var fieldTypeName = GetLuaTypeName(field.FieldType);
+            sb.AppendLine($"---@field {field.Name} {fieldTypeName}");
+        }
+
+        sb.AppendLine($"{typeName} = {{}}");
+        sb.AppendLine();
+    }
+
+    /// <summary>
+    ///     Generates EmmyLua definition for a single module
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="moduleName">Name of the module</param>
     /// <param name="functions">List of functions in the module</param>
     /// <param name="availableEnums">Optional list of available enum types</param>
+    /// <param name="availableCustomTypes">Optional list of available custom types</param>
     private static void GenerateModuleDefinition(
-        StringBuilder sb, string moduleName, List<ScriptFunctionDescriptor> functions, List<Type>? availableEnums = null
+        StringBuilder sb, string moduleName, List<ScriptFunctionDescriptor> functions, List<Type>? availableEnums = null,
+        List<Type>? availableCustomTypes = null
     )
     {
         // Module declaration
@@ -111,19 +199,21 @@ public static class EmmyLuaDefinitionGenerator
         // Generate function definitions
         foreach (var function in functions.OrderBy(f => f.FunctionName))
         {
-            GenerateFunctionDefinition(sb, moduleName, function, availableEnums);
+            GenerateFunctionDefinition(sb, moduleName, function, availableEnums, availableCustomTypes);
         }
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single function
+    ///     Generates EmmyLua definition for a single function
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="moduleName">Name of the module containing the function</param>
     /// <param name="function">Function descriptor</param>
     /// <param name="availableEnums">Optional list of available enum types</param>
+    /// <param name="availableCustomTypes">Optional list of available custom types</param>
     private static void GenerateFunctionDefinition(
-        StringBuilder sb, string moduleName, ScriptFunctionDescriptor function, List<Type>? availableEnums = null
+        StringBuilder sb, string moduleName, ScriptFunctionDescriptor function, List<Type>? availableEnums = null,
+        List<Type>? availableCustomTypes = null
     )
     {
         // Add help comment if available
@@ -135,14 +225,24 @@ public static class EmmyLuaDefinitionGenerator
         // Add parameter annotations
         foreach (var param in function.Parameters)
         {
-            var luaType = ConvertToLuaType(param.ParameterType, availableEnums);
+            var luaType = ConvertToLuaType(
+                param.ParameterType,
+                param.RawParameterType,
+                availableEnums,
+                availableCustomTypes
+            );
             sb.AppendLine($"---@param {param.ParameterName} {luaType}");
         }
 
         // Add return type annotation
         if (!string.IsNullOrEmpty(function.ReturnType) && function.ReturnType != "void")
         {
-            var luaReturnType = ConvertToLuaType(function.ReturnType, availableEnums);
+            var luaReturnType = ConvertToLuaType(
+                function.ReturnType,
+                function.RawReturnType,
+                availableEnums,
+                availableCustomTypes
+            );
             sb.AppendLine($"---@return {luaReturnType}");
         }
 
@@ -153,22 +253,77 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Converts C# type names to EmmyLua type annotations
+    ///     Generates EmmyLua function type definition for delegates (Action, Func, etc.)
+    /// </summary>
+    /// <param name="delegateType">The delegate type to analyze</param>
+    /// <returns>EmmyLua function type definition</returns>
+    private static string GenerateDelegateDefinition(Type delegateType)
+    {
+        if (!typeof(Delegate).IsAssignableFrom(delegateType))
+        {
+            return "function";
+        }
+
+        var invokeMethod = delegateType.GetMethod("Invoke");
+        if (invokeMethod == null)
+        {
+            return "function";
+        }
+
+        var parameters = invokeMethod.GetParameters();
+        var returnType = invokeMethod.ReturnType;
+
+        // Build parameter types
+        var paramTypes = parameters.Select(p => GetLuaTypeName(p.ParameterType));
+        var paramString = string.Join(", ", paramTypes);
+
+        // Build return type
+        var returnString = returnType == typeof(void) ? "" : $": {GetLuaTypeName(returnType)}";
+
+        return $"fun({paramString}){returnString}";
+    }
+
+    /// <summary>
+    ///     Converts C# type names to EmmyLua type annotations
     /// </summary>
     /// <param name="csharpType">C# type name</param>
+    /// <param name="rawType">Raw C# Type object for better analysis</param>
     /// <param name="availableEnums">Optional list of available enum types for better type mapping</param>
+    /// <param name="availableCustomTypes">Optional list of available custom types</param>
     /// <returns>EmmyLua type annotation</returns>
-    private static string ConvertToLuaType(string csharpType, List<Type>? availableEnums = null)
+    private static string ConvertToLuaType(
+        string csharpType, Type? rawType = null, List<Type>? availableEnums = null, List<Type>? availableCustomTypes = null
+    )
     {
         if (string.IsNullOrEmpty(csharpType))
+        {
             return "any";
+        }
+
+        // Use raw type analysis if available
+        if (rawType != null)
+        {
+            return GetLuaTypeName(rawType);
+        }
 
         // Check if it's an enum type
         if (availableEnums != null)
         {
             var enumType = availableEnums.FirstOrDefault(e => e.Name == csharpType || e.FullName == csharpType);
             if (enumType != null)
+            {
                 return enumType.Name;
+            }
+        }
+
+        // Check if it's a custom type
+        if (availableCustomTypes != null)
+        {
+            var customType = availableCustomTypes.FirstOrDefault(c => c.Name == csharpType || c.FullName == csharpType);
+            if (customType != null)
+            {
+                return customType.Name;
+            }
         }
 
         return csharpType.ToLowerInvariant() switch
@@ -180,27 +335,192 @@ public static class EmmyLuaDefinitionGenerator
             "void"                                                        => "nil",
             "table"                                                       => "table",
             "function"                                                    => "function",
-            _ when csharpType.EndsWith("[]")                              => "table", // Arrays as tables
-            _ when csharpType.StartsWith("List<")                         => "table", // Lists as tables
-            _ when csharpType.StartsWith("Dictionary<")                   => "table", // Dictionaries as tables
-            _                                                             => "any"    // Unknown types
+            _ when csharpType.EndsWith("[]")                              => "table",    // Arrays as tables
+            _ when csharpType.StartsWith("List<")                         => "table",    // Lists as tables
+            _ when csharpType.StartsWith("Dictionary<")                   => "table",    // Dictionaries as tables
+            _ when csharpType.StartsWith("Action")                        => "function", // Action delegates
+            _ when csharpType.StartsWith("Func<")                         => "function", // Func delegates
+            _                                                             => "any"       // Unknown types
         };
     }
 
     /// <summary>
-    /// Generates and saves EmmyLua definition file to disk
+    ///     Gets the appropriate Lua type name for EmmyLua annotations
+    /// </summary>
+    /// <param name="type">C# type to convert</param>
+    /// <returns>Lua type name string</returns>
+    private static string GetLuaTypeName(Type type)
+    {
+        if (type == typeof(string))
+        {
+            return "string";
+        }
+
+        if (type == typeof(int) || type == typeof(long) || type == typeof(short) || type == typeof(byte))
+        {
+            return "integer";
+        }
+
+        if (type == typeof(float) || type == typeof(double) || type == typeof(decimal))
+        {
+            return "number";
+        }
+
+        if (type == typeof(bool))
+        {
+            return "boolean";
+        }
+
+        if (type == typeof(void))
+        {
+            return "nil";
+        }
+
+        if (type.IsEnum)
+        {
+            return type.Name;
+        }
+
+        // Handle nullable types
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return GetLuaTypeName(underlyingType!) + "?";
+        }
+
+        // Handle arrays
+        if (type.IsArray)
+        {
+            var elementType = type.GetElementType()!;
+            return $"{GetLuaTypeName(elementType)}[]";
+        }
+
+        // Handle generic collections
+        if (type.IsGenericType)
+        {
+            var genericDefinition = type.GetGenericTypeDefinition();
+
+            if (genericDefinition == typeof(List<>) || genericDefinition == typeof(IList<>) ||
+                genericDefinition == typeof(ICollection<>) || genericDefinition == typeof(IEnumerable<>))
+            {
+                var elementType = type.GetGenericArguments()[0];
+                return $"{GetLuaTypeName(elementType)}[]";
+            }
+
+            if (genericDefinition == typeof(Dictionary<,>) || genericDefinition == typeof(IDictionary<,>))
+            {
+                var keyType = type.GetGenericArguments()[0];
+                var valueType = type.GetGenericArguments()[1];
+                return $"table<{GetLuaTypeName(keyType)}, {GetLuaTypeName(valueType)}>";
+            }
+
+            // Handle other generic types
+            var genericTypeName = type.Name.Split('`')[0];
+            var genericArgs = type.GetGenericArguments();
+            var genericArgNames = string.Join(", ", genericArgs.Select(GetLuaTypeName));
+            return $"{genericTypeName}<{genericArgNames}>";
+        }
+
+        // Handle delegates
+        if (typeof(Delegate).IsAssignableFrom(type))
+        {
+            return GenerateDelegateDefinition(type);
+        }
+
+        // Custom types
+        return type.Name;
+    }
+
+    /// <summary>
+    ///     Gets a friendly type name for display purposes
+    /// </summary>
+    /// <param name="type">Type to get friendly name for</param>
+    /// <returns>Friendly type name string</returns>
+    private static string GetFriendlyTypeName(Type type)
+    {
+        if (type == typeof(void))
+        {
+            return "void";
+        }
+
+        if (type == typeof(string))
+        {
+            return "string";
+        }
+
+        if (type == typeof(int))
+        {
+            return "int";
+        }
+
+        if (type == typeof(long))
+        {
+            return "long";
+        }
+
+        if (type == typeof(float))
+        {
+            return "float";
+        }
+
+        if (type == typeof(double))
+        {
+            return "double";
+        }
+
+        if (type == typeof(bool))
+        {
+            return "bool";
+        }
+
+        if (type == typeof(object))
+        {
+            return "object";
+        }
+
+        // Handle nullable types
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return GetFriendlyTypeName(underlyingType!) + "?";
+        }
+
+        // Handle arrays
+        if (type.IsArray)
+        {
+            var elementType = type.GetElementType()!;
+            return GetFriendlyTypeName(elementType) + "[]";
+        }
+
+        // Handle generic types
+        if (type.IsGenericType)
+        {
+            var genericTypeName = type.Name.Split('`')[0];
+            var genericArgs = type.GetGenericArguments();
+            var genericArgNames = string.Join(", ", genericArgs.Select(GetFriendlyTypeName));
+            return $"{genericTypeName}<{genericArgNames}>";
+        }
+
+        // For enums and other types, return the simple name
+        return type.Name;
+    }
+
+    /// <summary>
+    ///     Generates and saves EmmyLua definition file to disk
     /// </summary>
     /// <param name="descriptors">List of script function descriptors</param>
     /// <param name="outputPath">Path where to save the definition file</param>
     /// <param name="enums">Optional list of enum types to include</param>
+    /// <param name="customTypes">Optional list of custom types to include</param>
     public static void GenerateDefinitionFile(
-        List<ScriptFunctionDescriptor> descriptors, string outputPath, List<Type>? enums = null
+        List<ScriptFunctionDescriptor> descriptors, string outputPath, List<Type>? enums = null,
+        List<Type>? customTypes = null
     )
     {
         ArgumentNullException.ThrowIfNull(descriptors);
         ArgumentException.ThrowIfNullOrEmpty(outputPath);
 
-        var content = GenerateDefinitions(descriptors, enums);
+        var content = GenerateDefinitions(descriptors, enums, customTypes);
 
         // Ensure directory exists
         var directory = Path.GetDirectoryName(outputPath);
@@ -213,13 +533,15 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates separate definition files for each module
+    ///     Generates separate definition files for each module
     /// </summary>
     /// <param name="descriptors">List of script function descriptors</param>
     /// <param name="outputDirectory">Directory where to save the definition files</param>
     /// <param name="enums">Optional list of enum types to include</param>
+    /// <param name="customTypes">Optional list of custom types to include</param>
     public static void GenerateModuleDefinitionFiles(
-        List<ScriptFunctionDescriptor> descriptors, string outputDirectory, List<Type>? enums = null
+        List<ScriptFunctionDescriptor> descriptors, string outputDirectory, List<Type>? enums = null,
+        List<Type>? customTypes = null
     )
     {
         ArgumentNullException.ThrowIfNull(descriptors);
@@ -240,7 +562,24 @@ public static class EmmyLuaDefinitionGenerator
             var fileName = $"{moduleName}.lua";
             var filePath = Path.Combine(outputDirectory, fileName);
 
-            GenerateDefinitionFile(moduleDescriptors, filePath, enums);
+            GenerateDefinitionFile(moduleDescriptors, filePath, enums, customTypes);
         }
+    }
+
+    /// <summary>
+    ///     Convenience method to generate complete definitions with automatic type extraction
+    /// </summary>
+    /// <param name="classTypes">Array of class types to scan and generate definitions for</param>
+    /// <param name="outputPath">Path where to save the definition file</param>
+    public static void GenerateCompleteDefinitionsFromClasses(string outputPath, params Type[] classTypes)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(outputPath);
+        ArgumentNullException.ThrowIfNull(classTypes);
+
+        // Use the scanner to get all types
+        var (descriptors, enumTypes, customTypes) = ScriptDescriptorScanner.ScanClassesWithAllTypes(classTypes);
+
+        // Generate complete definitions
+        GenerateDefinitionFile(descriptors, outputPath, enumTypes, customTypes);
     }
 }
