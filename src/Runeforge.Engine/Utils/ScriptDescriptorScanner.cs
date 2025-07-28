@@ -6,12 +6,12 @@ using Runeforge.Engine.Data.Internal.Scripts;
 namespace Runeforge.Engine.Utils;
 
 /// <summary>
-/// Static class for scanning classes and generating script function descriptors from attributes
+///     Static class for scanning classes and generating script function descriptors from attributes
 /// </summary>
 public static class ScriptDescriptorScanner
 {
     /// <summary>
-    /// Scans a single class for ScriptModule and ScriptFunction attributes and generates descriptors
+    ///     Scans a single class for ScriptModule and ScriptFunction attributes and generates descriptors
     /// </summary>
     /// <param name="classType">The class type to scan</param>
     /// <returns>List of ScriptFunctionDescriptor for the class, empty if no ScriptModule attribute found</returns>
@@ -45,7 +45,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Scans multiple classes for ScriptModule and ScriptFunction attributes
+    ///     Scans multiple classes for ScriptModule and ScriptFunction attributes
     /// </summary>
     /// <param name="classTypes">Array of class types to scan</param>
     /// <returns>Combined list of ScriptFunctionDescriptor from all classes</returns>
@@ -65,7 +65,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Scans all classes in an assembly for ScriptModule and ScriptFunction attributes
+    ///     Scans all classes in an assembly for ScriptModule and ScriptFunction attributes
     /// </summary>
     /// <param name="assembly">Assembly to scan</param>
     /// <returns>List of ScriptFunctionDescriptor from all applicable classes in the assembly</returns>
@@ -89,7 +89,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Creates a ScriptFunctionDescriptor from a method and its ScriptFunction attribute
+    ///     Creates a ScriptFunctionDescriptor from a method and its ScriptFunction attribute
     /// </summary>
     /// <param name="moduleName">Name of the module containing the function</param>
     /// <param name="method">MethodInfo to analyze</param>
@@ -98,7 +98,8 @@ public static class ScriptDescriptorScanner
     private static ScriptFunctionDescriptor CreateFunctionDescriptor(
         string moduleName,
         MethodInfo method,
-        ScriptFunctionAttribute functionAttribute)
+        ScriptFunctionAttribute functionAttribute
+    )
     {
         var descriptor = new ScriptFunctionDescriptor
         {
@@ -123,10 +124,10 @@ public static class ScriptDescriptorScanner
             }
 
             var paramDescriptor = new ScriptFunctionParameterDescriptor(
-                ParameterName: paramName,
-                ParameterType: GetFriendlyTypeName(paramType),
-                RawParameterType: paramType,
-                ParameterTypeString: paramType.ToString()
+                paramName,
+                GetFriendlyTypeName(paramType),
+                paramType,
+                paramType.ToString()
             );
 
             descriptor.Parameters.Add(paramDescriptor);
@@ -136,35 +137,51 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Gets a friendly type name for display purposes
+    ///     Gets a friendly type name for display purposes
     /// </summary>
     /// <param name="type">Type to get friendly name for</param>
     /// <returns>Friendly type name string</returns>
     private static string GetFriendlyTypeName(Type type)
     {
         if (type == typeof(void))
+        {
             return "void";
+        }
 
         if (type == typeof(string))
+        {
             return "string";
+        }
 
         if (type == typeof(int))
+        {
             return "int";
+        }
 
         if (type == typeof(long))
+        {
             return "long";
+        }
 
         if (type == typeof(float))
+        {
             return "float";
+        }
 
         if (type == typeof(double))
+        {
             return "double";
+        }
 
         if (type == typeof(bool))
+        {
             return "bool";
+        }
 
         if (type == typeof(object))
+        {
             return "object";
+        }
 
         // Handle nullable types
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -194,7 +211,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Scans classes and extracts unique enum types referenced in method signatures
+    ///     Scans classes and extracts unique enum types referenced in method signatures
     /// </summary>
     /// <param name="classTypes">Array of class types to scan for enums</param>
     /// <returns>List of unique enum types found</returns>
@@ -208,7 +225,9 @@ public static class ScriptDescriptorScanner
         {
             // Check if class has ScriptModule attribute
             if (classType.GetCustomAttribute<ScriptModuleAttribute>() == null)
+            {
                 continue;
+            }
 
             // Get all public methods with ScriptFunction attribute
             var methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
@@ -231,76 +250,85 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Recursively extracts all enum types from a given type (including nested generics, arrays, delegates, etc.)
+    ///     Recursively extracts all enum types from a given type (including nested generics, arrays, delegates, etc.)
     /// </summary>
     /// <param name="type">Type to analyze</param>
     /// <param name="enumTypes">HashSet to collect found enum types</param>
     private static void ExtractEnumsFromType(Type type, HashSet<Type> enumTypes)
     {
-        // Direct enum check
-        if (type.IsEnum)
+        while (true)
         {
-            enumTypes.Add(type);
-            return;
-        }
-
-        // Handle nullable types
-        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-        {
-            var underlyingType = Nullable.GetUnderlyingType(type);
-            if (underlyingType != null)
+            // Direct enum check
+            if (type.IsEnum)
             {
-                ExtractEnumsFromType(underlyingType, enumTypes);
+                enumTypes.Add(type);
+                return;
             }
-            return;
-        }
 
-        // Handle arrays
-        if (type.IsArray)
-        {
-            var elementType = type.GetElementType();
-            if (elementType != null)
+            // Handle nullable types
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                ExtractEnumsFromType(elementType, enumTypes);
-            }
-            return;
-        }
-
-        // Handle generic types (List<T>, Dictionary<K,V>, etc.)
-        if (type.IsGenericType)
-        {
-            foreach (var genericArg in type.GetGenericArguments())
-            {
-                ExtractEnumsFromType(genericArg, enumTypes);
-            }
-        }
-
-        // Handle delegates (Action, Func, custom delegates)
-        if (typeof(Delegate).IsAssignableFrom(type) || type.BaseType == typeof(MulticastDelegate))
-        {
-            var invokeMethod = type.GetMethod("Invoke");
-            if (invokeMethod != null)
-            {
-                // Extract from return type
-                ExtractEnumsFromType(invokeMethod.ReturnType, enumTypes);
-
-                // Extract from parameters
-                foreach (var param in invokeMethod.GetParameters())
+                var underlyingType = Nullable.GetUnderlyingType(type);
+                if (underlyingType != null)
                 {
-                    ExtractEnumsFromType(param.ParameterType, enumTypes);
+                    type = underlyingType;
+                    continue;
+                }
+
+                return;
+            }
+
+            // Handle arrays
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+                if (elementType != null)
+                {
+                    type = elementType;
+                    continue;
+                }
+
+                return;
+            }
+
+            // Handle generic types (List<T>, Dictionary<K,V>, etc.)
+            if (type.IsGenericType)
+            {
+                foreach (var genericArg in type.GetGenericArguments())
+                {
+                    ExtractEnumsFromType(genericArg, enumTypes);
                 }
             }
-        }
 
-        // Handle custom classes/structs - check their public properties and fields
-        if (type.IsClass && type != typeof(string) && type != typeof(object) && !type.IsPrimitive)
-        {
-            ExtractEnumsFromCustomType(type, enumTypes);
+            // Handle delegates (Action, Func, custom delegates)
+            if (typeof(Delegate).IsAssignableFrom(type) || type.BaseType == typeof(MulticastDelegate))
+            {
+                var invokeMethod = type.GetMethod("Invoke");
+                if (invokeMethod != null)
+                {
+                    // Extract from return type
+                    ExtractEnumsFromType(invokeMethod.ReturnType, enumTypes);
+
+                    // Extract from parameters
+                    foreach (var param in invokeMethod.GetParameters())
+                    {
+                        ExtractEnumsFromType(param.ParameterType, enumTypes);
+                    }
+                }
+            }
+
+            // Handle custom classes/structs - check their public properties and fields
+            if (type.IsClass && type != typeof(string) && type != typeof(object) && !type.IsPrimitive)
+            {
+                ExtractEnumsFromCustomType(type, enumTypes);
+            }
+
+            break;
         }
     }
 
     /// <summary>
-    /// Extracts enum types from custom classes by analyzing their properties and fields
+    ///     Extracts enum types from custom classes by analyzing their properties and fields
     /// </summary>
     /// <param name="type">Custom type to analyze</param>
     /// <param name="enumTypes">HashSet to collect found enum types</param>
@@ -311,7 +339,9 @@ public static class ScriptDescriptorScanner
 
         // Prevent infinite recursion
         if (visitedTypes.Contains(type))
+        {
             return;
+        }
 
         visitedTypes.Add(type);
 
@@ -331,7 +361,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Extracts all custom types used in method signatures recursively
+    ///     Extracts all custom types used in method signatures recursively
     /// </summary>
     /// <param name="classTypes">Array of class types to scan</param>
     /// <returns>List of all custom types found</returns>
@@ -345,7 +375,9 @@ public static class ScriptDescriptorScanner
         {
             // Check if class has ScriptModule attribute
             if (classType.GetCustomAttribute<ScriptModuleAttribute>() == null)
+            {
                 continue;
+            }
 
             // Get all public methods with ScriptFunction attribute
             var methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
@@ -368,7 +400,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Recursively extracts all custom (non-primitive) types from a given type
+    ///     Recursively extracts all custom (non-primitive) types from a given type
     /// </summary>
     /// <param name="type">Type to analyze</param>
     /// <param name="customTypes">HashSet to collect found custom types</param>
@@ -379,13 +411,17 @@ public static class ScriptDescriptorScanner
 
         // Prevent infinite recursion
         if (visitedTypes.Contains(type))
+        {
             return;
+        }
 
         visitedTypes.Add(type);
 
         // Skip primitive types, string, and basic types
         if (type.IsPrimitive || type == typeof(string) || type == typeof(object) || type == typeof(void))
+        {
             return;
+        }
 
         // Add custom types (classes, structs, enums)
         if (type.IsClass || type.IsValueType || type.IsEnum)
@@ -401,6 +437,7 @@ public static class ScriptDescriptorScanner
             {
                 ExtractCustomTypesFromType(underlyingType, customTypes, visitedTypes);
             }
+
             return;
         }
 
@@ -412,6 +449,7 @@ public static class ScriptDescriptorScanner
             {
                 ExtractCustomTypesFromType(elementType, customTypes, visitedTypes);
             }
+
             return;
         }
 
@@ -449,7 +487,7 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Analyzes members of a custom type to find more custom types
+    ///     Analyzes members of a custom type to find more custom types
     /// </summary>
     /// <param name="type">Type to analyze</param>
     /// <param name="customTypes">HashSet to collect found custom types</param>
@@ -472,11 +510,12 @@ public static class ScriptDescriptorScanner
     }
 
     /// <summary>
-    /// Convenience method to scan classes and generate both descriptors and all related types
+    ///     Convenience method to scan classes and generate both descriptors and all related types
     /// </summary>
     /// <param name="classTypes">Array of class types to scan</param>
     /// <returns>Tuple containing the descriptors, enum types, and all custom types</returns>
-    public static (List<ScriptFunctionDescriptor> Descriptors, List<Type> EnumTypes, List<Type> CustomTypes) ScanClassesWithAllTypes(params Type[] classTypes)
+    public static (List<ScriptFunctionDescriptor> Descriptors, List<Type> EnumTypes, List<Type> CustomTypes)
+        ScanClassesWithAllTypes(params Type[] classTypes)
     {
         var descriptors = ScanClasses(classTypes);
         var enumTypes = ExtractEnumTypes(classTypes);

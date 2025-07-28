@@ -5,12 +5,12 @@ using Runeforge.Engine.Data.Internal.Scripts;
 namespace Runeforge.Engine.Utils;
 
 /// <summary>
-/// Static class for generating EmmyLua definition files from script function descriptors
+///     Static class for generating EmmyLua definition files from script function descriptors
 /// </summary>
 public static class EmmyLuaDefinitionGenerator
 {
     /// <summary>
-    /// Generates EmmyLua definition content from a list of script function descriptors
+    ///     Generates EmmyLua definition content from a list of script function descriptors
     /// </summary>
     /// <param name="descriptors">List of script function descriptors</param>
     /// <param name="version">Version string to include in header</param>
@@ -60,7 +60,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua enum definitions
+    ///     Generates EmmyLua enum definitions
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="enums">List of enum types</param>
@@ -76,7 +76,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single enum
+    ///     Generates EmmyLua definition for a single enum
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="enumType">Enum type to generate definition for</param>
@@ -105,7 +105,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua custom type definitions
+    ///     Generates EmmyLua custom type definitions
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="customTypes">List of custom types</param>
@@ -126,7 +126,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single custom type
+    ///     Generates EmmyLua definition for a single custom type
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="customType">Custom type to generate definition for</param>
@@ -180,7 +180,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single module
+    ///     Generates EmmyLua definition for a single module
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="moduleName">Name of the module</param>
@@ -205,7 +205,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua definition for a single function
+    ///     Generates EmmyLua definition for a single function
     /// </summary>
     /// <param name="sb">StringBuilder to append content to</param>
     /// <param name="moduleName">Name of the module containing the function</param>
@@ -283,7 +283,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates EmmyLua function type definition for delegates (Action, Func, etc.)
+    ///     Generates EmmyLua function type definition for delegates (Action, Func, etc.)
     /// </summary>
     /// <param name="delegateType">The delegate type to analyze</param>
     /// <returns>EmmyLua function type definition</returns>
@@ -314,7 +314,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Converts C# type names to EmmyLua type annotations
+    ///     Converts C# type names to EmmyLua type annotations
     /// </summary>
     /// <param name="csharpType">C# type name</param>
     /// <param name="rawType">Raw C# Type object for better analysis</param>
@@ -376,7 +376,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Gets the appropriate Lua type name for EmmyLua annotations
+    ///     Gets the appropriate Lua type name for EmmyLua annotations
     /// </summary>
     /// <param name="type">C# type to convert</param>
     /// <returns>Lua type name string</returns>
@@ -431,7 +431,9 @@ public static class EmmyLuaDefinitionGenerator
 
             // Fixed: Special case for object[] (often used with params) -> any[]
             if (elementType == typeof(object))
+            {
                 return "any[]";
+            }
 
             return $"{GetLuaTypeName(elementType)}[]";
         }
@@ -473,7 +475,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Gets a friendly type name for display purposes
+    ///     Gets a friendly type name for display purposes
     /// </summary>
     /// <param name="type">Type to get friendly name for</param>
     /// <returns>Friendly type name string</returns>
@@ -547,7 +549,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates and saves EmmyLua definition file to disk
+    ///     Generates and saves EmmyLua definition file to disk
     /// </summary>
     /// <param name="descriptors">List of script function descriptors</param>
     /// <param name="outputPath">Path where to save the definition file</param>
@@ -575,7 +577,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Generates separate definition files for each module
+    ///     Generates separate definition files for each module
     /// </summary>
     /// <param name="descriptors">List of script function descriptors</param>
     /// <param name="outputDirectory">Directory where to save the definition files</param>
@@ -610,7 +612,7 @@ public static class EmmyLuaDefinitionGenerator
     }
 
     /// <summary>
-    /// Convenience method to generate complete definitions with automatic type extraction
+    ///     Convenience method to generate complete definitions with automatic type extraction
     /// </summary>
     /// <param name="outputPath">Path where to save the definition file</param>
     /// <param name="version">Version string to include in header</param>
