@@ -139,9 +139,10 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IEventBusService), typeof(EventBusService))
             .RegisterService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .RegisterService(typeof(IDiagnosticService), typeof(DiagnosticService))
+            .RegisterService(typeof(IEventDispatcherService), typeof(EventDispatcherService))
             .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
+            .RegisterService(typeof(IVersionService), typeof(VersionService))
             ;
-
 
         // Register Configs
 

@@ -335,15 +335,13 @@ public static class ScriptDescriptorScanner
     /// <param name="visitedTypes">HashSet to prevent infinite recursion</param>
     private static void ExtractEnumsFromCustomType(Type type, HashSet<Type> enumTypes, HashSet<Type>? visitedTypes = null)
     {
-        visitedTypes ??= new HashSet<Type>();
+        visitedTypes ??= [];
 
         // Prevent infinite recursion
-        if (visitedTypes.Contains(type))
+        if (!visitedTypes.Add(type))
         {
             return;
         }
-
-        visitedTypes.Add(type);
 
         // Analyze public properties
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);

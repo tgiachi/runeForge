@@ -1,3 +1,4 @@
+using System.Reactive.Subjects;
 using Runeforge.Engine.Data.Internal.Metrics.EventBus;
 using Runeforge.Engine.Events;
 using Runeforge.Engine.Interfaces.Events;
@@ -12,8 +13,15 @@ public class EventBusService : IEventBusService
 {
     private readonly EventBus _eventBus;
 
+    private readonly Subject<object> _allEventsSubject = new();
+
     public EventBusService() => _eventBus = new EventBus();
 
+
+    /// <summary>
+    /// Observable that emits all events
+    /// </summary>
+    public IObservable<object> AllEventsObservable => _allEventsSubject;
 
     public void Subscribe<T>(IEventHandler<T> handler) where T : IEvent
     {
@@ -42,6 +50,8 @@ public class EventBusService : IEventBusService
             throw new ArgumentNullException(nameof(eventData));
         }
 
+        _allEventsSubject.OnNext(eventData);
+
         _eventBus.Publish(eventData);
     }
 
@@ -51,6 +61,8 @@ public class EventBusService : IEventBusService
         {
             throw new ArgumentNullException(nameof(eventData));
         }
+
+        _allEventsSubject.OnNext(eventData);
 
         await Task.Run(() => _eventBus.Publish(eventData), cancellationToken);
     }

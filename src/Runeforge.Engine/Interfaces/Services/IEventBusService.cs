@@ -53,4 +53,9 @@ public interface IEventBusService : IRuneforgeService
     ///     Get count of active subscribers for event type T
     /// </summary>
     int GetSubscriberCount<T>() where T : IEvent;
+
+    /// <summary>
+    ///   Observable that emits all events
+    /// </summary>
+    IObservable<object> AllEventsObservable { get; }
 }
