@@ -1,4 +1,5 @@
 using DryIoc;
+using Humanizer;
 using Runeforge.Core.Directories;
 using Runeforge.Core.Json;
 using Runeforge.Core.Types;
@@ -71,7 +72,8 @@ public class DataLoaderService : IDataLoaderService
     private async Task LoadTemplateAsync(string filePath)
     {
         var fileName = Path.GetFileName(filePath);
-        _logger.Information("Loading template from {FilePath}", fileName);
+        var length = new FileInfo(filePath).Length;
+        _logger.Information("Loading template from {FilePath} ({Bytes})", fileName, length.Bytes());
 
         try
         {
