@@ -1,22 +1,20 @@
-﻿using NUnit.Framework;
-using Runeforge.Engine.Events;
-using Runeforge.Engine.Interfaces.Events;
+﻿using Runeforge.Engine.Interfaces.Events;
 using Runeforge.Engine.Services;
 
 namespace Runeforge.Tests.Services;
 
 /// <summary>
-/// Test event for testing purposes
+///     Test event for testing purposes
 /// </summary>
 public record TestEvent(string Message) : IEvent;
 
 /// <summary>
-/// Another test event for testing
+///     Another test event for testing
 /// </summary>
 public record NumberEvent(int Value) : IEvent;
 
 /// <summary>
-/// Test handler for capturing events
+///     Test handler for capturing events
 /// </summary>
 public class TestEventHandler : IEventHandler<TestEvent>
 {
@@ -29,7 +27,7 @@ public class TestEventHandler : IEventHandler<TestEvent>
 }
 
 /// <summary>
-/// Number event handler for testing
+///     Number event handler for testing
 /// </summary>
 public class NumberEventHandler : IEventHandler<NumberEvent>
 {
@@ -44,8 +42,6 @@ public class NumberEventHandler : IEventHandler<NumberEvent>
 [TestFixture]
 public class EventBusServiceTests
 {
-    private EventBusService _eventBusService;
-
     [SetUp]
     public void Setup()
     {
@@ -57,6 +53,8 @@ public class EventBusServiceTests
     {
         _eventBusService?.Clear();
     }
+
+    private EventBusService _eventBusService;
 
     [Test]
     public void Subscribe_WithValidHandler_ShouldAddHandlerSuccessfully()

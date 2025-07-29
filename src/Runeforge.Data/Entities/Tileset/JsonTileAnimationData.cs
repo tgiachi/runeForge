@@ -9,5 +9,4 @@ public class JsonTileAnimationData : BaseJsonEntityData
     public int Duration { get; set; } = 400;
 
     public bool Loop { get; set; } = true;
-
 }

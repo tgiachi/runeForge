@@ -3,12 +3,12 @@ using Runeforge.Core.Utils;
 namespace Runeforge.Core.Extensions.Strings;
 
 /// <summary>
-/// Provides extension methods for string operations, particularly for case conversions.
+///     Provides extension methods for string operations, particularly for case conversions.
 /// </summary>
 public static class StringMethodExtension
 {
     /// <summary>
-    /// Converts a string to snake_case.
+    ///     Converts a string to snake_case.
     /// </summary>
     /// <param name="text">The string to convert.</param>
     /// <returns>A snake_case version of the input string.</returns>
@@ -18,7 +18,7 @@ public static class StringMethodExtension
     }
 
     /// <summary>
-    /// Converts a string to UPPER_SNAKE_CASE.
+    ///     Converts a string to UPPER_SNAKE_CASE.
     /// </summary>
     /// <param name="text">The string to convert.</param>
     /// <returns>An UPPER_SNAKE_CASE version of the input string.</returns>
@@ -28,7 +28,7 @@ public static class StringMethodExtension
     }
 
     /// <summary>
-    /// Converts a string to camelCase.
+    ///     Converts a string to camelCase.
     /// </summary>
     /// <param name="text">The string to convert.</param>
     /// <returns>A camelCase version of the input string.</returns>
@@ -38,7 +38,7 @@ public static class StringMethodExtension
     }
 
     /// <summary>
-    /// Converts a string to PascalCase.
+    ///     Converts a string to PascalCase.
     /// </summary>
     /// <param name="text">The string to convert.</param>
     /// <returns>A PascalCase version of the input string.</returns>
@@ -48,7 +48,7 @@ public static class StringMethodExtension
     }
 
     /// <summary>
-    /// Converts a string to kebab-case.
+    ///     Converts a string to kebab-case.
     /// </summary>
     /// <param name="text">The string to convert.</param>
     /// <returns>A kebab-case version of the input string.</returns>
@@ -58,7 +58,7 @@ public static class StringMethodExtension
     }
 
     /// <summary>
-    /// Converts a string to Title Case.
+    ///     Converts a string to Title Case.
     /// </summary>
     /// <param name="text">The string to convert.</param>
     /// <returns>A Title Case version of the input string.</returns>

@@ -8,7 +8,7 @@ using Stopwatch = System.Diagnostics.Stopwatch;
 namespace Runeforge.Engine.Ticks;
 
 /// <summary>
-/// Manages the queue of actions for a single tick with execution logic
+///     Manages the queue of actions for a single tick with execution logic
 /// </summary>
 public class ActionQueue
 {
@@ -16,7 +16,17 @@ public class ActionQueue
     private readonly ILogger _logger = Log.ForContext<ActionQueue>();
 
     /// <summary>
-    /// Add action to the queue
+    ///     Get count of queued actions
+    /// </summary>
+    public int Count => _actions.Count;
+
+    /// <summary>
+    ///     Check if queue is empty
+    /// </summary>
+    public bool IsEmpty => _actions.Count == 0;
+
+    /// <summary>
+    ///     Add action to the queue
     /// </summary>
     /// <param name="action">Action to enqueue</param>
     public void Enqueue(ITickAction action)
@@ -34,7 +44,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Add multiple actions to the queue
+    ///     Add multiple actions to the queue
     /// </summary>
     /// <param name="actions">Actions to enqueue</param>
     public void EnqueueRange(IEnumerable<ITickAction> actions)
@@ -48,7 +58,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Execute all actions in priority order and return results
+    ///     Execute all actions in priority order and return results
     /// </summary>
     /// <returns>List of execution results with their corresponding actions</returns>
     public List<ActionExecutionSummary> ExecuteAll()
@@ -78,7 +88,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Execute actions one by one, allowing for early termination
+    ///     Execute actions one by one, allowing for early termination
     /// </summary>
     /// <returns>Enumerable of execution results as they happen</returns>
     public IEnumerable<ActionExecutionSummary> ExecuteSequentially()
@@ -95,7 +105,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Get all actions sorted by execution order without executing them
+    ///     Get all actions sorted by execution order without executing them
     /// </summary>
     /// <returns>Actions sorted by Priority -> Speed (desc) -> Id</returns>
     public List<ITickAction> GetSortedActions()
@@ -108,7 +118,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Preview next action to be executed without executing it
+    ///     Preview next action to be executed without executing it
     /// </summary>
     /// <returns>Next action or null if queue is empty</returns>
     public ITickAction? PeekNext()
@@ -117,7 +127,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Remove specific action from queue
+    ///     Remove specific action from queue
     /// </summary>
     /// <param name="action">Action to remove</param>
     /// <returns>True if action was found and removed</returns>
@@ -139,7 +149,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Remove action by ID
+    ///     Remove action by ID
     /// </summary>
     /// <param name="actionId">ID of action to remove</param>
     /// <returns>True if action was found and removed</returns>
@@ -150,7 +160,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Remove all actions matching a predicate
+    ///     Remove all actions matching a predicate
     /// </summary>
     /// <param name="predicate">Condition for removal</param>
     /// <returns>Number of actions removed</returns>
@@ -178,7 +188,7 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Clear all actions from the queue
+    ///     Clear all actions from the queue
     /// </summary>
     public void Clear()
     {
@@ -192,23 +202,16 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Get count of queued actions
-    /// </summary>
-    public int Count => _actions.Count;
-
-    /// <summary>
-    /// Check if queue is empty
-    /// </summary>
-    public bool IsEmpty => _actions.Count == 0;
-
-    /// <summary>
-    /// Get all actions without sorting (for inspection)
+    ///     Get all actions without sorting (for inspection)
     /// </summary>
     /// <returns>Read-only collection of all actions</returns>
-    public IReadOnlyList<ITickAction> GetAllActions() => _actions.AsReadOnly();
+    public IReadOnlyList<ITickAction> GetAllActions()
+    {
+        return _actions.AsReadOnly();
+    }
 
     /// <summary>
-    /// Get actions by priority level
+    ///     Get actions by priority level
     /// </summary>
     /// <param name="priority">Priority level to filter by</param>
     /// <returns>Actions with specified priority</returns>
@@ -218,21 +221,27 @@ public class ActionQueue
     }
 
     /// <summary>
-    /// Check if queue contains specific action
+    ///     Check if queue contains specific action
     /// </summary>
     /// <param name="action">Action to check for</param>
     /// <returns>True if action is in queue</returns>
-    public bool Contains(ITickAction action) => _actions.Contains(action);
+    public bool Contains(ITickAction action)
+    {
+        return _actions.Contains(action);
+    }
 
     /// <summary>
-    /// Check if queue contains action with specific ID
+    ///     Check if queue contains action with specific ID
     /// </summary>
     /// <param name="actionId">Action ID to check for</param>
     /// <returns>True if action with ID is in queue</returns>
-    public bool ContainsId(Guid actionId) => _actions.Any(a => a.Id == actionId);
+    public bool ContainsId(Guid actionId)
+    {
+        return _actions.Any(a => a.Id == actionId);
+    }
 
     /// <summary>
-    /// Execute a single action with proper error handling and logging
+    ///     Execute a single action with proper error handling and logging
     /// </summary>
     /// <param name="action">Action to execute</param>
     /// <returns>Execution summary</returns>

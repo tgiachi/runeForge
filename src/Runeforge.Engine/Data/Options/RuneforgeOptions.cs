@@ -1,5 +1,3 @@
-using Runeforge.Engine.Logger.Sink;
-using Runeforge.Engine.Types;
 using Runeforge.Engine.Types.Logger;
 
 namespace Runeforge.Engine.Data.Options;
@@ -15,7 +13,4 @@ public class RuneforgeOptions
     public bool LogToConsole { get; set; } = true;
 
     public string GameName { get; set; }
-
-
-
 }

@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Runeforge.Data.Colors;
@@ -6,7 +5,7 @@ using Runeforge.Data.Colors;
 namespace Runeforge.Data.Json.Converters;
 
 /// <summary>
-/// JSON converter that transforms hex color strings (#RRGGBB or #AARRGGBB) into XNA Color objects
+///     JSON converter that transforms hex color strings (#RRGGBB or #AARRGGBB) into XNA Color objects
 /// </summary>
 public class HexColorConverter : JsonConverter<ColorDef>
 {
@@ -17,7 +16,7 @@ public class HexColorConverter : JsonConverter<ColorDef>
             throw new JsonException($"Expected string token for color, got {reader.TokenType}");
         }
 
-        string hexValue = reader.GetString();
+        var hexValue = reader.GetString();
 
         if (string.IsNullOrEmpty(hexValue))
         {
@@ -30,7 +29,7 @@ public class HexColorConverter : JsonConverter<ColorDef>
     public override void Write(Utf8JsonWriter writer, ColorDef value, JsonSerializerOptions options)
     {
         /// Convert Color back to hex string for serialization
-        string hexString = $"#{value.R:X2}{value.G:X2}{value.B:X2}";
+        var hexString = $"#{value.R:X2}{value.G:X2}{value.B:X2}";
 
         /// Include alpha if it's not fully opaque
         if (value.A != 255)
@@ -42,8 +41,8 @@ public class HexColorConverter : JsonConverter<ColorDef>
     }
 
     /// <summary>
-    /// Parse hex color string into XNA Color object
-    /// Supports formats: #RGB, #RRGGBB, #AARRGGBB
+    ///     Parse hex color string into XNA Color object
+    ///     Supports formats: #RGB, #RRGGBB, #AARRGGBB
     /// </summary>
     private static ColorDef ParseHexColor(string hexValue)
     {
@@ -52,7 +51,7 @@ public class HexColorConverter : JsonConverter<ColorDef>
             throw new JsonException($"Color hex value must start with '#': {hexValue}");
         }
 
-        string hex = hexValue.Substring(1);
+        var hex = hexValue.Substring(1);
 
         try
         {
@@ -82,38 +81,38 @@ public class HexColorConverter : JsonConverter<ColorDef>
     }
 
     /// <summary>
-    /// Parse 3-character hex (#RGB) - each character represents one component
+    ///     Parse 3-character hex (#RGB) - each character represents one component
     /// </summary>
     private static ColorDef ParseRgb3(string hex)
     {
-        byte r = (byte)(Convert.ToByte(hex.Substring(0, 1), 16) * 17); /// F -> FF
-        byte g = (byte)(Convert.ToByte(hex.Substring(1, 1), 16) * 17);
-        byte b = (byte)(Convert.ToByte(hex.Substring(2, 1), 16) * 17);
+        var r = (byte)(Convert.ToByte(hex.Substring(0, 1), 16) * 17); /// F -> FF
+        var g = (byte)(Convert.ToByte(hex.Substring(1, 1), 16) * 17);
+        var b = (byte)(Convert.ToByte(hex.Substring(2, 1), 16) * 17);
 
         return new ColorDef(r, g, b);
     }
 
     /// <summary>
-    /// Parse 6-character hex (#RRGGBB)
+    ///     Parse 6-character hex (#RRGGBB)
     /// </summary>
     private static ColorDef ParseRgb6(string hex)
     {
-        byte r = Convert.ToByte(hex.Substring(0, 2), 16);
-        byte g = Convert.ToByte(hex.Substring(2, 2), 16);
-        byte b = Convert.ToByte(hex.Substring(4, 2), 16);
+        var r = Convert.ToByte(hex.Substring(0, 2), 16);
+        var g = Convert.ToByte(hex.Substring(2, 2), 16);
+        var b = Convert.ToByte(hex.Substring(4, 2), 16);
 
         return new ColorDef(r, g, b);
     }
 
     /// <summary>
-    /// Parse 8-character hex (#AARRGGBB)
+    ///     Parse 8-character hex (#AARRGGBB)
     /// </summary>
     private static ColorDef ParseArgb8(string hex)
     {
-        byte a = Convert.ToByte(hex.Substring(0, 2), 16);
-        byte r = Convert.ToByte(hex.Substring(2, 2), 16);
-        byte g = Convert.ToByte(hex.Substring(4, 2), 16);
-        byte b = Convert.ToByte(hex.Substring(6, 2), 16);
+        var a = Convert.ToByte(hex.Substring(0, 2), 16);
+        var r = Convert.ToByte(hex.Substring(2, 2), 16);
+        var g = Convert.ToByte(hex.Substring(4, 2), 16);
+        var b = Convert.ToByte(hex.Substring(6, 2), 16);
 
         return new ColorDef(r, g, b, a);
     }

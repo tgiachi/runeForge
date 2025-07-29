@@ -55,7 +55,6 @@ public class HashUtilsTests
     }
 
 
-
     [Test]
     public void HashPassword_WithValidPassword_ShouldReturnHashAndSalt()
     {

@@ -1,16 +1,12 @@
 ﻿using Runeforge.Engine.Bootstrap;
 using Runeforge.Engine.Data.Options;
-using Runeforge.Engine.Logger.Sink;
-using Runeforge.Engine.Types;
 using Runeforge.Engine.Types.Logger;
 using Runeforge.Gui;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;
-using Serilog.Events;
-
 
 var bootstrap = new RuneforgeBootstrap(
-    new RuneforgeOptions()
+    new RuneforgeOptions
     {
         RootDirectory = "/tmp/runeforge",
         LogLevel = LogLevelType.Debug,
@@ -23,7 +19,7 @@ var bootstrap = new RuneforgeBootstrap(
 
 Settings.WindowTitle = "My SadConsole Game";
 
-Builder gameStartup = new Builder()
+var gameStartup = new Builder()
         .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         .SetStartingScreen(host =>
             {

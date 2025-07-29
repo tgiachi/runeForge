@@ -1,27 +1,22 @@
+using System.Collections.Concurrent;
 using Runeforge.Engine.Logger.Sink;
 using SadConsole;
+using SadConsole.Input;
 using SadRogue.Primitives;
 using Serilog.Events;
-using System.Collections.Concurrent;
-using SadConsole.Input;
 
 namespace Runeforge.UI.Screens;
 
 /// <summary>
-/// SadConsole screen for displaying log entries with scrolling and colors
+///     SadConsole screen for displaying log entries with scrolling and colors
 /// </summary>
 public class LogViewerScreen : ScreenSurface
 {
-    private readonly ConcurrentQueue<LogEntry> _logEntries = new();
     private readonly List<LogEntry> _displayedLogs = new();
     private readonly Lock _lockObject = new();
 
-    private int _scrollOffset = 0;
-    private int _maxLogEntries = 1000;
-    private int _visibleLines;
-
     /// <summary>
-    /// Color scheme for different log levels
+    ///     Color scheme for different log levels
     /// </summary>
     private readonly Dictionary<LogEventLevel, Color> _logColors = new()
     {
@@ -32,6 +27,12 @@ public class LogViewerScreen : ScreenSurface
         { LogEventLevel.Error, Color.Red },
         { LogEventLevel.Fatal, Color.DarkRed }
     };
+
+    private readonly ConcurrentQueue<LogEntry> _logEntries = new();
+    private int _maxLogEntries = 1000;
+
+    private int _scrollOffset;
+    private int _visibleLines;
 
     public LogViewerScreen(int width, int height) : base(width, height)
     {
@@ -52,7 +53,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Add a log entry to the viewer
+    ///     Add a log entry to the viewer
     /// </summary>
     public void AddLogEntry(LogEntry logEntry)
     {
@@ -63,7 +64,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Process all pending log entries from the queue
+    ///     Process all pending log entries from the queue
     /// </summary>
     private void ProcessPendingLogs()
     {
@@ -97,7 +98,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Auto-scroll to show the latest log entries
+    ///     Auto-scroll to show the latest log entries
     /// </summary>
     private void AutoScrollToBottom()
     {
@@ -109,7 +110,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Refresh the display with current log entries
+    ///     Refresh the display with current log entries
     /// </summary>
     private void RefreshDisplay()
     {
@@ -122,7 +123,7 @@ public class LogViewerScreen : ScreenSurface
 
         var displayLine = 1; // Start after the title line
 
-        for (int i = startIndex; i < endIndex; i++)
+        for (var i = startIndex; i < endIndex; i++)
         {
             var logEntry = _displayedLogs[i];
             DrawLogEntry(logEntry, displayLine);
@@ -136,11 +137,14 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Draw a single log entry on the specified line
+    ///     Draw a single log entry on the specified line
     /// </summary>
     private void DrawLogEntry(LogEntry logEntry, int line)
     {
-        if (line >= Height - 1) return; // Don't draw outside bounds
+        if (line >= Height - 1)
+        {
+            return; // Don't draw outside bounds
+        }
 
         var color = _logColors.GetValueOrDefault(logEntry.Level, Color.White);
         var timestamp = logEntry.Timestamp.ToString("HH:mm:ss");
@@ -186,27 +190,30 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Get short text representation of log level
+    ///     Get short text representation of log level
     /// </summary>
-    private static string GetLevelText(LogEventLevel level) => level switch
+    private static string GetLevelText(LogEventLevel level)
     {
-        LogEventLevel.Verbose     => "VRB",
-        LogEventLevel.Debug       => "DBG",
-        LogEventLevel.Information => "INF",
-        LogEventLevel.Warning     => "WRN",
-        LogEventLevel.Error       => "ERR",
-        LogEventLevel.Fatal       => "FTL",
-        _                         => "UNK"
-    };
+        return level switch
+        {
+            LogEventLevel.Verbose     => "VRB",
+            LogEventLevel.Debug       => "DBG",
+            LogEventLevel.Information => "INF",
+            LogEventLevel.Warning     => "WRN",
+            LogEventLevel.Error       => "ERR",
+            LogEventLevel.Fatal       => "FTL",
+            _                         => "UNK"
+        };
+    }
 
     /// <summary>
-    /// Clear the log display area (preserve borders)
+    ///     Clear the log display area (preserve borders)
     /// </summary>
     private void ClearLogArea()
     {
-        for (int y = 1; y < Height - 1; y++)
+        for (var y = 1; y < Height - 1; y++)
         {
-            for (int x = 1; x < Width - 1; x++)
+            for (var x = 1; x < Width - 1; x++)
             {
                 Surface.SetGlyph(x, y, ' ', Color.White, Color.Black);
             }
@@ -214,7 +221,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Draw the border around the log viewer
+    ///     Draw the border around the log viewer
     /// </summary>
     private void DrawBorder()
     {
@@ -228,7 +235,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Draw the title bar
+    ///     Draw the title bar
     /// </summary>
     private void DrawTitle()
     {
@@ -238,11 +245,14 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Draw scroll indicator showing current position
+    ///     Draw scroll indicator showing current position
     /// </summary>
     private void DrawScrollIndicator()
     {
-        if (_displayedLogs.Count <= _visibleLines) return;
+        if (_displayedLogs.Count <= _visibleLines)
+        {
+            return;
+        }
 
         var totalLines = _displayedLogs.Count;
         var scrollPercent = _scrollOffset == 0
@@ -254,7 +264,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Handle keyboard input for scrolling
+    ///     Handle keyboard input for scrolling
     /// </summary>
     public override bool ProcessKeyboard(Keyboard keyboard)
     {
@@ -295,7 +305,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Scroll up by specified number of lines
+    ///     Scroll up by specified number of lines
     /// </summary>
     private void ScrollUp(int lines = 1)
     {
@@ -305,7 +315,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Scroll down by specified number of lines
+    ///     Scroll down by specified number of lines
     /// </summary>
     private void ScrollDown(int lines = 1)
     {
@@ -314,7 +324,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Scroll to the top of the log
+    ///     Scroll to the top of the log
     /// </summary>
     private void ScrollToTop()
     {
@@ -323,7 +333,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Scroll to the bottom of the log (latest entries)
+    ///     Scroll to the bottom of the log (latest entries)
     /// </summary>
     private void ScrollToBottom()
     {
@@ -332,7 +342,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Clear all log entries
+    ///     Clear all log entries
     /// </summary>
     public void ClearLogs()
     {
@@ -345,7 +355,7 @@ public class LogViewerScreen : ScreenSurface
     }
 
     /// <summary>
-    /// Set maximum number of log entries to keep in memory
+    ///     Set maximum number of log entries to keep in memory
     /// </summary>
     public void SetMaxLogEntries(int maxEntries)
     {

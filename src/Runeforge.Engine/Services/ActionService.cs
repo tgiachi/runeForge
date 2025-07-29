@@ -5,9 +5,8 @@ namespace Runeforge.Engine.Services;
 
 public class ActionService : IActionService
 {
-    private readonly ILogger _logger = Log.ForContext<ActionService>();
-
     private readonly Dictionary<string, Action<object>> _actions = new();
+    private readonly ILogger _logger = Log.ForContext<ActionService>();
 
     public void AddAction(string name, Action<object> action)
     {

@@ -1,7 +1,7 @@
 namespace Runeforge.Engine.Ticks;
 
 /// <summary>
-/// Statistics about action queue execution
+///     Statistics about action queue execution
 /// </summary>
 public record ActionQueueStats(
     int TotalActions,
@@ -13,7 +13,9 @@ public record ActionQueueStats(
 {
     public double SuccessRate => TotalActions > 0 ? (double)SuccessfulActions / TotalActions * 100 : 0;
 
-    public override string ToString() =>
-        $"Actions: {SuccessfulActions}/{TotalActions} ({SuccessRate:F1}% success), " +
-        $"Duration: {TotalDuration:F1}ms total, {AverageDuration:F1}ms avg";
+    public override string ToString()
+    {
+        return $"Actions: {SuccessfulActions}/{TotalActions} ({SuccessRate:F1}% success), " +
+               $"Duration: {TotalDuration:F1}ms total, {AverageDuration:F1}ms avg";
+    }
 }

@@ -6,5 +6,4 @@ public enum DirectoryType
     Scripts,
     Assets,
     Logs
-
 }

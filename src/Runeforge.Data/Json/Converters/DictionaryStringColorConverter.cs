@@ -5,7 +5,7 @@ using Runeforge.Data.Colors;
 namespace Runeforge.Data.Json.Converters;
 
 /// <summary>
-/// Custom converter for Dictionary<string, Color> to handle hex color strings
+///     Custom converter for Dictionary<string, Color> to handle hex color strings
 /// </summary>
 public class DictionaryStringColorConverter : JsonConverter<Dictionary<string, ColorDef>>
 {
@@ -34,7 +34,7 @@ public class DictionaryStringColorConverter : JsonConverter<Dictionary<string, C
                 throw new JsonException($"Expected PropertyName token, got {reader.TokenType}");
             }
 
-            string propertyName = reader.GetString()!;
+            var propertyName = reader.GetString()!;
 
             reader.Read(); /// Move to the value
             var color = _colorConverter.Read(ref reader, typeof(ColorDef), options);

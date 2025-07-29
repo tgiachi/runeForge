@@ -6,10 +6,7 @@ namespace Runeforge.Engine.Services;
 
 public class VersionService : IVersionService
 {
-    public VersionService()
-    {
-        _ = GetVersionInfo();
-    }
+    public VersionService() => _ = GetVersionInfo();
 
     public VersionInfoData GetVersionInfo()
     {

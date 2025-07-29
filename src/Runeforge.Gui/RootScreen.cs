@@ -1,6 +1,6 @@
 ﻿namespace Runeforge.Gui;
 
-class RootScreen : ScreenObject
+internal class RootScreen : ScreenObject
 {
     private ScreenSurface _mainSurface;
 

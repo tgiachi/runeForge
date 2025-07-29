@@ -15,26 +15,6 @@ public class EventDispatcherService : IEventDispatcherService
         eventBusService.AllEventsObservable.Subscribe(OnEvent);
     }
 
-    private void OnEvent(object obj)
-    {
-        DispatchEvent(obj.GetType().Name.ToSnakeCase().Replace("_event", ""), obj);
-    }
-
-
-    private void DispatchEvent(string eventName, object? eventData = null)
-    {
-        _logger.Debug("Dispatching event {EventName}", eventName);
-        if (!_eventHandlers.TryGetValue(eventName, out var eventHandler))
-        {
-            return;
-        }
-
-        foreach (var handler in eventHandler)
-        {
-            handler(eventData);
-        }
-    }
-
     public void SubscribeToEvent(string eventName, Action<object?> eventHandler)
     {
         if (!_eventHandlers.TryGetValue(eventName, out var eventHandlers))
@@ -54,5 +34,25 @@ public class EventDispatcherService : IEventDispatcherService
         }
 
         eventHandlers.Remove(eventHandler);
+    }
+
+    private void OnEvent(object obj)
+    {
+        DispatchEvent(obj.GetType().Name.ToSnakeCase().Replace("_event", ""), obj);
+    }
+
+
+    private void DispatchEvent(string eventName, object? eventData = null)
+    {
+        _logger.Debug("Dispatching event {EventName}", eventName);
+        if (!_eventHandlers.TryGetValue(eventName, out var eventHandler))
+        {
+            return;
+        }
+
+        foreach (var handler in eventHandler)
+        {
+            handler(eventData);
+        }
     }
 }

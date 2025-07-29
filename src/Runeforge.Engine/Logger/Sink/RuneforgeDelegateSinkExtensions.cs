@@ -7,12 +7,12 @@ using Serilog.Formatting.Display;
 namespace Runeforge.Engine.Logger.Sink;
 
 /// <summary>
-/// Serilog configuration extensions for delegate sink
+///     Serilog configuration extensions for delegate sink
 /// </summary>
 public static class RuneforgeDelegateSinkExtensions
 {
     /// <summary>
-    /// Add delegate sink to Serilog configuration
+    ///     Add delegate sink to Serilog configuration
     /// </summary>
     public static LoggerConfiguration Delegate(
         this LoggerSinkConfiguration sinkConfiguration,
@@ -32,7 +32,7 @@ public static class RuneforgeDelegateSinkExtensions
     }
 
     /// <summary>
-    /// Add delegate sink with custom formatter
+    ///     Add delegate sink with custom formatter
     /// </summary>
     public static LoggerConfiguration Delegate(
         this LoggerSinkConfiguration sinkConfiguration,

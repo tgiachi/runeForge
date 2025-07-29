@@ -1,11 +1,10 @@
-using NUnit.Framework;
-using Runeforge.Core.Json;
 using System.Text.Json;
+using Runeforge.Core.Json;
 
 namespace Runeforge.Tests.Core;
 
 /// <summary>
-/// Test model for JSON serialization tests
+///     Test model for JSON serialization tests
 /// </summary>
 public class TestModel
 {
@@ -16,7 +15,7 @@ public class TestModel
 }
 
 /// <summary>
-/// Test model with enum for JSON serialization tests
+///     Test model with enum for JSON serialization tests
 /// </summary>
 public class TestModelWithEnum
 {
@@ -34,8 +33,6 @@ public enum TestEnum
 [TestFixture]
 public class JsonUtilsTests
 {
-    private readonly string _testDirectory = Path.Combine(Path.GetTempPath(), "runeforge_tests");
-
     [SetUp]
     public void Setup()
     {
@@ -54,6 +51,8 @@ public class JsonUtilsTests
             Directory.Delete(_testDirectory, true);
         }
     }
+
+    private readonly string _testDirectory = Path.Combine(Path.GetTempPath(), "runeforge_tests");
 
     [Test]
     public void Serialize_WithValidObject_ShouldReturnJsonString()

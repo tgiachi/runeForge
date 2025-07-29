@@ -10,16 +10,16 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.4">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-        <PackageReference Include="NUnit" Version="4.3.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
+        <PackageReference Include="NUnit" Version="4.3.2"/>
         <PackageReference Include="NUnit.Analyzers" Version="4.9.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -27,11 +27,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Runeforge.Core\Runeforge.Core.csproj" />
-      <ProjectReference Include="..\..\src\Runeforge.Data\Runeforge.Data.csproj" />
-      <ProjectReference Include="..\..\src\Runeforge.Engine\Runeforge.Engine.csproj" />
-      <ProjectReference Include="..\..\src\Runeforge.Gui\Runeforge.Gui.csproj" />
-      <ProjectReference Include="..\..\src\Runeforge.Ui\Runeforge.Ui.csproj" />
+        <ProjectReference Include="..\..\src\Runeforge.Core\Runeforge.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Runeforge.Data\Runeforge.Data.csproj"/>
+        <ProjectReference Include="..\..\src\Runeforge.Engine\Runeforge.Engine.csproj"/>
+        <ProjectReference Include="..\..\src\Runeforge.Gui\Runeforge.Gui.csproj"/>
+        <ProjectReference Include="..\..\src\Runeforge.Ui\Runeforge.Ui.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -14,43 +14,23 @@ namespace Runeforge.Engine.Services;
 
 public class DiagnosticService : IDiagnosticService, IMetricsProvider
 {
-    public string ProviderName => "SystemMetrics";
-    public string PidFilePath { get; }
+    private readonly Process _currentProcess;
+    private readonly DiagnosticServiceConfig _diagnosticServiceConfig;
+
+    private readonly IEventBusService _eventBusService;
 
     private readonly ILogger _logger = Log.ForContext<DiagnosticService>();
 
-    private readonly IEventBusService _eventBusService;
-    private readonly DiagnosticServiceConfig _diagnosticServiceConfig;
-
-    private readonly ISchedulerSystemService _schedulerService;
-    private readonly Subject<MetricProviderData> _metricsSubject = new();
-    private long _uptimeStopwatch;
-    private readonly Process _currentProcess;
-
 
     private readonly Dictionary<string, IMetricsProvider> _metricsProviders = new();
+    private readonly Subject<MetricProviderData> _metricsSubject = new();
+
+    private readonly ISchedulerSystemService _schedulerService;
 
     private int _lastGcGen0;
     private int _lastGcGen1;
     private int _lastGcGen2;
-
-    public Task<List<MetricProviderData>> GetCurrentMetricsAsync()
-    {
-        var metrics = GetAllProvidersMetrics();
-        var metricList = new List<MetricProviderData>();
-
-        foreach (var kvp in metrics)
-        {
-            if (kvp.Value is MetricProviderData metricData)
-            {
-                metricList.Add(metricData);
-            }
-        }
-
-        return Task.FromResult(metricList);
-    }
-
-    public IObservable<MetricProviderData> Metrics => _metricsSubject.AsObservable();
+    private long _uptimeStopwatch;
 
 
     public DiagnosticService(
@@ -76,16 +56,25 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         RegisterMetricsProvider(this);
     }
 
-    private void OnRegisterMetricEvent(RegisterMetricEvent obj)
+    public string PidFilePath { get; }
+
+    public Task<List<MetricProviderData>> GetCurrentMetricsAsync()
     {
-        RegisterMetricsProvider(obj.provider);
+        var metrics = GetAllProvidersMetrics();
+        var metricList = new List<MetricProviderData>();
+
+        foreach (var kvp in metrics)
+        {
+            if (kvp.Value is MetricProviderData metricData)
+            {
+                metricList.Add(metricData);
+            }
+        }
+
+        return Task.FromResult(metricList);
     }
 
-
-    public object GetMetrics()
-    {
-        return CollectMetricsInternalAsync();
-    }
+    public IObservable<MetricProviderData> Metrics => _metricsSubject.AsObservable();
 
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -167,6 +156,19 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
             );
     }
 
+    public string ProviderName => "SystemMetrics";
+
+
+    public object GetMetrics()
+    {
+        return CollectMetricsInternalAsync();
+    }
+
+    private void OnRegisterMetricEvent(RegisterMetricEvent obj)
+    {
+        RegisterMetricsProvider(obj.provider);
+    }
+
     private DiagnosticMetrics CollectMetricsInternalAsync()
     {
         var currentGen0 = GC.CollectionCount(0);
@@ -174,8 +176,8 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         var currentGen2 = GC.CollectionCount(2);
 
         var metrics = new DiagnosticMetrics(
-            privateMemoryBytes: _currentProcess.WorkingSet64,
-            pagedMemoryBytes: GC.GetTotalMemory(false),
+            _currentProcess.WorkingSet64,
+            GC.GetTotalMemory(false),
             threadCount: _currentProcess.Threads.Count,
             processId: _currentProcess.Id,
             uptime: Stopwatch.GetElapsedTime(_uptimeStopwatch),

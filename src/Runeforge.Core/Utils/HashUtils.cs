@@ -4,12 +4,12 @@ using System.Text;
 namespace Runeforge.Core.Utils;
 
 /// <summary>
-/// Provides utility methods for cryptographic operations including hashing, password management, and encryption.
+///     Provides utility methods for cryptographic operations including hashing, password management, and encryption.
 /// </summary>
 public static class HashUtils
 {
     /// <summary>
-    /// Computes a SHA-256 hash of the given string.
+    ///     Computes a SHA-256 hash of the given string.
     /// </summary>
     /// <param name="rawData">The string to hash.</param>
     /// <returns>A hexadecimal string representation of the SHA-256 hash.</returns>
@@ -17,19 +17,22 @@ public static class HashUtils
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(rawData));
         var builder = new StringBuilder();
-        foreach (var b in bytes) builder.Append(b.ToString("x2"));
+        foreach (var b in bytes)
+        {
+            builder.Append(b.ToString("x2"));
+        }
 
         return builder.ToString();
     }
 
     /// <summary>
-    /// Generates a secure hash of a password using PBKDF2 with SHA-256.
+    ///     Generates a secure hash of a password using PBKDF2 with SHA-256.
     /// </summary>
     /// <param name="password">The password to hash.</param>
     /// <returns>A tuple containing the base64-encoded hash and salt.</returns>
     /// <remarks>
-    /// Uses 100,000 iterations of PBKDF2 with a random 16-byte salt for security.
-    /// The hash is 32 bytes (256 bits) in length.
+    ///     Uses 100,000 iterations of PBKDF2 with a random 16-byte salt for security.
+    ///     The hash is 32 bytes (256 bits) in length.
     /// </remarks>
     public static (string Hash, string Salt) HashPassword(string password)
     {
@@ -47,15 +50,15 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Verifies a password against a stored hash and salt.
+    ///     Verifies a password against a stored hash and salt.
     /// </summary>
     /// <param name="password">The password to verify.</param>
     /// <param name="storedHash">The base64-encoded stored hash.</param>
     /// <param name="storedSalt">The base64-encoded stored salt.</param>
     /// <returns>True if the password matches the stored hash, false otherwise.</returns>
     /// <remarks>
-    /// Uses PBKDF2 with 100,000 iterations and SHA-256, matching the settings used in HashPassword.
-    /// The verification is performed using a constant-time comparison to prevent timing attacks.
+    ///     Uses PBKDF2 with 100,000 iterations and SHA-256, matching the settings used in HashPassword.
+    ///     The verification is performed using a constant-time comparison to prevent timing attacks.
     /// </remarks>
     public static bool CheckPasswordHash(string password, string storedHash, string storedSalt)
     {
@@ -68,7 +71,7 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Creates a formatted password hash string in the format "Hash:Salt".
+    ///     Creates a formatted password hash string in the format "Hash:Salt".
     /// </summary>
     /// <param name="password">The password to hash.</param>
     /// <returns>A string in the format "Hash:Salt" where both Hash and Salt are base64-encoded.</returns>
@@ -79,7 +82,7 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Verifies a password against a combined hash:salt string.
+    ///     Verifies a password against a combined hash:salt string.
     /// </summary>
     /// <param name="password">The password to verify.</param>
     /// <param name="hashSaltCombined">The combined hash and salt in the format "Hash:Salt".</param>
@@ -106,7 +109,7 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Generates a cryptographically secure random string suitable for use as a refresh token.
+    ///     Generates a cryptographically secure random string suitable for use as a refresh token.
     /// </summary>
     /// <param name="size">The size of the token in bytes, defaults to 32 (256 bits).</param>
     /// <returns>A base64-encoded random string.</returns>
@@ -122,7 +125,7 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Generates a cryptographically secure random key in base64 format.
+    ///     Generates a cryptographically secure random key in base64 format.
     /// </summary>
     /// <param name="byteLength">The length of the key in bytes, defaults to 32 (256 bits).</param>
     /// <returns>A base64-encoded random key.</returns>
@@ -134,14 +137,14 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Encrypts a string using AES with the provided key.
+    ///     Encrypts a string using AES with the provided key.
     /// </summary>
     /// <param name="plaintext">The text to encrypt.</param>
     /// <param name="key">The encryption key (should be 16, 24, or 32 bytes for AES-128, AES-192, or AES-256).</param>
     /// <returns>A byte array containing the IV concatenated with the encrypted data.</returns>
     /// <remarks>
-    /// A random IV (Initialization Vector) is generated for each encryption operation.
-    /// The IV is prepended to the ciphertext in the returned array (first 16 bytes).
+    ///     A random IV (Initialization Vector) is generated for each encryption operation.
+    ///     The IV is prepended to the ciphertext in the returned array (first 16 bytes).
     /// </remarks>
     public static byte[] Encrypt(string plaintext, byte[] key)
     {
@@ -158,14 +161,14 @@ public static class HashUtils
     }
 
     /// <summary>
-    /// Decrypts AES-encrypted data using the provided key.
+    ///     Decrypts AES-encrypted data using the provided key.
     /// </summary>
     /// <param name="ivAndCiphertext">A byte array containing the IV (first 16 bytes) concatenated with the encrypted data.</param>
     /// <param name="key">The decryption key (should match the key used for encryption).</param>
     /// <returns>The decrypted plaintext as a string.</returns>
     /// <remarks>
-    /// Expects the IV to be the first 16 bytes of the input array, followed by the ciphertext.
-    /// This format matches the output of the Encrypt method.
+    ///     Expects the IV to be the first 16 bytes of the input array, followed by the ciphertext.
+    ///     This format matches the output of the Encrypt method.
     /// </remarks>
     public static string Decrypt(byte[] ivAndCiphertext, byte[] key)
     {

@@ -6,10 +6,7 @@ public class ChannelObservable<T> : IObservable<T>
 {
     private readonly ChannelReader<T> _reader;
 
-    public ChannelObservable(ChannelReader<T> reader)
-    {
-        _reader = reader;
-    }
+    public ChannelObservable(ChannelReader<T> reader) => _reader = reader;
 
     public IDisposable Subscribe(IObserver<T> observer)
     {

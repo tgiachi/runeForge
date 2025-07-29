@@ -1,7 +1,7 @@
 namespace Runeforge.Engine.Types.Tick;
 
 /// <summary>
-/// Result of action execution
+///     Result of action execution
 /// </summary>
 public enum ActionResult
 {

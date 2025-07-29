@@ -10,6 +10,11 @@ namespace Runeforge.Engine.Interfaces.Services;
 public interface IEventBusService : IRuneforgeService
 {
     /// <summary>
+    ///     Observable that emits all events
+    /// </summary>
+    IObservable<object> AllEventsObservable { get; }
+
+    /// <summary>
     ///     Subscribe to events of type T
     /// </summary>
     void Subscribe<T>(IEventHandler<T> handler) where T : IEvent;
@@ -53,9 +58,4 @@ public interface IEventBusService : IRuneforgeService
     ///     Get count of active subscribers for event type T
     /// </summary>
     int GetSubscriberCount<T>() where T : IEvent;
-
-    /// <summary>
-    ///   Observable that emits all events
-    /// </summary>
-    IObservable<object> AllEventsObservable { get; }
 }

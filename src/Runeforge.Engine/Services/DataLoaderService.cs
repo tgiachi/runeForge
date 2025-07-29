@@ -12,13 +12,12 @@ namespace Runeforge.Engine.Services;
 
 public class DataLoaderService : IDataLoaderService
 {
-    private readonly ILogger _logger = Log.ForContext<DataLoaderService>();
-
-    private readonly DirectoriesConfig _directoriesConfig;
+    private readonly IContainer _container;
 
     private readonly Dictionary<Type, IDataLoader> _dataLoaders = new();
 
-    private readonly IContainer _container;
+    private readonly DirectoriesConfig _directoriesConfig;
+    private readonly ILogger _logger = Log.ForContext<DataLoaderService>();
 
     public DataLoaderService(DirectoriesConfig directoriesConfig, IContainer container)
     {

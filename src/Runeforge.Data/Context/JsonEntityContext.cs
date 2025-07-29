@@ -10,7 +10,6 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonTileData))]
 [JsonSerializable(typeof(JsonTileAnimationData))]
 [JsonSerializable(typeof(JsonKeybindData))]
-
 public partial class JsonEntityContext : JsonSerializerContext
 {
 }

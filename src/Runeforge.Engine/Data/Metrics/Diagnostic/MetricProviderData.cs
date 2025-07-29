@@ -2,14 +2,6 @@ namespace Runeforge.Engine.Data.Metrics.Diagnostic;
 
 public class MetricProviderData
 {
-    public string Name { get; set; }
-    public object Value { get; set; }
-
-    public override string ToString()
-    {
-        return Value.ToString();
-    }
-
     public MetricProviderData(string name, object value)
     {
         Name = name;
@@ -18,6 +10,13 @@ public class MetricProviderData
 
     public MetricProviderData()
     {
+    }
 
+    public string Name { get; set; }
+    public object Value { get; set; }
+
+    public override string ToString()
+    {
+        return Value.ToString();
     }
 }

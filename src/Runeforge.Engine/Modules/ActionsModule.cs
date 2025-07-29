@@ -8,10 +8,7 @@ public class ActionsModule
 {
     private readonly IActionService _actionService;
 
-    public ActionsModule(IActionService actionService)
-    {
-        _actionService = actionService;
-    }
+    public ActionsModule(IActionService actionService) => _actionService = actionService;
 
     [ScriptFunction("Add new action")]
     public void AddAction(string name, Action<object> action)

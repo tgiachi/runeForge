@@ -5,7 +5,7 @@ using Runeforge.Engine.Types.Tick;
 namespace Runeforge.Engine.Ticks;
 
 /// <summary>
-/// Summary of action execution with timing and result information
+///     Summary of action execution with timing and result information
 /// </summary>
 public record ActionExecutionSummary(
     ITickAction Action,
@@ -16,26 +16,28 @@ public record ActionExecutionSummary(
 )
 {
     /// <summary>
-    /// Duration of action execution
+    ///     Duration of action execution
     /// </summary>
     public TimeSpan Duration => Stopwatch.GetElapsedTime(StartTimestamp, EndTimestamp);
 
     /// <summary>
-    /// Whether the action executed successfully
+    ///     Whether the action executed successfully
     /// </summary>
     public bool WasSuccessful => Result == ActionResult.Success;
 
     /// <summary>
-    /// Action type name for logging
+    ///     Action type name for logging
     /// </summary>
     public string ActionTypeName => Action.GetType().Name;
 
     /// <summary>
-    /// Action ID for tracking
+    ///     Action ID for tracking
     /// </summary>
     public Guid ActionId => Action.Id;
 
-    public override string ToString() =>
-        $"{ActionTypeName}({ActionId}): {Result} in {Duration.TotalMilliseconds:F3}ms" +
-        (Message != null ? $" - {Message}" : "");
+    public override string ToString()
+    {
+        return $"{ActionTypeName}({ActionId}): {Result} in {Duration.TotalMilliseconds:F3}ms" +
+               (Message != null ? $" - {Message}" : "");
+    }
 }

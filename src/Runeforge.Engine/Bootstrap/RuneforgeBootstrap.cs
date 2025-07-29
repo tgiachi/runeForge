@@ -20,13 +20,8 @@ namespace Runeforge.Engine.Bootstrap;
 
 public class RuneforgeBootstrap
 {
-    private readonly IContainer _container = new Container(rules => rules.WithoutThrowOnRegisteringDisposableTransient());
-
     private readonly CancellationTokenRegistration _cancellationTokenRegistration = new();
-
-    //  public RuneforgeSink.LogEventDelegate LogEventDelegate { get; set; }
-
-    public event RuneforgeSink.LogEventDelegate OnLogEvent;
+    private readonly IContainer _container = new Container(rules => rules.WithoutThrowOnRegisteringDisposableTransient());
 
 
     private readonly RuneforgeOptions _runeforgeOptions;
@@ -40,6 +35,10 @@ public class RuneforgeBootstrap
         InitializeRootDirectory();
         InitializeLogger();
     }
+
+    //  public RuneforgeSink.LogEventDelegate LogEventDelegate { get; set; }
+
+    public event RuneforgeSink.LogEventDelegate OnLogEvent;
 
     public void Initialize()
     {
@@ -163,7 +162,7 @@ public class RuneforgeBootstrap
 
         // Register Configs
         _container.RegisterInstance(
-            new DiagnosticServiceConfig()
+            new DiagnosticServiceConfig
             {
                 PidFileName = $"{_runeforgeOptions.GameName.ToSnakeCase()}.pid",
                 MetricsIntervalInSeconds = 60
@@ -171,7 +170,7 @@ public class RuneforgeBootstrap
         );
 
         _container.RegisterInstance(
-            new ScriptEngineConfig()
+            new ScriptEngineConfig
             {
                 DefinitionPath = _directoriesConfig[DirectoryType.Scripts]
             }

@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using Runeforge.Core.Utils;
 
 namespace Runeforge.Tests.Core;

@@ -3,7 +3,7 @@ using Serilog.Events;
 namespace Runeforge.Engine.Logger.Sink;
 
 /// <summary>
-/// Log entry data for delegate sink
+///     Log entry data for delegate sink
 /// </summary>
 public class LogEntry
 {

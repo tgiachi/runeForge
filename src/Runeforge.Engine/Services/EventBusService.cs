@@ -11,15 +11,14 @@ namespace Runeforge.Engine.Services;
 /// </summary>
 public class EventBusService : IEventBusService
 {
-    private readonly EventBus _eventBus;
-
     private readonly Subject<object> _allEventsSubject = new();
+    private readonly EventBus _eventBus;
 
     public EventBusService() => _eventBus = new EventBus();
 
 
     /// <summary>
-    /// Observable that emits all events
+    ///     Observable that emits all events
     /// </summary>
     public IObservable<object> AllEventsObservable => _allEventsSubject;
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -5,20 +6,21 @@ using Serilog.Formatting;
 namespace Runeforge.Engine.Logger.Sink;
 
 /// <summary>
-/// Serilog sink that emits log events to a delegate
+///     Serilog sink that emits log events to a delegate
 /// </summary>
 public class RuneforgeSink : ILogEventSink
 {
     /// <summary>
-    /// Delegate type for log events
+    ///     Delegate type for log events
     /// </summary>
     public delegate void LogEventDelegate(LogEntry logEntry);
 
-    private readonly LogEventDelegate _logDelegate;
     private readonly ITextFormatter _formatter;
 
+    private readonly LogEventDelegate _logDelegate;
+
     /// <summary>
-    /// Create delegate sink with custom formatter
+    ///     Create delegate sink with custom formatter
     /// </summary>
     public RuneforgeSink(LogEventDelegate logDelegate, ITextFormatter formatter)
     {
@@ -27,7 +29,7 @@ public class RuneforgeSink : ILogEventSink
     }
 
     /// <summary>
-    /// Emit log event to delegate
+    ///     Emit log event to delegate
     /// </summary>
     public void Emit(LogEvent logEvent)
     {
@@ -59,12 +61,12 @@ public class RuneforgeSink : ILogEventSink
         catch (Exception ex)
         {
             /// Avoid infinite recursion if logging fails
-            System.Diagnostics.Debug.WriteLine($"DelegateSink error: {ex}");
+            Debug.WriteLine($"DelegateSink error: {ex}");
         }
     }
 
     /// <summary>
-    /// Extract category from log event properties
+    ///     Extract category from log event properties
     /// </summary>
     private static string ExtractCategory(LogEvent logEvent)
     {

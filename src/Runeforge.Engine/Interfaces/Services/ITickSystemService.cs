@@ -8,5 +8,4 @@ public interface ITickSystemService
     event TickDelegate Tick;
     event TickDelegate TickStarted;
     event TickDelegate TickEnded;
-
 }

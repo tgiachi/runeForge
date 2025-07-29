@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using Runeforge.Engine.Data.Events.Scheduler;
 using Runeforge.Engine.Data.Scheduler;
 using Runeforge.Engine.Interfaces.Events;
@@ -10,15 +11,22 @@ namespace Runeforge.Engine.Services;
 
 public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<AddSchedulerJobEvent>
 {
-    private readonly ILogger _logger = Log.ForContext<SchedulerSystemService>();
     private readonly ConcurrentDictionary<string, ScheduledJobData> _jobs;
+    private readonly ILogger _logger = Log.ForContext<SchedulerSystemService>();
     private readonly ConcurrentDictionary<string, IDisposable> _pausedJobs;
 
     public SchedulerSystemService(IEventBusService eventBusService)
     {
         _jobs = new ConcurrentDictionary<string, ScheduledJobData>();
         _pausedJobs = new ConcurrentDictionary<string, IDisposable>();
-        eventBusService.Subscribe<AddSchedulerJobEvent>(this);
+        eventBusService.Subscribe(this);
+    }
+
+
+    public void Handle(AddSchedulerJobEvent @event)
+    {
+        _logger.Information("Registering job '{JobName}'", @event.Name);
+        _ = RegisterJob(@event.Name, @event.Action, @event.TotalSpan);
     }
 
 
@@ -41,7 +49,7 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<Add
             throw new InvalidOperationException($"Job '{name}' is already registered");
         }
 
-        var subscription = System.Reactive.Linq.Observable
+        var subscription = Observable
             .Interval(interval)
             .Subscribe(async _ =>
                 {
@@ -98,16 +106,6 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<Add
         }
     }
 
-    private async Task ExecuteJob(ScheduledJobData jobData)
-    {
-        var startTime = Stopwatch.GetTimestamp();
-        _logger.Verbose("Executing job '{JobName}'", jobData.Name);
-        await jobData.Task();
-        var elapsed = Stopwatch.GetElapsedTime(startTime);
-
-        _logger.Verbose("Job '{JobName}' executed in {Elapsed} ms", jobData.Name, elapsed);
-    }
-
     public async Task ResumeJob(string name)
     {
         if (!await IsJobRegistered(name))
@@ -117,13 +115,23 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<Add
 
         if (_jobs.TryGetValue(name, out var job))
         {
-            var subscription = System.Reactive.Linq.Observable
+            var subscription = Observable
                 .Interval(job.Interval)
                 .Subscribe(async _ => await ExecuteJob(_jobs[name]));
 
             job.Subscription = subscription;
             _pausedJobs.TryRemove(name, out _);
         }
+    }
+
+    private async Task ExecuteJob(ScheduledJobData jobData)
+    {
+        var startTime = Stopwatch.GetTimestamp();
+        _logger.Verbose("Executing job '{JobName}'", jobData.Name);
+        await jobData.Task();
+        var elapsed = Stopwatch.GetElapsedTime(startTime);
+
+        _logger.Verbose("Job '{JobName}' executed in {Elapsed} ms", jobData.Name, elapsed);
     }
 
     public void Dispose()
@@ -136,12 +144,5 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<Add
         _jobs.Clear();
         _pausedJobs.Clear();
         GC.SuppressFinalize(this);
-    }
-
-
-    public void Handle(AddSchedulerJobEvent @event)
-    {
-        _logger.Information("Registering job '{JobName}'", @event.Name);
-        _ = RegisterJob(@event.Name, @event.Action, @event.TotalSpan);
     }
 }
