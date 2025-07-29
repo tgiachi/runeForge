@@ -9,5 +9,6 @@ public enum ActionResult
     Failed,
     Blocked,
     Invalid,
-    Cancelled
+    Cancelled,
+    Continuing
 }
