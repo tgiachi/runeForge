@@ -9,7 +9,7 @@ namespace Runeforge.Data.Entities.Base;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(JsonTilesetData), "tiles")]
 [JsonDerivedType(typeof(JsonColorData), "colors")]
-[JsonDerivedType(typeof(JsonKeysetData), "keybinds")]
+[JsonDerivedType(typeof(JsonKeybindData), "keybinds")]
 public class BaseJsonEntityData : IJsonEntityData
 {
     public string Id { get; set; }

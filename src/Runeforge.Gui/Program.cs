@@ -44,6 +44,7 @@ void OnEnd(object? sender, GameHost e)
 
 void StartBootstrap(object? sender, GameHost e)
 {
+    bootstrap.Initialize();
     bootstrap.StartAsync();
 }
 

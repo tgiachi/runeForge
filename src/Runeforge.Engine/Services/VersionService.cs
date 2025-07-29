@@ -29,8 +29,4 @@ public class VersionService : IVersionService
             ThisAssembly.Git.CommitDate
         );
     }
-
-    public void Dispose()
-    {
-    }
 }

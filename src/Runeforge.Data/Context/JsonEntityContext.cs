@@ -9,7 +9,7 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonColorData))]
 [JsonSerializable(typeof(JsonTileData))]
 [JsonSerializable(typeof(JsonTileAnimationData))]
-[JsonSerializable(typeof(JsonKeysetData))]
+[JsonSerializable(typeof(JsonKeybindData))]
 
 public partial class JsonEntityContext : JsonSerializerContext
 {

@@ -4,6 +4,7 @@ using Runeforge.Core.Extensions.Strings;
 using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
 using Runeforge.Engine.Data.Configs.Services;
+using Runeforge.Engine.Data.Events.Engine;
 using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Extensions;
@@ -38,6 +39,10 @@ public class RuneforgeBootstrap
 
         InitializeRootDirectory();
         InitializeLogger();
+    }
+
+    public void Initialize()
+    {
         PrintHeader();
         RegisterServices();
         RegisterScriptModules();
@@ -63,7 +68,6 @@ public class RuneforgeBootstrap
     private void RegisterScriptModules()
     {
         _container
-
             .AddScriptModule(typeof(LoggerModule))
             .AddScriptModule(typeof(ActionsModule))
             ;
@@ -102,6 +106,8 @@ public class RuneforgeBootstrap
     public async Task StartAsync()
     {
         await StartStopServiceAsync(true);
+        var eventBusService = _container.Resolve<IEventBusService>();
+        await eventBusService.PublishAsync(new EngineStartedEvent());
     }
 
     private async Task StartStopServiceAsync(bool isStart)
