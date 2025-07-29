@@ -5,7 +5,7 @@ namespace Runeforge.Engine.Ticks.Actions;
 public class ScriptedAction : BaseAction
 {
     private Action _action;
-    
+
     public ScriptedAction(Action action)
     {
         _action = action;
@@ -16,6 +16,5 @@ public class ScriptedAction : BaseAction
     protected override ActionResult ExecuteAction()
     {
         return ActionResult.Success;
-
     }
 }
