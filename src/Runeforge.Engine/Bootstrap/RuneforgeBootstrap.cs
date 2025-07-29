@@ -9,6 +9,7 @@ using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Extensions;
 using Runeforge.Engine.Extensions.Loggers;
+using Runeforge.Engine.Instance;
 using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Interfaces.Services.Base;
 using Runeforge.Engine.Logger.Sink;
@@ -35,6 +36,8 @@ public class RuneforgeBootstrap
     public RuneforgeBootstrap(RuneforgeOptions options)
     {
         _runeforgeOptions = options ?? throw new ArgumentNullException(nameof(options));
+
+        RuneforgeInstances.Container = _container;
 
         InitializeRootDirectory();
         InitializeLogger();
