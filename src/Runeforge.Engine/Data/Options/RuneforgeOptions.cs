@@ -1,5 +1,6 @@
 using Runeforge.Engine.Logger.Sink;
 using Runeforge.Engine.Types;
+using Runeforge.Engine.Types.Logger;
 
 namespace Runeforge.Engine.Data.Options;
 

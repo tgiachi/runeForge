@@ -1,4 +1,4 @@
-namespace Runeforge.Engine.Types;
+namespace Runeforge.Engine.Types.Logger;
 
 public enum LogLevelType : byte
 {

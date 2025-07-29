@@ -2,6 +2,7 @@
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Logger.Sink;
 using Runeforge.Engine.Types;
+using Runeforge.Engine.Types.Logger;
 using Runeforge.Gui;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;

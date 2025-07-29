@@ -1,4 +1,5 @@
 using Runeforge.Engine.Types;
+using Runeforge.Engine.Types.Logger;
 using Serilog.Events;
 
 namespace Runeforge.Engine.Extensions.Loggers;
