@@ -26,4 +26,12 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Runeforge.Core\Runeforge.Core.csproj" />
+      <ProjectReference Include="..\..\src\Runeforge.Data\Runeforge.Data.csproj" />
+      <ProjectReference Include="..\..\src\Runeforge.Engine\Runeforge.Engine.csproj" />
+      <ProjectReference Include="..\..\src\Runeforge.Gui\Runeforge.Gui.csproj" />
+      <ProjectReference Include="..\..\src\Runeforge.Ui\Runeforge.Ui.csproj" />
+    </ItemGroup>
+
 </Project>
