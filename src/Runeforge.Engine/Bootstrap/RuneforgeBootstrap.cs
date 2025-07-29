@@ -74,6 +74,7 @@ public class RuneforgeBootstrap
         _container
             .AddScriptModule(typeof(LoggerModule))
             .AddScriptModule(typeof(ActionsModule))
+            .AddScriptModule(typeof(RandomModule))
             ;
     }
 
