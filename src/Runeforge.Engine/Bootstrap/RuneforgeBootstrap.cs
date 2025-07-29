@@ -20,13 +20,17 @@ namespace Runeforge.Engine.Bootstrap;
 
 public class RuneforgeBootstrap
 {
+    public delegate void RegisterServicesDelegate(IContainer container);
+
+    public event RegisterServicesDelegate OnRegisterServices;
+
     private readonly CancellationTokenRegistration _cancellationTokenRegistration = new();
     private readonly IContainer _container = new Container(rules => rules.WithoutThrowOnRegisteringDisposableTransient());
-
 
     private readonly RuneforgeOptions _runeforgeOptions;
 
     private DirectoriesConfig _directoriesConfig;
+
 
     public RuneforgeBootstrap(RuneforgeOptions options)
     {
@@ -45,6 +49,7 @@ public class RuneforgeBootstrap
         PrintHeader();
         RegisterServices();
         RegisterScriptModules();
+        OnRegisterServices?.Invoke(_container);
     }
 
     private static void PrintHeader()

@@ -2,6 +2,7 @@
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Types.Logger;
 using Runeforge.Gui;
+using Runeforge.Ui.Extensions;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;
 
@@ -15,6 +16,8 @@ var bootstrap = new RuneforgeBootstrap(
         LogToFile = true
     }
 );
+
+bootstrap.RegisterUiServices();
 
 
 Settings.WindowTitle = "My SadConsole Game";

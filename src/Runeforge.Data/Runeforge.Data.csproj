@@ -4,12 +4,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
         <Version>0.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Runeforge.Core\Runeforge.Core.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GoRogue" Version="3.0.0-beta10-debug" />
     </ItemGroup>
 
 </Project>

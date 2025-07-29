@@ -97,6 +97,14 @@ public class TickSystemService : ITickSystemService
 
                 _logger.Debug("Action {ActionId} will continue in next tick", result.ActionId);
             }
+
+            if (result.Result == ActionResult.Failed)
+            {
+                _logger.Warning(
+                    "Action {ActionId} failed with error",
+                    result.ActionId
+                );
+            }
         }
     }
 }
