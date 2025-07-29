@@ -171,6 +171,7 @@ public class RuneforgeBootstrap
             //
             .RegisterService(typeof(INameGeneratorService), typeof(NameGeneratorService))
             .RegisterService(typeof(IVariablesService), typeof(VariableService))
+            .RegisterService(typeof(IMapService), typeof(MapService))
             ;
 
         // Register Configs
