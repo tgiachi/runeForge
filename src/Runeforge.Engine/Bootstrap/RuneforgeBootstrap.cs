@@ -62,7 +62,11 @@ public class RuneforgeBootstrap
 
     private void RegisterScriptModules()
     {
-        _container.AddScriptModule(typeof(LoggerModule));
+        _container
+
+            .AddScriptModule(typeof(LoggerModule))
+            .AddScriptModule(typeof(ActionsModule))
+            ;
     }
 
     private void InitializeLogger()
@@ -148,6 +152,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IEventDispatcherService), typeof(EventDispatcherService))
             .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
             .RegisterService(typeof(IDataLoaderService), typeof(DataLoaderService))
+            .RegisterService(typeof(IActionService), typeof(ActionService))
             ;
 
         // Register Configs
