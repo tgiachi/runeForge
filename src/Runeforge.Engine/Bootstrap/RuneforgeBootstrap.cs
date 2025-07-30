@@ -94,7 +94,6 @@ public class RuneforgeBootstrap
     {
         var dataLoaderService = _container.Resolve<IDataLoaderService>();
         dataLoaderService.AddDataLoader<NamesDataLoader, JsonNameData>();
-
     }
 
     private static void PrintHeader()
@@ -122,6 +121,7 @@ public class RuneforgeBootstrap
             .AddScriptModule(typeof(LoggerModule))
             .AddScriptModule(typeof(ActionsModule))
             .AddScriptModule(typeof(RandomModule))
+            .AddScriptModule(typeof(NamesModule))
             ;
     }
 

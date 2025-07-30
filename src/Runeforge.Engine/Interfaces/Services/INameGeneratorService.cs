@@ -7,4 +7,6 @@ public interface INameGeneratorService : IRuneforgeService
     void AddName(string type, string name);
 
     string GenerateName(string type);
+
+    List<string> Types { get; }
 }

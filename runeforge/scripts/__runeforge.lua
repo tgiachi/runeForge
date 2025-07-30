@@ -41,6 +41,15 @@ function logger.info(message, ...) end
 function logger.warning(message, ...) end
 
 
+---@class names
+names = {}
+
+--- Generate new name
+---@param type string
+---@return string
+function names.generateName(type) end
+
+
 ---@class random
 random = {}
 
