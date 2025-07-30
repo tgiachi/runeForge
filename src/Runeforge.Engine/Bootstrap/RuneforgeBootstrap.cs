@@ -58,7 +58,6 @@ public class RuneforgeBootstrap
     }
 
 
-
     private RuneforgeEngineConfig InitializeConfig(string configName)
     {
         Console.WriteLine($"Loading config: {configName}");
@@ -81,8 +80,6 @@ public class RuneforgeBootstrap
         return config;
     }
 
-
-    //  public RuneforgeSink.LogEventDelegate LogEventDelegate { get; set; }
 
     public event RuneforgeSink.LogEventDelegate OnLogEvent;
 
@@ -254,7 +251,7 @@ public class RuneforgeBootstrap
                     Directory.CreateDirectory(directory);
                 }
 
-                await File.WriteAllTextAsync(fileName, content);
+                await File.WriteAllBytesAsync(fileName, content);
             }
         }
     }

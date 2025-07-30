@@ -24,19 +24,14 @@ public static class RuneforgeBootstrapExtension
 
     public static void InitGuiInstance(this RuneforgeBootstrap bootstrap, GameHost gameHost)
     {
-
         var engineConfig = bootstrap.EngineConfig;
-        var directoriesConfig = RuneforgeInstances.GetService<DirectoriesConfig>();
-        var defaultFontFileName = Path.Combine(directoriesConfig[DirectoryType.Fonts], engineConfig.DefaultUiFont);
 
-        if (!File.Exists(defaultFontFileName))
+        if (string.IsNullOrEmpty(engineConfig.DefaultUiFont))
         {
-            throw new FileNotFoundException(
-                $"Default UI font file not found: {defaultFontFileName}. Please ensure the font is present in the Fonts directory."
-            );
+            RuneforgeGuiInstance.Instance.DefaultUiFont = gameHost.Fonts[engineConfig.DefaultUiFont];
         }
 
-
-        RuneforgeGuiInstance.Instance.DefaultUiFont =  gameHost.LoadFont(defaultFontFileName);
+        RuneforgeGuiInstance.Instance.DefaultUiFontSize = engineConfig.FontSize;
+        RuneforgeGuiInstance.Instance.GameWindowConfig = engineConfig.GameWindow;
     }
 }

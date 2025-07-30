@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Runeforge.Engine.Logger.Sink;
+using Runeforge.Ui.Screens.Base;
 using SadConsole;
 using SadConsole.Input;
 using SadRogue.Primitives;
@@ -10,7 +11,7 @@ namespace Runeforge.UI.Screens;
 /// <summary>
 ///     SadConsole screen for displaying log entries with scrolling and colors
 /// </summary>
-public class LogViewerScreen : ScreenSurface
+public class LogViewerScreen : BaseRuneforgeScreenSurface
 {
     private readonly List<LogEntry> _displayedLogs = new();
     private readonly Lock _lockObject = new();

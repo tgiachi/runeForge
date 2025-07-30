@@ -125,7 +125,7 @@ public static partial class ResourceUtils
     /// <param name="resourcePath">Resource path (e.g. "Assets/Templates/welcome.scriban")</param>
     /// <param name="assembly">The assembly to search in (if null, uses current assembly)</param>
     /// <returns>The content of the resource as a string</returns>
-    public static string GetEmbeddedResourceContent(string resourcePath, Assembly assembly = null)
+    public static byte[] GetEmbeddedResourceContent(string resourcePath, Assembly assembly = null)
     {
         assembly ??= Assembly.GetExecutingAssembly();
 
@@ -160,8 +160,9 @@ public static partial class ResourceUtils
             throw new FileNotFoundException($"Unable to open resource: {fullResourceName}");
         }
 
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        using var memoryStream = new MemoryStream();
+        stream.CopyTo(memoryStream);
+        return memoryStream.ToArray();
     }
 
     public static string ConvertResourceNameToPath(string resourceName, string baseNamespace)

@@ -1,14 +1,17 @@
 ﻿using System.Globalization;
 using ConsoleAppFramework;
+using Runeforge.Core.Directories;
 using Runeforge.Core.Json;
+using Runeforge.Core.Types;
 using Runeforge.Data.Context;
 using Runeforge.Engine.Bootstrap;
 using Runeforge.Engine.Data.Options;
+using Runeforge.Engine.Instance;
 using Runeforge.Engine.Types.Logger;
 using Runeforge.Ui.Extensions;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;
-
+using Serilog;
 
 
 JsonUtils.RegisterJsonContext(JsonEntityContext.Default);
@@ -61,6 +64,25 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
             )
             .IsStartingScreenFocused(true)
             .ConfigureFonts(true)
+            .ConfigureFonts((f, g) =>
+                {
+                    var directoriesConfig = RuneforgeInstances.GetService<DirectoriesConfig>();
+                    var allFonts = Directory.GetFiles(directoriesConfig[DirectoryType.Fonts], "*.font");
+                    foreach (var fontFile in allFonts)
+                    {
+                        Log.Logger.Information("Loading font: {FontFile}", fontFile);
+                        try
+                        {
+                            var font = g.LoadFont(fontFile);
+                            g.Fonts[font.Name] = font;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Logger.Error(ex, "Failed to load font: {FontFile}", fontFile);
+                        }
+                    }
+                }
+            )
             .OnStart(StartBootstrap)
             .OnEnd(OnEnd)
         ;
@@ -72,16 +94,14 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
 
     void StartBootstrap(object? sender, GameHost e)
     {
-
         bootstrap.Initialize();
         _ = Task.Run(async () =>
-        {
-            await bootstrap.StartAsync();
-            bootstrap.InitGuiInstance(GameHost.Instance);
-        });
-
+            {
+                await bootstrap.StartAsync();
+                bootstrap.InitGuiInstance(GameHost.Instance);
+            }
+        );
     }
-
 
 
     Game.Create(gameStartup);

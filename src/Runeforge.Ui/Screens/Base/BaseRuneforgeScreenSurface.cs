@@ -1,5 +1,6 @@
 using Runeforge.Ui.Instances;
 using SadConsole;
+using SadRogue.Primitives;
 
 namespace Runeforge.Ui.Screens.Base;
 
@@ -12,12 +13,25 @@ public abstract class BaseRuneforgeScreenSurface : ScreenSurface
     {
         // Subscribe to font changes
         RuneforgeGuiInstance.Instance.OnDefaultUiFontChanged += OnFontChanged;
+        RuneforgeGuiInstance.Instance.OnDefaultUiFontSizeChanged += OnFontSizeChanged;
 
         // Set initial font if available
         if (RuneforgeGuiInstance.Instance.DefaultUiFont != null)
         {
             Font = RuneforgeGuiInstance.Instance.DefaultUiFont;
         }
+    }
+
+    private void OnFontSizeChanged(Point size)
+    {
+        FontSize = new Point(size.X, size.Y);
+        IsDirty = true;
+
+        // Update child surfaces if any
+        UpdateChildSurfacesFont(Font);
+
+        // Call custom font change logic
+        OnFontChangedCustom(Font);
     }
 
     /// <summary>
