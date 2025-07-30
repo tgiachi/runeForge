@@ -4,10 +4,11 @@ internal class RootScreen : ScreenObject
 {
     private ScreenSurface _mainSurface;
 
-    public RootScreen()
+    public RootScreen(int width, int height)
+        // Initialize the screen with the specified width and height.
     {
         // Create a surface that's the same size as the screen.
-        _mainSurface = new ScreenSurface(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
+        _mainSurface = new ScreenSurface(width, height);
 
         // Fill the surface with random characters and colors
         _mainSurface.FillWithRandomGarbage(_mainSurface.Font);

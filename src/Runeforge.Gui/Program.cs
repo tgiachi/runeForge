@@ -1,53 +1,76 @@
-﻿using Runeforge.Engine.Bootstrap;
+﻿using ConsoleAppFramework;
+using Runeforge.Engine.Bootstrap;
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Types.Logger;
-using Runeforge.Gui;
 using Runeforge.Ui.Extensions;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;
 
-var bootstrap = new RuneforgeBootstrap(
-    new RuneforgeOptions
+
+ConsoleApp.Run(
+    args,
+    (
+        string rootDirectory = "", LogLevelType levelType = LogLevelType.Debug, bool logToConsole = true,
+        bool logToFile = true
+    ) =>
     {
-        RootDirectory = "/tmp/runeforge",
-        LogLevel = LogLevelType.Debug,
-        GameName = "test-game",
-        LogToConsole = true,
-        LogToFile = true
+        LoadApp(rootDirectory, levelType, logToConsole, logToFile);
     }
 );
 
-bootstrap.RegisterUiServices();
-
-
-Settings.WindowTitle = "My SadConsole Game";
-
-var gameStartup = new Builder()
-        .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-        .SetStartingScreen(host =>
-            {
-                var logViewer = new LogViewerScreen(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
-                bootstrap.OnLogEvent += entry => { logViewer.AddLogEntry(entry); };
-                return logViewer;
-            }
-        )
-        .IsStartingScreenFocused(true)
-        .ConfigureFonts(true)
-        .OnStart(StartBootstrap)
-        .OnEnd(OnEnd)
-    ;
-
-void OnEnd(object? sender, GameHost e)
+static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToConsole, bool logToFile)
 {
-    bootstrap.StopAsync();
-}
+    if (string.IsNullOrWhiteSpace(rootDirectory))
+    {
+        rootDirectory = Environment.GetEnvironmentVariable("RUNEFORGE_ROOT_DIRECTORY") ??
+                        Path.Combine(Directory.GetCurrentDirectory(), "Runeforge");
+    }
 
-void StartBootstrap(object? sender, GameHost e)
-{
-    bootstrap.Initialize();
-    bootstrap.StartAsync();
-}
+    var bootstrap = new RuneforgeBootstrap(
+        new RuneforgeOptions
+        {
+            RootDirectory = rootDirectory,
+            LogLevel = levelType,
+            LogToConsole = logToConsole,
+            LogToFile = logToFile,
+        }
+    );
 
-Game.Create(gameStartup);
-Game.Instance.Run();
-Game.Instance.Dispose();
+    bootstrap.RegisterUiServices();
+
+
+    Settings.WindowTitle = bootstrap.GameTitle;
+
+    var gameStartup = new Builder()
+            .SetScreenSize(bootstrap.EngineConfig.GameWindow.Width, bootstrap.EngineConfig.GameWindow.Height)
+            .SetStartingScreen(host =>
+                {
+                    var logViewer = new LogViewerScreen(
+                        bootstrap.EngineConfig.GameWindow.Width,
+                        bootstrap.EngineConfig.GameWindow.Height
+                    );
+                    bootstrap.OnLogEvent += entry => { logViewer.AddLogEntry(entry); };
+                    return logViewer;
+                }
+            )
+            .IsStartingScreenFocused(true)
+            .ConfigureFonts(true)
+            .OnStart(StartBootstrap)
+            .OnEnd(OnEnd)
+        ;
+
+    void OnEnd(object? sender, GameHost e)
+    {
+        bootstrap.StopAsync();
+    }
+
+    async void StartBootstrap(object? sender, GameHost e)
+    {
+        bootstrap.Initialize();
+        await bootstrap.StartAsync();
+    }
+
+    Game.Create(gameStartup);
+    Game.Instance.Run();
+    Game.Instance.Dispose();
+}

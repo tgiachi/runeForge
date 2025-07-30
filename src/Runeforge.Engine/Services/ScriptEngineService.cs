@@ -22,6 +22,7 @@ public class ScriptEngineService : IScriptEngineService
 
     private readonly Dictionary<string, Script> _loadedScripts = new();
 
+
     private readonly ILogger _logger = Log.ForContext<ScriptEngineService>();
     private readonly List<ScriptDefObject> _scriptDefObjects;
     private readonly ScriptEngineConfig _scriptEngineConfig;
@@ -66,7 +67,7 @@ public class ScriptEngineService : IScriptEngineService
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        InitFileWatcher();
+        //  InitFileWatcher();
 
         EmmyLuaDefinitionGenerator.GenerateDefinitionFile(
             Functions,
@@ -75,7 +76,7 @@ public class ScriptEngineService : IScriptEngineService
             Enums
         );
 
-        LoadAllScripts();
+        LoadInitScript();
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
@@ -207,11 +208,12 @@ public class ScriptEngineService : IScriptEngineService
     }
 
     /// <summary>
-    ///     Load all Lua scripts from the scripts directory
+    ///   Load initial scripts defined in the configuration
     /// </summary>
-    public async Task LoadAllScripts()
+    public async Task LoadInitScript()
     {
         var scriptsPath = _directoriesConfig[DirectoryType.Scripts];
+
 
         if (!Directory.Exists(scriptsPath))
         {
@@ -219,18 +221,39 @@ public class ScriptEngineService : IScriptEngineService
             return;
         }
 
-        var luaFiles = Directory.GetFiles(scriptsPath, "*.lua", SearchOption.AllDirectories);
+        // var luaFiles = Directory.GetFiles(scriptsPath, "*.lua", SearchOption.AllDirectories);
 
-        foreach (var filePath in luaFiles)
+        var initFileFound = false;
+        foreach (var initFile in _scriptEngineConfig.StartupScripts)
         {
-            var fileName = Path.GetFileNameWithoutExtension(filePath);
-            if (fileName.StartsWith("__") || fileName.StartsWith("runeforge_"))
+            var initFilePath = Path.Combine(scriptsPath, initFile);
+            if (File.Exists(initFilePath))
             {
-                _logger.Debug("Skipping internal script: {FilePath}", filePath);
-                continue; // Skip internal scripts
+                _logger.Information("Loading startup script: {InitFile}", initFilePath);
+                await LoadScript(initFilePath);
+                initFileFound = true;
             }
-
-            await LoadScript(filePath);
+            else
+            {
+                _logger.Warning("Startup script not found: {InitFile}", initFilePath);
+            }
         }
+
+        if (!initFileFound)
+        {
+            throw new Exception("No startup scripts found in the configuration. Please check your script engine configuration.");
+        }
+
+        // foreach (var filePath in luaFiles)
+        // {
+        //     var fileName = Path.GetFileNameWithoutExtension(filePath);
+        //     if (fileName.StartsWith("__") || fileName.StartsWith("runeforge_"))
+        //     {
+        //         _logger.Debug("Skipping internal script: {FilePath}", filePath);
+        //         continue; // Skip internal scripts
+        //     }
+        //
+        //     await LoadScript(filePath);
+        // }
     }
 }

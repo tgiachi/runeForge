@@ -12,5 +12,5 @@ public class RuneforgeOptions
 
     public bool LogToConsole { get; set; } = true;
 
-    public string GameName { get; set; }
+    public string ConfigName { get; set; } = "config.json";
 }

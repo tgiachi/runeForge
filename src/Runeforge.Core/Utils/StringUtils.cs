@@ -37,6 +37,7 @@ public static partial class StringUtils
             return text.ToLowerInvariant();
         }
 
+        text = text.Replace(" ", "");
         text = text.Replace('-', '_');
 
         var sb = new StringBuilder();

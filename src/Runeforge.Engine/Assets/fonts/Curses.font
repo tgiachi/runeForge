@@ -1,0 +1,9 @@
+{
+    "$type": "SadConsole.SadFont, SadConsole",
+    "FilePath": "Curses_800x600_shade.png",
+    "GlyphHeight": 12,
+    "GlyphPadding": 1,
+    "GlyphWidth": 10,
+    "Name": "Curses",
+    "SolidGlyphIndex": 219
+}
