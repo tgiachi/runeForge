@@ -88,6 +88,8 @@ public class ScriptEngineService : IScriptEngineService
         );
 
         await LoadInitScript();
+
+        InitFileWatcher();
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
@@ -224,6 +226,12 @@ public class ScriptEngineService : IScriptEngineService
             {
                 _logger.Debug("Skipping internal script change event: {FilePath}", e.FullPath);
                 return; // Skip internal scripts
+            }
+
+            if (!_scriptEngineConfig.StartupScripts.Contains(fileName))
+            {
+                _logger.Debug("Skipping non-startup script change event: {FilePath}", e.FullPath);
+                return;
             }
 
             // Debounce multiple events
