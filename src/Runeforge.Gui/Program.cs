@@ -11,6 +11,7 @@ using Runeforge.Engine.Types.Logger;
 using Runeforge.Ui.Extensions;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;
+using SadConsole.Input;
 using Serilog;
 
 
@@ -19,14 +20,14 @@ ConsoleApp.Run(
     args,
     (
         string rootDirectory = "", LogLevelType levelType = LogLevelType.Debug, bool logToConsole = true,
-        bool logToFile = true
+        bool logToFile = true, bool enableDebugger = false
     ) =>
     {
-        LoadApp(rootDirectory, levelType, logToConsole, logToFile);
+        LoadApp(rootDirectory, levelType, logToConsole, logToFile, enableDebugger);
     }
 );
 
-static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToConsole, bool logToFile)
+static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToConsole, bool logToFile, bool enableDebugger)
 {
     if (string.IsNullOrWhiteSpace(rootDirectory))
     {
@@ -51,40 +52,46 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
 
 
     var gameStartup = new Builder()
-            .SetScreenSize(bootstrap.EngineConfig.GameWindow.Width, bootstrap.EngineConfig.GameWindow.Height)
-            .SetStartingScreen(host =>
+        .SetScreenSize(bootstrap.EngineConfig.GameWindow.Width, bootstrap.EngineConfig.GameWindow.Height)
+        .SetStartingScreen(host =>
+            {
+                var logViewer = new LogViewerScreen(
+                    bootstrap.EngineConfig.GameWindow.Width,
+                    bootstrap.EngineConfig.GameWindow.Height
+                );
+                bootstrap.OnLogEvent += entry => { logViewer.AddLogEntry(entry); };
+                return logViewer;
+            }
+        )
+        .IsStartingScreenFocused(true)
+        .ConfigureFonts(true)
+        .ConfigureFonts((f, g) =>
+            {
+                var directoriesConfig = RuneforgeInstances.GetService<DirectoriesConfig>();
+                var allFonts = Directory.GetFiles(directoriesConfig[DirectoryType.Fonts], "*.font");
+                foreach (var fontFile in allFonts)
                 {
-                    var logViewer = new LogViewerScreen(
-                        bootstrap.EngineConfig.GameWindow.Width,
-                        bootstrap.EngineConfig.GameWindow.Height
-                    );
-                    bootstrap.OnLogEvent += entry => { logViewer.AddLogEntry(entry); };
-                    return logViewer;
-                }
-            )
-            .IsStartingScreenFocused(true)
-            .ConfigureFonts(true)
-            .ConfigureFonts((f, g) =>
-                {
-                    var directoriesConfig = RuneforgeInstances.GetService<DirectoriesConfig>();
-                    var allFonts = Directory.GetFiles(directoriesConfig[DirectoryType.Fonts], "*.font");
-                    foreach (var fontFile in allFonts)
+                    Log.Logger.Information("Loading font: {FontFile}", fontFile);
+                    try
                     {
-                        Log.Logger.Information("Loading font: {FontFile}", fontFile);
-                        try
-                        {
-                            var font = g.LoadFont(fontFile);
-                            g.Fonts[font.Name] = font;
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Logger.Error(ex, "Failed to load font: {FontFile}", fontFile);
-                        }
+                        var font = g.LoadFont(fontFile);
+                        g.Fonts[font.Name] = font;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Logger.Error(ex, "Failed to load font: {FontFile}", fontFile);
                     }
                 }
-            )
-            .OnStart(StartBootstrap)
-            .OnEnd(OnEnd)
+            }
+        );
+
+    if (enableDebugger)
+    {
+        gameStartup.EnableImGuiDebugger(Keys.F12);
+    }
+
+    gameStartup.OnStart(StartBootstrap)
+        .OnEnd(OnEnd)
         ;
 
     void OnEnd(object? sender, GameHost e)
