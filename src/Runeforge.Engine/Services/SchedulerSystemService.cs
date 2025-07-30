@@ -9,7 +9,7 @@ using Serilog;
 
 namespace Runeforge.Engine.Services;
 
-public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<AddSchedulerJobEvent>
+public class SchedulerSystemService : ISchedulerSystemService, IEventBusListener<AddSchedulerJobEvent>
 {
     private readonly ConcurrentDictionary<string, ScheduledJobData> _jobs;
     private readonly ILogger _logger = Log.ForContext<SchedulerSystemService>();
@@ -23,7 +23,7 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventHandler<Add
     }
 
 
-    public void Handle(AddSchedulerJobEvent @event)
+    public async Task HandleAsync(AddSchedulerJobEvent @event, CancellationToken cancellationToken = default)
     {
         _logger.Information("Registering job '{JobName}'", @event.Name);
         _ = RegisterJob(@event.Name, @event.Action, @event.TotalSpan);

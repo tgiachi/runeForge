@@ -5,6 +5,7 @@ using Runeforge.Core.Directories;
 using Runeforge.Core.Types;
 using Runeforge.Engine.Attributes.Scripts;
 using Runeforge.Engine.Data.Configs.Services;
+using Runeforge.Engine.Data.Events.Engine;
 using Runeforge.Engine.Data.Internal.Scripts;
 using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Interfaces.Services;
@@ -16,6 +17,8 @@ namespace Runeforge.Engine.Services;
 public class ScriptEngineService : IScriptEngineService
 {
     private readonly IContainer _container;
+    private readonly IEventBusService _eventBusService;
+
     private readonly DirectoriesConfig _directoriesConfig;
 
     private readonly Dictionary<string, DynValue> _globalModules = new();
@@ -35,15 +38,23 @@ public class ScriptEngineService : IScriptEngineService
 
     public ScriptEngineService(
         DirectoriesConfig directoriesConfig, ScriptEngineConfig scriptEngineConfig, IContainer container,
-        List<ScriptDefObject> scriptDefObjects
+        List<ScriptDefObject> scriptDefObjects, IEventBusService eventBusService
     )
     {
         _directoriesConfig = directoriesConfig;
         _scriptEngineConfig = scriptEngineConfig;
         _scriptDefObjects = scriptDefObjects;
+        _eventBusService = eventBusService;
         _container = container;
 
         RegisterGlobalBindings();
+
+        _eventBusService.Subscribe<EngineStartedEvent>(OnEngineStarted);
+    }
+
+    private async Task OnEngineStarted(EngineStartedEvent obj)
+    {
+        ExecuteBootstrap();
     }
 
     public List<ScriptFunctionDescriptor> Functions { get; } = [];
@@ -76,7 +87,7 @@ public class ScriptEngineService : IScriptEngineService
             Enums
         );
 
-        LoadInitScript();
+        await LoadInitScript();
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
@@ -166,6 +177,43 @@ public class ScriptEngineService : IScriptEngineService
         }
     }
 
+    private void ExecuteBootstrap()
+    {
+        // Execute bootstrap logic if needed
+        _logger.Information("Executing script engine bootstrap logic...");
+
+        var bootstrapExecuted = false;
+
+        foreach (var (name, script) in _loadedScripts)
+        {
+            try
+            {
+                var bootstrap = script.Globals.Get("bootstrap");
+
+                if (bootstrap.IsNil())
+                {
+                    _logger.Debug("No bootstrap function found in script: {ScriptName}", name);
+                    continue;
+                }
+
+                script.Call(bootstrap);
+
+                bootstrapExecuted = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error executing bootstrap for script: {ScriptName}", name);
+            }
+        }
+
+        if (!bootstrapExecuted)
+        {
+            throw new Exception(
+                "No bootstrap function found in any loaded script. Please ensure at least one script defines a 'bootstrap' function."
+            );
+        }
+    }
+
     private async void OnScriptChanged(object sender, FileSystemEventArgs e)
     {
         try
@@ -241,7 +289,9 @@ public class ScriptEngineService : IScriptEngineService
 
         if (!initFileFound)
         {
-            throw new Exception("No startup scripts found in the configuration. Please check your script engine configuration.");
+            throw new Exception(
+                "No startup scripts found in the configuration. Please check your script engine configuration."
+            );
         }
 
         // foreach (var filePath in luaFiles)

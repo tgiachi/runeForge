@@ -5,7 +5,6 @@ using Runeforge.Core.Directories;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Events.Diagnostic;
 using Runeforge.Engine.Data.Metrics.Diagnostic;
-using Runeforge.Engine.Extensions.EventBus;
 using Runeforge.Engine.Interfaces.Metrics;
 using Runeforge.Engine.Interfaces.Services;
 using Serilog;
@@ -164,7 +163,7 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         return CollectMetricsInternalAsync();
     }
 
-    private void OnRegisterMetricEvent(RegisterMetricEvent obj)
+    private async Task OnRegisterMetricEvent(RegisterMetricEvent obj)
     {
         RegisterMetricsProvider(obj.provider);
     }

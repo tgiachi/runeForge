@@ -1,61 +1,67 @@
-using Runeforge.Engine.Data.Internal.Metrics.EventBus;
 using Runeforge.Engine.Interfaces.Events;
-using Runeforge.Engine.Interfaces.Services.Base;
 
 namespace Runeforge.Engine.Interfaces.Services;
 
-/// <summary>
-///     Service interface for event bus operations
-/// </summary>
-public interface IEventBusService : IRuneforgeService
+public interface IEventBusService
 {
     /// <summary>
-    ///     Observable that emits all events
+    ///  Observable that emits all events dispatched through the system.
     /// </summary>
     IObservable<object> AllEventsObservable { get; }
 
-    /// <summary>
-    ///     Subscribe to events of type T
-    /// </summary>
-    void Subscribe<T>(IEventHandler<T> handler) where T : IEvent;
 
     /// <summary>
-    ///     Unsubscribe from events of type T
+    ///  Registers a listener for a specific event type.
     /// </summary>
-    void Unsubscribe<T>(IEventHandler<T> handler) where T : IEvent;
+    /// <param name="listener"></param>
+    /// <typeparam name="TEvent"></typeparam>
+    void Subscribe<TEvent>(IEventBusListener<TEvent> listener)
+        where TEvent : class;
+
 
     /// <summary>
-    ///     Publish event immediately (synchronous)
+    ///  Registers a listener for a specific event type.
     /// </summary>
-    void Publish<T>(T eventData) where T : IEvent;
+    /// <param name="handler"></param>
+    /// <typeparam name="TEvent"></typeparam>
+    void Subscribe<TEvent>(Func<TEvent, Task> handler)
+        where TEvent : class;
 
     /// <summary>
-    ///     Publish event asynchronously
+    ///  Unregisters a listener for a specific event type.
     /// </summary>
-    Task PublishAsync<T>(T eventData, CancellationToken cancellationToken = default) where T : IEvent;
+    /// <param name="listener"></param>
+    /// <typeparam name="TEvent"></typeparam>
+    void Unsubscribe<TEvent>(IEventBusListener<TEvent> listener)
+        where TEvent : class;
 
     /// <summary>
-    ///     Clean up dead weak references
+    ///  Dispatches an event to all registered listeners asynchronously.
     /// </summary>
-    void CleanupDeadReferences();
+    /// <param name="eventData"></param>
+    /// <param name="cancellationToken"></param>
+    /// <typeparam name="TEvent"></typeparam>
+    /// <returns></returns>
+    Task PublishAsync<TEvent>(TEvent eventData, CancellationToken cancellationToken = default)
+        where TEvent : class;
 
     /// <summary>
-    ///     Get event bus statistics
+    /// Gets the current number of registered listeners for all event types.
     /// </summary>
-    EventBusStats GetStats();
+    /// <returns>The total number of registered listeners.</returns>
+    int GetListenerCount();
 
     /// <summary>
-    ///     Clear all handlers (useful for testing)
+    /// Gets the current number of registered listeners for a specific event type.
     /// </summary>
-    void Clear();
+    /// <typeparam name="TEvent">The type of event.</typeparam>
+    /// <returns>The number of registered listeners for the specified event type.</returns>
+    int GetListenerCount<TEvent>() where TEvent : class;
+
 
     /// <summary>
-    ///     Check if there are any subscribers for event type T
+    ///  Waits for all dispatched events to be processed.
     /// </summary>
-    bool HasSubscribers<T>() where T : IEvent;
-
-    /// <summary>
-    ///     Get count of active subscribers for event type T
-    /// </summary>
-    int GetSubscriberCount<T>() where T : IEvent;
+    /// <returns></returns>
+    public Task WaitForCompletionAsync();
 }

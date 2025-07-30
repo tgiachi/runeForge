@@ -64,10 +64,11 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
         bootstrap.StopAsync();
     }
 
-    async void StartBootstrap(object? sender, GameHost e)
+    void StartBootstrap(object? sender, GameHost e)
     {
         bootstrap.Initialize();
-        await bootstrap.StartAsync();
+        _ = Task.Run(async () => { await bootstrap.StartAsync(); }
+        );
     }
 
     Game.Create(gameStartup);

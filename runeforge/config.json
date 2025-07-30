@@ -1,0 +1,8 @@
+{
+  "gameName": "Runeforge Game",
+  "gameVersion": "1.0.0",
+  "gameWindow": {
+    "width": 180,
+    "height": 60
+  }
+}

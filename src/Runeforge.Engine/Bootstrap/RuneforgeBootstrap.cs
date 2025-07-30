@@ -172,12 +172,12 @@ public class RuneforgeBootstrap
                     if (isStart)
                     {
                         Log.Logger.Debug("Starting service: {ServiceType}", serviceDef.ImplementationType.Name);
-                        await startableService.StartAsync(_cancellationTokenRegistration.Token);
+                        await startableService.StartAsync();
                     }
                     else
                     {
                         Log.Logger.Debug("Stopping service: {ServiceType}", serviceDef.ImplementationType.Name);
-                        await startableService.StopAsync(_cancellationTokenRegistration.Token);
+                        await startableService.StopAsync();
                     }
                 }
             }
