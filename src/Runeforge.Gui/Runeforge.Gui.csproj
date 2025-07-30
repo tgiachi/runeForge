@@ -13,7 +13,6 @@
         <NoWarn>$(NoWarn);IL2072</NoWarn>
         <NoWarn>$(NoWarn);IL2070</NoWarn>
         <NoWarn>$(NoWarn);IL2075</NoWarn>
-        <InvariantGlobalization>true</InvariantGlobalization>
 
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>

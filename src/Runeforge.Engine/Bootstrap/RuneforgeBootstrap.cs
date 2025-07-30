@@ -4,11 +4,13 @@ using Runeforge.Core.Extensions.Strings;
 using Runeforge.Core.Json;
 using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
+using Runeforge.Data.Entities.Names;
 using Runeforge.Engine.Data.Configs;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Events.Engine;
 using Runeforge.Engine.Data.Internal.Services;
 using Runeforge.Engine.Data.Options;
+using Runeforge.Engine.DataLoaders;
 using Runeforge.Engine.Extensions;
 using Runeforge.Engine.Extensions.Loggers;
 using Runeforge.Engine.Instance;
@@ -47,6 +49,7 @@ public class RuneforgeBootstrap
         _runeforgeOptions = options ?? throw new ArgumentNullException(nameof(options));
         RuneforgeInstances.Container = _container;
 
+
         InitializeRootDirectory();
         EngineConfig = InitializeConfig(options.ConfigName);
         InitializeLogger();
@@ -83,7 +86,15 @@ public class RuneforgeBootstrap
         PrintHeader();
         RegisterServices();
         RegisterScriptModules();
+        RegisterDefaultDataLoaders();
         OnRegisterServices?.Invoke(_container);
+    }
+
+    private void RegisterDefaultDataLoaders()
+    {
+        var dataLoaderService = _container.Resolve<IDataLoaderService>();
+        dataLoaderService.AddDataLoader<NamesDataLoader, JsonNameData>();
+
     }
 
     private static void PrintHeader()

@@ -1,15 +1,17 @@
-﻿using ConsoleAppFramework;
+﻿using System.Globalization;
+using ConsoleAppFramework;
 using Runeforge.Core.Json;
+using Runeforge.Data.Context;
 using Runeforge.Engine.Bootstrap;
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Types.Logger;
-using Runeforge.Gui.Json;
 using Runeforge.Ui.Extensions;
 using Runeforge.UI.Screens;
 using SadConsole.Configuration;
 
-JsonUtils.RegisterJsonContext(SadConsoleJsonContext.Default);
 
+
+JsonUtils.RegisterJsonContext(JsonEntityContext.Default);
 ConsoleApp.Run(
     args,
     (
