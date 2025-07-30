@@ -1,49 +1,65 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Runeforge.Engine.Data.Configs.Sections;
-using Runeforge.Engine.Instance;
 using SadConsole;
 using SadRogue.Primitives;
 
 namespace Runeforge.Ui.Instances;
 
-public class RuneforgeGuiInstance
+public class RuneforgeGuiInstance : INotifyPropertyChanged
 {
     private static RuneforgeGuiInstance? _instance;
     public static RuneforgeGuiInstance Instance => _instance ??= new RuneforgeGuiInstance();
 
-    public delegate void OnFontChangedHandler(IFont font);
-    public delegate void OnSizeChangedHandler(Point size);
+    public delegate void FontChangedHandler(IFont font);
+    public delegate void FontSizeChangedHandler(Point size);
 
-    public event OnFontChangedHandler? OnDefaultUiFontChanged;
-    public event OnSizeChangedHandler? OnDefaultUiFontSizeChanged;
+    public event FontChangedHandler? OnDefaultUiFontChanged;
+    public event FontSizeChangedHandler? OnDefaultUiFontSizeChanged;
+    public event FontChangedHandler? OnMapFontChanged;
+    public event FontSizeChangedHandler? OnMapFontSizeChanged;
+
+
+    public IFont.Sizes DefaultUiFontSize { get; set; }
+    public IFont.Sizes DefaultMapFontSize { get; set; }
+
+    public IFont DefaultUiFont { get; set; }
+    public IFont DefaultMapFont { get; set; }
 
     public GameWindowConfig GameWindowConfig { get; set; }
 
-    private IFont _font;
 
-    private IFont.Sizes _defaultUiFontSize;
-
-    public IFont.Sizes DefaultUiFontSize
+    public RuneforgeGuiInstance()
     {
-        get => _defaultUiFontSize;
-        set
+        PropertyChanged += OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(DefaultUiFont))
         {
-            if (_defaultUiFontSize != value)
-            {
-                _defaultUiFontSize = value;
-                OnDefaultUiFontSizeChanged?.Invoke(DefaultUiFont.GetFontSize(value));
-            }
+            OnDefaultUiFontChanged?.Invoke(DefaultUiFont);
+            return;
+        }
+
+        if (e.PropertyName == nameof(DefaultUiFontSize))
+        {
+            OnDefaultUiFontSizeChanged?.Invoke(DefaultUiFont.GetFontSize(DefaultUiFontSize));
+            return;
+        }
+
+        if (e.PropertyName == nameof(DefaultMapFont))
+        {
+            OnMapFontChanged?.Invoke(DefaultMapFont);
+            return;
+        }
+
+        if (e.PropertyName == nameof(DefaultMapFontSize))
+        {
+            OnMapFontSizeChanged?.Invoke(DefaultMapFont.GetFontSize(DefaultMapFontSize));
+            return;
         }
     }
-    public IFont DefaultUiFont
-    {
-        get => _font;
-        set
-        {
-            if (_font != value)
-            {
-                _font = value;
-                OnDefaultUiFontChanged?.Invoke(_font);
-            }
-        }
-    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

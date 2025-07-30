@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
         <PackageReference Include="SadConsole" Version="10.5.0"/>
         <PackageReference Include="SadConsole.Extended" Version="10.5.0"/>
     </ItemGroup>

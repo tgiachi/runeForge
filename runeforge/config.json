@@ -5,5 +5,7 @@
     "width": 180,
     "height": 60
   },
-  "fontSize": "two"
+  "defaultUiFontSize": "one",
+  "defaultMapFont": "Tangaria32",
+  "defaultMapFontSize": "one"
 }

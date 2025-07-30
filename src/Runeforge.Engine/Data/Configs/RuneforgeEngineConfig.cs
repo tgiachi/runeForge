@@ -9,5 +9,7 @@ public class RuneforgeEngineConfig
     public string GameVersion { get; set; } = "1.0.0";
     public GameWindowConfig GameWindow { get; set; } = new();
     public string DefaultUiFont { get; set; }
-    public IFont.Sizes FontSize { get; set; } = IFont.Sizes.One;
+    public IFont.Sizes DefaultUiFontSize { get; set; } = IFont.Sizes.One;
+    public string DefaultMapFont { get; set; } = "Tangaria32";
+    public IFont.Sizes DefaultMapFontSize { get; set; } = IFont.Sizes.One;
 }

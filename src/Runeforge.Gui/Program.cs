@@ -90,7 +90,8 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
         gameStartup.EnableImGuiDebugger(Keys.F12);
     }
 
-    gameStartup.OnStart(StartBootstrap)
+    gameStartup
+        .OnStart(StartBootstrap)
         .OnEnd(OnEnd)
         ;
 

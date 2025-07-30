@@ -26,12 +26,22 @@ public static class RuneforgeBootstrapExtension
     {
         var engineConfig = bootstrap.EngineConfig;
 
-        if (string.IsNullOrEmpty(engineConfig.DefaultUiFont))
+        if (!string.IsNullOrEmpty(engineConfig.DefaultUiFont))
         {
             RuneforgeGuiInstance.Instance.DefaultUiFont = gameHost.Fonts[engineConfig.DefaultUiFont];
         }
+        else
+        {
+            RuneforgeGuiInstance.Instance.DefaultUiFont = gameHost.DefaultFont;
+        }
 
-        RuneforgeGuiInstance.Instance.DefaultUiFontSize = engineConfig.FontSize;
+        if (!string.IsNullOrEmpty(engineConfig.DefaultMapFont))
+        {
+            RuneforgeGuiInstance.Instance.DefaultMapFont = gameHost.Fonts[engineConfig.DefaultMapFont];
+        }
+
+        RuneforgeGuiInstance.Instance.DefaultUiFontSize = engineConfig.DefaultUiFontSize;
+        RuneforgeGuiInstance.Instance.DefaultMapFontSize = engineConfig.DefaultMapFontSize;
         RuneforgeGuiInstance.Instance.GameWindowConfig = engineConfig.GameWindow;
     }
 }
