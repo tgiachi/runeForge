@@ -4,5 +4,6 @@
   "gameWindow": {
     "width": 180,
     "height": 60
-  }
+  },
+  "fontSize": "two"
 }
