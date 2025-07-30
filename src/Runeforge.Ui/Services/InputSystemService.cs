@@ -16,6 +16,7 @@ public class InputSystemService : IInputSystemService
             context = "default";
         }
 
+
         if (string.IsNullOrEmpty(key))
         {
             throw new ArgumentException("Key cannot be null or empty", nameof(key));

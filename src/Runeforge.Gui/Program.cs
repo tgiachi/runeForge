@@ -46,6 +46,7 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
 
     Settings.WindowTitle = bootstrap.GameTitle;
 
+
     var gameStartup = new Builder()
             .SetScreenSize(bootstrap.EngineConfig.GameWindow.Width, bootstrap.EngineConfig.GameWindow.Height)
             .SetStartingScreen(host =>
@@ -71,10 +72,17 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
 
     void StartBootstrap(object? sender, GameHost e)
     {
+
         bootstrap.Initialize();
-        _ = Task.Run(async () => { await bootstrap.StartAsync(); }
-        );
+        _ = Task.Run(async () =>
+        {
+            await bootstrap.StartAsync();
+            bootstrap.InitGuiInstance(GameHost.Instance);
+        });
+
     }
+
+
 
     Game.Create(gameStartup);
     Game.Instance.Run();

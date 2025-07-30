@@ -20,7 +20,9 @@ using Runeforge.Engine.Json;
 using Runeforge.Engine.Logger.Sink;
 using Runeforge.Engine.Modules;
 using Runeforge.Engine.Services;
+using SadConsole;
 using Serilog;
+using Console = System.Console;
 
 namespace Runeforge.Engine.Bootstrap;
 
@@ -55,6 +57,8 @@ public class RuneforgeBootstrap
         InitializeLogger();
     }
 
+
+
     private RuneforgeEngineConfig InitializeConfig(string configName)
     {
         Console.WriteLine($"Loading config: {configName}");
@@ -76,6 +80,7 @@ public class RuneforgeBootstrap
 
         return config;
     }
+
 
     //  public RuneforgeSink.LogEventDelegate LogEventDelegate { get; set; }
 

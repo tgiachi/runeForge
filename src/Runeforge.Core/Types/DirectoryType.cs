@@ -5,5 +5,6 @@ public enum DirectoryType
     Templates,
     Scripts,
     Assets,
+    Fonts,
     Logs
 }
