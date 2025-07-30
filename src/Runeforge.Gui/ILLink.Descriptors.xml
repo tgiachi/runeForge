@@ -1,0 +1,22 @@
+<linker>
+
+
+    <assembly fullname="DryIoc">
+        <type fullname="DryIoc.ReflectionTools">
+            <method name="GetDefault"/>
+        </type>
+    </assembly>
+
+    <assembly fullname="MoonSharp.Interpreter">
+        <type fullname="MoonSharp.*" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="Runeforge.*">
+        <type fullname="Runeforge.*" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="SadConsole.*">
+        <type fullname="SadConsole.*" preserve="all"/>
+    </assembly>
+
+</linker>
