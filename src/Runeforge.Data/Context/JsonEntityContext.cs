@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Runeforge.Data.Entities.Base;
 using Runeforge.Data.Entities.Common;
+using Runeforge.Data.Entities.Items;
 using Runeforge.Data.Entities.Keysets;
 using Runeforge.Data.Entities.Names;
 using Runeforge.Data.Entities.Tileset;
@@ -15,6 +16,10 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonTileAnimationData))]
 [JsonSerializable(typeof(JsonKeybindData))]
 [JsonSerializable(typeof(JsonNameData))]
+[JsonSerializable(typeof(JsonItemData))]
+[JsonSerializable(typeof(JsonHasTile))]
+[JsonSerializable(typeof(JsonItemContainerData))]
+[JsonSerializable(typeof(JsonLightSourceData))]
 public partial class JsonEntityContext : JsonSerializerContext
 {
 }
