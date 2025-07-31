@@ -90,7 +90,7 @@ public record TileDataObj(
     string[] Tags = null
 );
 
-public record TileColoredGlyph(ColoredGlyph coloredGlyph, bool IsBlocking, bool IsTransparent)
+public record TileColoredGlyph(ColoredGlyph ColoredGlyph, bool IsBlocking, bool IsTransparent)
 {
     public TileColoredGlyph(TileDataObj tileData)
         : this(

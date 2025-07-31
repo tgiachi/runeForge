@@ -63,7 +63,7 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         var playerColoredGlyph = tileSetService.CreateGlyph("player");
 
-        Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.coloredGlyph);
+        Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.ColoredGlyph);
 
         Player.GoRogueComponents.Add(new PlayerFOVController());
 
@@ -117,8 +117,8 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         mapInfo.Map.ApplyTerrainOverlay(
             wallFloors,
             (point, val) => val
-                ? new TerrainGameObject(point, floorTile.coloredGlyph, "floor")
-                : new TerrainGameObject(point, wallTile.coloredGlyph, "wall", false)
+                ? new TerrainGameObject(point, tileSetService.CreateGlyph("floor").ColoredGlyph, "floor")
+                : new TerrainGameObject(point, tileSetService.CreateGlyph("wall").ColoredGlyph, "wall", false)
         );
 
         return Task.CompletedTask;
