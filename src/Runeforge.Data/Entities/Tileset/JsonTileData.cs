@@ -9,6 +9,7 @@ public class JsonTileData
     public string Symbol { get; set; }
     public bool IsBlocking { get; set; }
     public bool IsTransparent { get; set; }
-
     public List<string> Tags { get; set; } = [];
+
+    public string? AnimationId { get; set; }
 }

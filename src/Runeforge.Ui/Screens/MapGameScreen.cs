@@ -40,8 +40,8 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             new Point(width, height),
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight,
-            RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphWidth,
-            RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphHeight
+            RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
+            RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight
         );
 
         var mapId = mapService.GenerateMapAsync(300, 300, "Test", "Test Map").GetAwaiter().GetResult();
@@ -52,20 +52,22 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         currentMap.DefaultRenderer = currentMap.CreateRenderer(
             viewport,
-            RuneforgeGuiInstance.Instance.DefaultMapFont
+            RuneforgeGuiInstance.Instance.DefaultUiFont
         );
 
         Children.Add(currentMap);
         Children.Add(textConsole);
 
 
-        Player = new PlayerGameObject(new Point(30, 30), new ColoredGlyph(Color.White, Color.Transparent, 1450));
+        var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
 
+        var playerColoredGlyph = tileSetService.CreateGlyph("player");
+
+        Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.coloredGlyph);
 
         Player.GoRogueComponents.Add(new PlayerFOVController());
 
         currentMap.AddEntity(Player);
-
 
         ViewLock = new SurfaceComponentFollowTarget() { Target = Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
@@ -103,16 +105,20 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
     private Task MapServiceOnMapGenerated(MapInfoObject mapInfo, Generator generator)
     {
+        var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
+
         var wallFloors = generator.Context.GetFirstOrDefault<ISettableGridView<bool>>("WallFloor");
 
-        var floorTile = new ColoredGlyph(Color.White, Color.Transparent, 3954);
-        var wallTile = new ColoredGlyph(Color.Gray, Color.Transparent, 2863);
+        //var floorTile = new ColoredGlyph(Color.White, Color.Transparent, 3954);
+        //var wallTile = new ColoredGlyph(Color.Gray, Color.Transparent, 2863);
+        var floorTile = tileSetService.CreateGlyph("floor");
+        var wallTile = tileSetService.CreateGlyph("wall");
 
         mapInfo.Map.ApplyTerrainOverlay(
             wallFloors,
             (point, val) => val
-                ? new TerrainGameObject(point, floorTile, "floor")
-                : new TerrainGameObject(point, wallTile, "wall", false)
+                ? new TerrainGameObject(point, floorTile.coloredGlyph, "floor")
+                : new TerrainGameObject(point, wallTile.coloredGlyph, "wall", false)
         );
 
         return Task.CompletedTask;
