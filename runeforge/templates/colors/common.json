@@ -1,0 +1,109 @@
+[
+  {
+    "type": "colors",
+    "id": "default_colors",
+    "name": "Default Color Palette",
+    "isDefault": true,
+    "description": "Standard color palette for Runeforge game",
+    "tags": [
+      "default",
+      "basic"
+    ],
+    "colors": {
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "red": "#FF0000",
+      "green": "#00FF00",
+      "blue": "#0000FF",
+      "yellow": "#FFFF00",
+      "cyan": "#00FFFF",
+      "magenta": "#FF00FF",
+      "gray": "#808080",
+      "darkGray": "#404040",
+      "lightGray": "#C0C0C0",
+      "darkRed": "#800000",
+      "darkGreen": "#008000",
+      "darkBlue": "#000080",
+      "brown": "#A52A2A",
+      "orange": "#FFA500",
+      "pink": "#FFC0CB",
+      "purple": "#800080",
+      "lightBlue": "#ADD8E6",
+      "lightGreen": "#90EE90",
+      "gold": "#FFD700",
+      "silver": "#C0C0C0",
+      "bronze": "#CD7F32"
+    }
+  },
+  {
+    "type": "colors",
+    "id": "ui_colors",
+    "name": "UI Color Palette",
+    "description": "Colors specifically for user interface elements",
+    "tags": [
+      "ui",
+      "interface"
+    ],
+    "colors": {
+      "background": "#1E1E1E",
+      "foreground": "#FFFFFF",
+      "accent": "#007ACC",
+      "border": "#3C3C3C",
+      "hover": "#094771",
+      "selected": "#094771",
+      "disabled": "#6D6D6D",
+      "error": "#F44747",
+      "warning": "#FFCC02",
+      "success": "#89D185",
+      "info": "#75BEFF"
+    }
+  },
+  {
+    "type": "colors",
+    "id": "terrain_colors",
+    "name": "Terrain Color Palette",
+    "description": "Colors for different terrain types",
+    "tags": [
+      "terrain",
+      "map"
+    ],
+    "colors": {
+      "grass": "#228B22",
+      "dirt": "#8B4513",
+      "stone": "#696969",
+      "water": "#4682B4",
+      "sand": "#F4A460",
+      "snow": "#FFFAFA",
+      "lava": "#FF4500",
+      "ice": "#B0E0E6",
+      "wood": "#8B4513",
+      "metal": "#C0C0C0",
+      "crystal": "#E6E6FA",
+      "void": "#191970"
+    }
+  },
+  {
+    "type": "colors",
+    "id": "creature_colors",
+    "name": "Creature Color Palette",
+    "description": "Colors for different creature types",
+    "tags": [
+      "creatures",
+      "entities"
+    ],
+    "colors": {
+      "player": "#00BFFF",
+      "npc": "#32CD32",
+      "enemy": "#DC143C",
+      "boss": "#8B008B",
+      "neutral": "#DAA520",
+      "friendly": "#00FF7F",
+      "hostile": "#B22222",
+      "undead": "#2F4F4F",
+      "demon": "#8B0000",
+      "angel": "#FFD700",
+      "beast": "#8B4513",
+      "elemental": "#4169E1"
+    }
+  }
+]

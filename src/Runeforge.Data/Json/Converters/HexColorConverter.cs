@@ -44,7 +44,7 @@ public class HexColorConverter : JsonConverter<ColorDef>
     ///     Parse hex color string into XNA Color object
     ///     Supports formats: #RGB, #RRGGBB, #AARRGGBB
     /// </summary>
-    private static ColorDef ParseHexColor(string hexValue)
+    public static ColorDef ParseHexColor(string hexValue)
     {
         if (!hexValue.StartsWith("#"))
         {

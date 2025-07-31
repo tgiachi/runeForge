@@ -9,9 +9,11 @@ using Runeforge.Ui.Screens.Base;
 using Runeforge.Ui.Utils;
 using SadConsole;
 using SadConsole.Components;
+using SadConsole.Effects;
 using SadConsole.Input;
 using SadRogue.Primitives;
 using SadRogue.Primitives.GridViews;
+using Console = SadConsole.Console;
 
 namespace Runeforge.UI.Screens;
 
@@ -24,6 +26,13 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
     public MapGameScreen(int width, int height) : base(width, height)
     {
         var mapService = RuneforgeInstances.GetService<IMapService>();
+        var textConsole = new Console(width, height);
+        textConsole.Font = RuneforgeGuiInstance.Instance.DefaultUiFont;
+        textConsole.IsVisible = true;
+        textConsole.IsFocused = false;
+        textConsole.UseKeyboard = false;
+        textConsole.Clear();
+
 
         mapService.MapGenerated += MapServiceOnMapGenerated;
 
@@ -47,13 +56,11 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         );
 
         Children.Add(currentMap);
+        Children.Add(textConsole);
 
 
-        var walkablePositions = currentMap.Positions().Where(pos => currentMap.WalkabilityView[pos]).ToList();
-        var random = new Random();
-        var freePos = walkablePositions[random.Next(walkablePositions.Count)];
+        Player = new PlayerGameObject(new Point(30, 30), new ColoredGlyph(Color.White, Color.Transparent, 1450));
 
-        Player = new PlayerGameObject(freePos, new ColoredGlyph(Color.White, Color.Transparent, 1450));
 
         Player.GoRogueComponents.Add(new PlayerFOVController());
 
@@ -63,6 +70,32 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         ViewLock = new SurfaceComponentFollowTarget() { Target = Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
         Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
+
+        // var fov = new GoRogue.FOV.RecursiveShadowcastingFOV(currentMap.TransparencyView);
+        //
+        // var lightPos = new Point(10, 20);
+        //
+        // fov.Calculate(lightPos, 10);
+
+        // foreach (var pos in currentMap.Positions())
+        // {
+        //     var bright = fov.DoubleResultView[pos];
+        //
+        //     var visible = fov.BooleanResultView[pos];
+        //
+        //     var cell = currentMap.TerrainView[pos.X, pos.Y];
+        //     if (visible)
+        //     {
+        //         var fade = (float)Math.Max(0.3, bright);
+        //         cell.Foreground = Color.White * fade;
+        //     }
+        //     else
+        //     {
+        //         cell.Foreground = Color.DarkGray;
+        //     }
+        // }
+
+        // textConsole.PrintFadingText("Dio cano", new Point(Width / 2, Height / 2), TimeSpan.FromSeconds(1), new Blink());
 
         IsFocused = true;
         UseKeyboard = true;
