@@ -14,7 +14,7 @@
         "foreground": "terrain_colors#stone",
         "background": "default_colors#black",
         "description": "Stone wall that blocks movement and sight",
-        "symbol": "#",
+        "symbol": "176",
         "isBlocking": true,
         "isTransparent": false
       },
@@ -23,7 +23,7 @@
         "foreground": "terrain_colors#dirt",
         "background": "default_colors#black",
         "description": "Dirt floor that can be walked on",
-        "symbol": ".",
+        "symbol": "`",
         "isBlocking": false,
         "isTransparent": true
       },

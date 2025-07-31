@@ -40,8 +40,8 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             new Point(width, height),
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight,
-            RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
-            RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight
+            RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphWidth,
+            RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphHeight
         );
 
         var mapId = mapService.GenerateMapAsync(300, 300, "Test", "Test Map").GetAwaiter().GetResult();
@@ -52,7 +52,7 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         currentMap.DefaultRenderer = currentMap.CreateRenderer(
             viewport,
-            RuneforgeGuiInstance.Instance.DefaultUiFont
+            RuneforgeGuiInstance.Instance.DefaultMapFont
         );
 
         Children.Add(currentMap);
