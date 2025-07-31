@@ -1,3 +1,4 @@
+using GoRogue.GameFramework;
 using Runeforge.Engine.Types.Map;
 using SadConsole;
 using SadRogue.Integration;
@@ -28,7 +29,11 @@ public class NpcGameObject : RogueLikeEntity
 
     public void MoveTo(Direction direction)
     {
-        Position += direction;
+        var newPosition = Position + direction;
+        if (this.CanMove(newPosition))
+        {
+            Position += direction;
+        }
     }
 
     public override string ToString() => $"ID: {ID} Npc: {Name}";

@@ -48,7 +48,12 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         Children.Add(currentMap);
 
-        Player = new PlayerGameObject(new Point(10, 10), new ColoredGlyph(Color.White, Color.Transparent, 1450));
+
+        var walkablePositions = currentMap.Positions().Where(pos => currentMap.WalkabilityView[pos]).ToList();
+        var random = new Random();
+        var freePos = walkablePositions[random.Next(walkablePositions.Count)];
+
+        Player = new PlayerGameObject(freePos, new ColoredGlyph(Color.White, Color.Transparent, 1450));
 
         Player.GoRogueComponents.Add(new PlayerFOVController());
 
