@@ -1,11 +1,8 @@
-using GoRogue.GameFramework;
 using GoRogue.MapGeneration;
-using Runeforge.Engine.Data;
 using Runeforge.Engine.Data.Maps;
+using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Services;
-using Runeforge.Engine.Types.Map;
 using SadRogue.Integration.Maps;
-using SadRogue.Primitives;
 
 namespace Runeforge.Engine.Services;
 
@@ -13,7 +10,6 @@ public class MapService : IMapService
 {
     public event IMapService.MapGeneratedHandler? MapGenerated;
     public event IMapService.MapStartGeneratedHandler? MapStartGenerated;
-    public DefaultRendererParams DefaultRendererParams { get; set; }
     public MapInfoObject CurrentMap { get; set; }
 
     private readonly Dictionary<Guid, MapInfoObject> _maps = new();
@@ -27,14 +23,16 @@ public class MapService : IMapService
         MapStartGenerated?.Invoke(mapId);
 
         var generator = new Generator(width, height)
-            .ConfigAndGenerateSafe(c => c.AddComponent(DefaultAlgorithms.RectangleMapSteps()))
+            .ConfigAndGenerateSafe(c => c.AddSteps(DefaultAlgorithms.RectangleMapSteps()))
             .Generate();
 
-        var gameMap = new GameMap(width, height, DefaultRendererParams);
+        var gameMap = new GameMap(width, height, null);
+
+        gameMap.AllComponents.Add(new TerrainFOVVisibilityHandler());
 
         var mapInfo = new MapInfoObject(gameMap, name, description, level);
 
-        await MapGenerated?.Invoke(mapInfo);
+        await MapGenerated?.Invoke(mapInfo, generator);
 
         _maps[mapId] = mapInfo;
 

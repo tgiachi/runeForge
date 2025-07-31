@@ -9,7 +9,6 @@ namespace Runeforge.Engine.GameObjects;
 public class TerrainGameObject : MemoryAwareRogueLikeCell
 {
     public ColoredGlyph DarkAppearance { get; }
-
     public string TileId { get; set; }
 
     public TerrainGameObject(

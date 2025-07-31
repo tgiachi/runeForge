@@ -164,6 +164,13 @@ public class RuneforgeBootstrap
         await eventBusService.PublishAsync(new EngineStartedEvent());
     }
 
+    public async Task ReadyAsync()
+    {
+        var eventBusService = _container.Resolve<IEventBusService>();
+
+        await eventBusService.PublishAsync(new EngineReadyEvent());
+    }
+
     private async Task StartStopServiceAsync(bool isStart)
     {
         var servicesDef = _container.Resolve<List<ServiceDefObject>>().OrderBy(s => s.Priority).ToList();

@@ -5,8 +5,10 @@ using Runeforge.Core.Json;
 using Runeforge.Core.Types;
 using Runeforge.Data.Context;
 using Runeforge.Engine.Bootstrap;
+using Runeforge.Engine.Data.Events.Engine;
 using Runeforge.Engine.Data.Options;
 using Runeforge.Engine.Instance;
+using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Types.Logger;
 using Runeforge.Ui.Extensions;
 using Runeforge.UI.Screens;
@@ -107,8 +109,20 @@ static void LoadApp(string rootDirectory, LogLevelType levelType, bool logToCons
             {
                 await bootstrap.StartAsync();
                 bootstrap.InitGuiInstance(GameHost.Instance);
+                await bootstrap.ReadyAsync();
             }
         );
+
+        RuneforgeInstances.GetService<IEventBusService>()
+            .Subscribe<EngineStartedEvent>(@event =>
+                {
+                    Game.Instance.Screen = new MapGameScreen(
+                        bootstrap.EngineConfig.GameWindow.Width,
+                        bootstrap.EngineConfig.GameWindow.Height
+                    );
+                    return Task.CompletedTask;
+                }
+            );
     }
 
 
