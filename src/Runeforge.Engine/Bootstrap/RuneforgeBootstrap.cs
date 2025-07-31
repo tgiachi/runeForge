@@ -6,6 +6,7 @@ using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
 using Runeforge.Data.Entities.Common;
 using Runeforge.Data.Entities.Names;
+using Runeforge.Data.Entities.Tileset;
 using Runeforge.Engine.Data.Configs;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Events.Engine;
@@ -98,6 +99,7 @@ public class RuneforgeBootstrap
         var dataLoaderService = _container.Resolve<IDataLoaderService>();
         dataLoaderService.AddDataLoader<NamesDataLoader, JsonNameData>();
         dataLoaderService.AddDataLoader<ColorDataLoader, JsonColorData>();
+        dataLoaderService.AddDataLoader<TileSetDataLoader, JsonTilesetData>();
     }
 
     private static void PrintHeader()
@@ -283,6 +285,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IVariablesService), typeof(VariableService))
             .RegisterService(typeof(IMapService), typeof(MapService))
             .RegisterService(typeof(IColorService), typeof(ColorService))
+            .RegisterService(typeof(ITileSetService), typeof(TileSetService))
             ;
 
         // Register Configs

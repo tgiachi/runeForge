@@ -1,0 +1,41 @@
+[
+  {
+    "type": "tiles",
+    "id": "basic_tileset",
+    "name": "Basic Tileset",
+    "description": "Basic tileset with wall, floor and player tiles",
+    "tags": [
+      "basic",
+      "dungeon"
+    ],
+    "tiles": [
+      {
+        "id": "wall",
+        "foreground": "terrain_colors#stone",
+        "background": "default_colors#black",
+        "description": "Stone wall that blocks movement and sight",
+        "symbol": "#",
+        "isBlocking": true,
+        "isTransparent": false
+      },
+      {
+        "id": "floor",
+        "foreground": "terrain_colors#dirt",
+        "background": "default_colors#black",
+        "description": "Dirt floor that can be walked on",
+        "symbol": ".",
+        "isBlocking": false,
+        "isTransparent": true
+      },
+      {
+        "id": "player",
+        "foreground": "creature_colors#player",
+        "background": "default_colors#black",
+        "description": "Player character",
+        "symbol": "@",
+        "isBlocking": false,
+        "isTransparent": true
+      }
+    ]
+  }
+]

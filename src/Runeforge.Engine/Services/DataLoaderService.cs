@@ -84,7 +84,7 @@ public class DataLoaderService : IDataLoaderService
 
                 if (_dataLoaders.TryGetValue(entityType, out var dataLoader))
                 {
-                    _logger.Debug("Using existing data loader for {EntityType}", entityType.Name);
+                    _logger.Verbose("Using existing data loader for {EntityType}", entityType.Name);
                     await dataLoader.LoadDataAsync(entity, CancellationToken.None);
                 }
                 else
