@@ -156,8 +156,18 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             potion.Position = Player.Position + Direction.Up;
 
             mapService.AddEntityInCurrentMap(potion);
+        }
 
+        if (keyboard.IsKeyPressed(Keys.F3))
+        {
+            var npcService = RuneforgeInstances.GetService<INpcService>();
+            var mapService = RuneforgeInstances.GetService<IMapService>();
 
+            var npc = npcService.CreateNpcGameObject("a_orion");
+
+            npc.Position = Player.Position + Direction.Down;
+
+            mapService.AddEntityInCurrentMap(npc);
         }
 
         if (keyboard.IsKeyPressed(Keys.Space))

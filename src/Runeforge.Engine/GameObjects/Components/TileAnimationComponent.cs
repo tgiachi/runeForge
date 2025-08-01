@@ -28,9 +28,6 @@ public class TileAnimationComponent : RogueLikeComponentBase<RogueLikeEntity>
 
     private int _currentTime = 0;
 
-    private bool _state = false;
-
-
     public TileAnimationComponent(AnimationData animationData) : base(true, false, false, false)
     {
         _frames = animationData.Frames;

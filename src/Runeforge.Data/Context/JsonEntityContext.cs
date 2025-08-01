@@ -4,6 +4,7 @@ using Runeforge.Data.Entities.Common;
 using Runeforge.Data.Entities.Items;
 using Runeforge.Data.Entities.Keysets;
 using Runeforge.Data.Entities.Names;
+using Runeforge.Data.Entities.Npcs;
 using Runeforge.Data.Entities.Tileset;
 
 namespace Runeforge.Data.Context;
@@ -22,6 +23,9 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonLightSourceData))]
 [JsonSerializable(typeof(JsonItemStatData))]
 [JsonSerializable(typeof(JsonTileAnimationColor))]
+[JsonSerializable(typeof(JsonNpcData))]
+[JsonSerializable(typeof(JsonNpcStat))]
+[JsonSerializable(typeof(JsonNpcInventory))]
 public partial class JsonEntityContext : JsonSerializerContext
 {
 }

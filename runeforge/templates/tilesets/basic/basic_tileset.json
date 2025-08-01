@@ -46,7 +46,7 @@
     "animations": [
       {
         "id": "a_potion",
-        "frames": ["p", "P"],
+        "frames": ["p", "P", "a", "q", "Q"],
         "duration": 500,
         "loop": true
       }

@@ -79,7 +79,9 @@ public partial class ItemService : IItemService
     public ItemGameObject CreateItemGameObject(string searchCriteria)
     {
         if (string.IsNullOrWhiteSpace(searchCriteria))
+        {
             return null;
+        }
 
         JsonItemData? itemData = null;
 
