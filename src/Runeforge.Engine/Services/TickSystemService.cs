@@ -90,7 +90,7 @@ public class TickSystemService : ITickSystemService
             var continuingAction = _continuingActions.Dequeue();
             _actionQueue.Enqueue(continuingAction);
 
-            _logger.Debug(
+            _logger.Verbose(
                 "Requeued continuing action: {ActionType} (ID: {ActionId})",
                 continuingAction.GetType().Name,
                 continuingAction.Id
@@ -106,7 +106,7 @@ public class TickSystemService : ITickSystemService
             {
                 _continuingActions.Enqueue(result.Action);
 
-                _logger.Debug("Action {ActionId} will continue in next tick", result.ActionId);
+                _logger.Verbose("Action {ActionId} will continue in next tick", result.ActionId);
             }
 
             if (result.Result == ActionResult.Failed)

@@ -34,7 +34,7 @@ public class ActionQueue
         ArgumentNullException.ThrowIfNull(action);
 
         _actions.Add(action);
-        _logger.Debug(
+        _logger.Verbose(
             "Enqueued action: {ActionType} (ID: {ActionId}, Priority: {Priority}, Speed: {Speed})",
             action.GetType().Name,
             action.Id,
@@ -66,7 +66,7 @@ public class ActionQueue
         var results = new List<ActionExecutionSummary>();
         var sortedActions = GetSortedActions();
 
-        _logger.Debug("Executing {ActionCount} actions", sortedActions.Count);
+        _logger.Verbose("Executing {ActionCount} actions", sortedActions.Count);
 
         foreach (var action in sortedActions)
         {
@@ -83,7 +83,7 @@ public class ActionQueue
         // Clear queue after execution
         Clear();
 
-        _logger.Debug("Completed executing {ActionCount} actions", results.Count);
+        _logger.Verbose("Completed executing {ActionCount} actions", results.Count);
         return results;
     }
 
@@ -138,7 +138,7 @@ public class ActionQueue
         var removed = _actions.Remove(action);
         if (removed)
         {
-            _logger.Debug(
+            _logger.Verbose(
                 "Removed action: {ActionType} (ID: {ActionId})",
                 action.GetType().Name,
                 action.Id
@@ -176,7 +176,7 @@ public class ActionQueue
             if (_actions.Remove(action))
             {
                 removedCount++;
-                _logger.Debug(
+                _logger.Verbose(
                     "Removed action by predicate: {ActionType} (ID: {ActionId})",
                     action.GetType().Name,
                     action.Id
@@ -197,7 +197,7 @@ public class ActionQueue
 
         if (count > 0)
         {
-            _logger.Debug("Cleared {ActionCount} actions from queue", count);
+            _logger.Verbose("Cleared {ActionCount} actions from queue", count);
         }
     }
 
@@ -251,7 +251,7 @@ public class ActionQueue
 
         try
         {
-            _logger.Debug(
+            _logger.Verbose(
                 "Executing action: {ActionType} (ID: {ActionId})",
                 action.GetType().Name,
                 action.Id
@@ -260,7 +260,7 @@ public class ActionQueue
             // Check if action can be executed
             if (!action.CanBeExecuted())
             {
-                _logger.Debug("Action {ActionId} cannot be executed, skipping", action.Id);
+                _logger.Verbose("Action {ActionId} cannot be executed, skipping", action.Id);
                 return new ActionExecutionSummary(
                     action,
                     ActionResult.Blocked,
@@ -275,7 +275,7 @@ public class ActionQueue
             var endTimestamp = Stopwatch.GetTimestamp();
             var duration = Stopwatch.GetElapsedTime(startTimestamp, endTimestamp);
 
-            _logger.Debug(
+            _logger.Verbose(
                 "Action {ActionId} executed with result: {Result} (Duration: {Duration}ms)",
                 action.Id,
                 result,
