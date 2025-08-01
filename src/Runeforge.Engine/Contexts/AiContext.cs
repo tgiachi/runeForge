@@ -1,3 +1,4 @@
+using Runeforge.Core.Extensions.Rnd;
 using Runeforge.Engine.GameObjects;
 using SadRogue.Primitives;
 
@@ -20,6 +21,38 @@ public class AiContext
     public void Say(string text)
     {
 
+    }
+
+    public void MoveUp()
+    {
+        Self.MoveTo(Direction.Up);
+    }
+
+    public void MoveDown()
+    {
+        Self.MoveTo(Direction.Down);
+    }
+
+    public void MoveLeft()
+    {
+        Self.MoveTo(Direction.Left);
+    }
+
+    public void MoveRight()
+    {
+        Self.MoveTo(Direction.Right);
+    }
+
+    public void MoveRandomly()
+    {
+        var direction = new Point(
+            Random.Shared.Next(0, 2) == 0 ? -1 : 1,
+            Random.Shared.Next(0, 2) == 0 ? -1 : 1
+        );
+
+        var newPosition = Self.Position + direction;
+
+        Self.MoveTo(newPosition);
     }
 
 }

@@ -11,7 +11,8 @@
       "symbol": "C",
       "foreground": "default_colors#white",
       "background": "default_colors#black"
-    }
+    },
+    "brainId": "orion"
   },
   {
     "type": "npcs",

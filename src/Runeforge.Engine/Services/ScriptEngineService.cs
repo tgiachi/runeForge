@@ -270,6 +270,7 @@ public class ScriptEngineService : IScriptEngineService
     {
         UserData.RegisterType<Action>();
 
+        UserData.RegisterType<AiContext>();
         UserData.RegisterType<Action<AiContext>>();
         foreach (var scriptDef in _scriptDefObjects)
         {

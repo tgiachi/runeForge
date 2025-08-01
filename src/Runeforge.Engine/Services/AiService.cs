@@ -12,16 +12,51 @@ public class AiService : IAiService
 
     private readonly ILogger _logger = Log.ForContext<AiService>();
 
-
     private readonly IMapService _mapService;
     private readonly IPlayerService _playerService;
+    private readonly ITickSystemService _tickSystemService;
 
-    public AiService(IMapService mapService, IPlayerService playerService)
+    private readonly List<AiComponent> _aiComponents = new();
+
+
+    public AiService(IMapService mapService, IPlayerService playerService, ITickSystemService tickSystemService)
     {
         _mapService = mapService;
         _playerService = playerService;
+        _tickSystemService = tickSystemService;
 
         _mapService.NpcAdded += OnNpcAdded;
+
+        _tickSystemService.Tick += OnTick;
+    }
+
+    private void OnTick(int tickCount)
+    {
+        foreach (var aiComponent in _aiComponents)
+        {
+            if (aiComponent.AiContext == null)
+            {
+                _logger.Warning("AiContext is null for npc {npc}", aiComponent.AiContext.Self.Name);
+                continue;
+            }
+
+            if (_brains.TryGetValue(aiComponent.BrainName, out var brainAction))
+            {
+                try
+                {
+                    brainAction(aiComponent.AiContext);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(
+                        ex,
+                        "Error executing brain {brain} for npc {npc}",
+                        aiComponent.BrainName,
+                        aiComponent.AiContext.Self.Name
+                    );
+                }
+            }
+        }
     }
 
     private void OnNpcAdded(NpcGameObject entity)
@@ -35,6 +70,8 @@ public class AiService : IAiService
             _logger.Information("Bring to life npc {npc} with brain {brain}", entity.Name, aiComponent.BrainName);
 
             aiComponent.AiContext = AiContext.Create(entity, _playerService.Player);
+
+            _aiComponents.Add(aiComponent);
         }
     }
 

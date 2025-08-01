@@ -135,9 +135,14 @@ public partial class NpcService : INpcService
         var npcGameObject = new NpcGameObject(Point.Zero, tile.ColoredGlyph);
         npcGameObject.Name = npcData.Name ?? _nameGeneratorService.GenerateName(npcData.Gender);
 
-        if (!string.IsNullOrEmpty(npcData.BrianAi))
+        if (!string.IsNullOrEmpty(npcData.BrainId))
         {
-            npcGameObject.AllComponents.Add(new AiComponent(npcData.BrianAi));
+            npcGameObject.AllComponents.Add(new AiComponent(npcData.BrainId));
+            _logger.Information("Created npc {NpcName} with brain AI {BrainId}", npcGameObject.Name, npcData.BrainId);
+        }
+        else
+        {
+            _logger.Warning("Npc {NpcName} does not have a brain AI defined", npcGameObject.Name);
         }
 
         return npcGameObject;

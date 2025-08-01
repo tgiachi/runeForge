@@ -37,5 +37,13 @@ public class NpcGameObject : RogueLikeEntity
         }
     }
 
+    public void MoveTo(Point newPosition)
+    {
+        if (this.CanMove(newPosition))
+        {
+            Position = newPosition;
+        }
+    }
+
     public override string ToString() => $"ID: {ID} Npc: {Name}";
 }

@@ -126,27 +126,38 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
     public override bool ProcessKeyboard(Keyboard keyboard)
     {
+        bool processTick = false;
+
         var playerService = RuneforgeInstances.GetService<IPlayerService>();
         var Player = playerService.Player;
         if (keyboard.IsKeyPressed(Keys.W))
         {
             Player.MoveTo(Direction.Up);
+            processTick = true;
         }
 
         if (keyboard.IsKeyPressed(Keys.S))
         {
             Player.MoveTo(Direction.Down);
+
+            processTick = true;
         }
 
         if (keyboard.IsKeyPressed(Keys.A))
         {
             Player.MoveTo(Direction.Left);
+
+            processTick = true;
         }
+
 
         if (keyboard.IsKeyPressed(Keys.D))
         {
             Player.MoveTo(Direction.Right);
+
+            processTick = true;
         }
+
 
         if (keyboard.IsKeyPressed(Keys.F2))
         {
@@ -178,6 +189,12 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         }
 
         Player.UpdateFOV();
+
+        if (processTick)
+        {
+            var tickSystemService = RuneforgeInstances.GetService<ITickSystemService>();
+            tickSystemService.ExecuteTick();
+        }
 
         return base.ProcessKeyboard(keyboard);
     }

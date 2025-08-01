@@ -283,6 +283,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
             .RegisterService(typeof(IDataLoaderService), typeof(DataLoaderService))
             .RegisterService(typeof(IActionService), typeof(ActionService))
+            .RegisterService(typeof(ITickSystemService), typeof(TickSystemService))
 
             //
             .RegisterService(typeof(INameGeneratorService), typeof(NameGeneratorService))
@@ -294,7 +295,6 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(INpcService), typeof(NpcService))
             .RegisterService(typeof(IAiService), typeof(AiService))
             .RegisterService(typeof(IPlayerService), typeof(PlayerService))
-
             ;
 
         // Register Configs
