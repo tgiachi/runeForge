@@ -1,0 +1,17 @@
+[
+  {
+    "type": "items",
+    "id": "i_simple_potion",
+    "category": "potions",
+    "subCategory": "simple",
+    "tile": {
+      "symbol": "p",
+      "foreground": "default_colors#red",
+      "background": "default_colors#black"
+    },
+    "stats": {
+      "weight": 0.5,
+      "value": 10
+    }
+  }
+]

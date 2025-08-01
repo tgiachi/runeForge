@@ -69,6 +69,22 @@ public class TileSetService : ITileSetService
         return new TileColoredGlyph(tileDataObj);
     }
 
+    public TileColoredGlyph CreateGlyph(JsonHasTile tileData)
+    {
+        if (tileData.Symbol.Length > 1)
+        {
+            return CreateGlyph(tileData.Symbol);
+        }
+
+        var coloredGlyph = new ColoredGlyph(
+            _colorService.GetColor(tileData.Foreground),
+            _colorService.GetColor(tileData.Background),
+            SymbolParser.ParseSymbol<int>(tileData.Symbol)
+        );
+
+        return new TileColoredGlyph(coloredGlyph, true, false);
+    }
+
     public void SetDefaultTileSet(string tileSetId)
     {
         _defaultTileSet = tileSetId;

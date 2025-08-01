@@ -11,4 +11,8 @@ public class JsonItemContainerData
     public int Capacity { get; set; }
 
 
+    public override string ToString()
+    {
+        return "Items: " + string.Join(", ", Items.Select(kvp => $"{kvp.Key}: {kvp.Value}")) + ", Capacity: " + Capacity;
+    }
 }

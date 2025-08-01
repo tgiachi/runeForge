@@ -146,6 +146,20 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             Player.MoveTo(Direction.Right);
         }
 
+        if (keyboard.IsKeyPressed(Keys.F2))
+        {
+            var itemService = RuneforgeInstances.GetService<IItemService>();
+            var mapService = RuneforgeInstances.GetService<IMapService>();
+
+            var potion = itemService.CreateItemGameObject("i_simple_potion");
+
+            potion.Position = Player.Position + Direction.Up;
+
+            mapService.AddEntityInCurrentMap(potion);
+
+
+        }
+
         if (keyboard.IsKeyPressed(Keys.Space))
         {
             Player.ShowAllMap();

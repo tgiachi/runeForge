@@ -9,6 +9,8 @@ public interface ITileSetService : IRuneforgeService
     void AddTile(string tileSet, JsonTileData tileData);
     TileColoredGlyph CreateGlyph(string nameOrTag);
 
+    TileColoredGlyph CreateGlyph(JsonHasTile tileData);
+
     void SetDefaultTileSet(string tileSetId);
 
     string GetDefaultTileSet();
