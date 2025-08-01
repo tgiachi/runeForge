@@ -183,6 +183,30 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             mapService.AddEntityInCurrentMap(npc);
         }
 
+        if (keyboard.IsKeyPressed(Keys.F4))
+        {
+            var npcService = RuneforgeInstances.GetService<INpcService>();
+            var mapService = RuneforgeInstances.GetService<IMapService>();
+
+            foreach (var i in Enumerable.Range(1, 50))
+            {
+                var randomPosition = new Point(
+                    Random.Shared.Next(0, mapService.CurrentMap.Map.Width),
+                    Random.Shared.Next(0, mapService.CurrentMap.Map.Height)
+                );
+
+
+                var npc = npcService.CreateNpcGameObject("a_orion");
+
+                if (mapService.CurrentMap.Map.CanAddEntityAt(npc, randomPosition))
+                {
+                    npc.Position = randomPosition;
+
+                    mapService.AddEntityInCurrentMap(npc);
+                }
+            }
+        }
+
         if (keyboard.IsKeyPressed(Keys.Space))
         {
             Player.ShowAllMap();

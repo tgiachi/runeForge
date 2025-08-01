@@ -7,8 +7,6 @@ function M.register()
         --
 
         context.moveRandomly()
-
-        logger.info("Orion brain activated with context: " .. tostring(context))
     end)
 end
 

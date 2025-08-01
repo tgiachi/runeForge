@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Interfaces.Ticks;
 using Runeforge.Engine.Ticks;
@@ -45,6 +46,7 @@ public class TickSystemService : ITickSystemService
 
     public void ExecuteTick()
     {
+        var startTime = Stopwatch.GetTimestamp();
         TickCount++;
         TickStarted?.Invoke(TickCount);
 
@@ -56,6 +58,15 @@ public class TickSystemService : ITickSystemService
 
         Tick?.Invoke(TickCount);
         TickEnded?.Invoke(TickCount);
+
+        var elapsedMs = Stopwatch.GetElapsedTime(startTime);
+
+        _logger.Debug(
+            "Tick completed #{TickCount} with {ActionCount} actions elapsed in {ElapsedMs} ms",
+            TickCount,
+            results.Count,
+            elapsedMs.TotalMilliseconds
+        );
     }
 
     /// <summary>
