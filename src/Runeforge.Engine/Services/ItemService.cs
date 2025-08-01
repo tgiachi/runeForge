@@ -3,6 +3,7 @@ using Runeforge.Core.Extensions.Rnd;
 using Runeforge.Core.Utils;
 using Runeforge.Data.Entities.Items;
 using Runeforge.Engine.GameObjects;
+using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Services;
 using Serilog;
 
@@ -129,7 +130,13 @@ public partial class ItemService : IItemService
     {
         var tile = _tileSetService.CreateGlyph(itemData.Tile);
 
+
         var itemGameObject = new ItemGameObject(tile.ColoredGlyph);
+
+        if (tile.Animation != null)
+        {
+            itemGameObject.AllComponents.Add(new TileAnimationComponent(tile.Animation));
+        }
 
         return itemGameObject;
     }

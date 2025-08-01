@@ -7,6 +7,9 @@ namespace Runeforge.Engine.Interfaces.Services;
 public interface ITileSetService : IRuneforgeService
 {
     void AddTile(string tileSet, JsonTileData tileData);
+
+    void AddAnimation(string tileSet, JsonTileAnimationData animationData);
+
     TileColoredGlyph CreateGlyph(string nameOrTag);
 
     TileColoredGlyph CreateGlyph(JsonHasTile tileData);

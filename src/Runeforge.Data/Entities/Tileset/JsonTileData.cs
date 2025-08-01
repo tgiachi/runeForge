@@ -10,6 +10,5 @@ public class JsonTileData
     public bool IsBlocking { get; set; }
     public bool IsTransparent { get; set; }
     public List<string> Tags { get; set; } = [];
-
     public string? AnimationId { get; set; }
 }

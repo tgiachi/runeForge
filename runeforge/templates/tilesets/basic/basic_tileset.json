@@ -4,10 +4,7 @@
     "id": "basic_tileset",
     "name": "Basic Tileset",
     "description": "Basic tileset with wall, floor and player tiles",
-    "tags": [
-      "basic",
-      "dungeon"
-    ],
+    "tags": ["basic", "dungeon"],
     "tiles": [
       {
         "id": "wall",
@@ -35,6 +32,23 @@
         "symbol": "@",
         "isBlocking": false,
         "isTransparent": true
+      },
+      {
+        "id": "potion",
+        "foreground": "default_colors#red",
+        "background": "default_colors#black",
+        "symbol": "p",
+        "isBlocking": false,
+        "isTransparent": false,
+        "animationId": "a_potion"
+      }
+    ],
+    "animations": [
+      {
+        "id": "a_potion",
+        "frames": ["p", "P"],
+        "duration": 500,
+        "loop": true
       }
     ]
   }

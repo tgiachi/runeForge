@@ -5,7 +5,7 @@
     "category": "potions",
     "subCategory": "simple",
     "tile": {
-      "symbol": "p",
+      "symbol": "potion",
       "foreground": "default_colors#red",
       "background": "default_colors#black"
     },

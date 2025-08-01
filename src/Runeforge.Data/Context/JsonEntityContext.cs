@@ -21,6 +21,7 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonItemContainerData))]
 [JsonSerializable(typeof(JsonLightSourceData))]
 [JsonSerializable(typeof(JsonItemStatData))]
+[JsonSerializable(typeof(JsonTileAnimationColor))]
 public partial class JsonEntityContext : JsonSerializerContext
 {
 }
