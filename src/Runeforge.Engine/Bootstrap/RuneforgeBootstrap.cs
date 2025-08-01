@@ -132,6 +132,7 @@ public class RuneforgeBootstrap
             .AddScriptModule(typeof(ActionsModule))
             .AddScriptModule(typeof(RandomModule))
             .AddScriptModule(typeof(NamesModule))
+            .AddScriptModule(typeof(AiModule))
             ;
     }
 
@@ -292,6 +293,8 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(ITileSetService), typeof(TileSetService))
             .RegisterService(typeof(IItemService), typeof(ItemService))
             .RegisterService(typeof(INpcService), typeof(NpcService))
+            .RegisterService(typeof(IAiService), typeof(AiService))
+
             ;
 
         // Register Configs

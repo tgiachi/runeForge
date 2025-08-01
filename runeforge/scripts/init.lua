@@ -1,3 +1,7 @@
+local brains = require("ai")
+
+brains.register()
+
 function bootstrap()
     logger.info("Test 123 ")
 
