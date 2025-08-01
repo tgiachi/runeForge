@@ -3,6 +3,7 @@ using Runeforge.Core.Extensions.Rnd;
 using Runeforge.Core.Utils;
 using Runeforge.Data.Entities.Npcs;
 using Runeforge.Engine.GameObjects;
+using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Services;
 using SadRogue.Primitives;
 using Serilog;
@@ -17,16 +18,19 @@ public partial class NpcService : INpcService
     private readonly ILogger _logger = Log.ForContext<NpcService>();
 
     private readonly IItemService _itemService;
+    private readonly INameGeneratorService _nameGeneratorService;
+
     private readonly ITileSetService _tileSetService;
 
     private readonly Dictionary<string, JsonNpcData> _npcIdDataMap = new();
     private readonly Dictionary<string, List<JsonNpcData>> _npcCategoryMap = new();
     private readonly Dictionary<string, List<JsonNpcData>> _npcTagsMap = new();
 
-    public NpcService(IItemService itemService, ITileSetService tileSetService)
+    public NpcService(IItemService itemService, ITileSetService tileSetService, INameGeneratorService nameGeneratorService)
     {
         _itemService = itemService;
         _tileSetService = tileSetService;
+        _nameGeneratorService = nameGeneratorService;
     }
 
     public void AddNpc(JsonNpcData npc)
@@ -129,6 +133,12 @@ public partial class NpcService : INpcService
     {
         var tile = _tileSetService.CreateGlyph(npcData.Tile);
         var npcGameObject = new NpcGameObject(Point.Zero, tile.ColoredGlyph);
+        npcGameObject.Name = npcData.Name ?? _nameGeneratorService.GenerateName(npcData.Gender);
+
+        if (!string.IsNullOrEmpty(npcData.BrianAi))
+        {
+            npcGameObject.AllComponents.Add(new AiComponent(npcData.BrianAi));
+        }
 
         return npcGameObject;
     }

@@ -24,7 +24,6 @@ using Runeforge.Engine.Json;
 using Runeforge.Engine.Logger.Sink;
 using Runeforge.Engine.Modules;
 using Runeforge.Engine.Services;
-using SadConsole;
 using Serilog;
 using Console = System.Console;
 
@@ -294,6 +293,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IItemService), typeof(ItemService))
             .RegisterService(typeof(INpcService), typeof(NpcService))
             .RegisterService(typeof(IAiService), typeof(AiService))
+            .RegisterService(typeof(IPlayerService), typeof(PlayerService))
 
             ;
 

@@ -9,7 +9,6 @@ using Runeforge.Ui.Screens.Base;
 using Runeforge.Ui.Utils;
 using SadConsole;
 using SadConsole.Components;
-using SadConsole.Effects;
 using SadConsole.Input;
 using SadRogue.Primitives;
 using SadRogue.Primitives.GridViews;
@@ -21,7 +20,6 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 {
     public readonly SurfaceComponentFollowTarget ViewLock;
 
-    public PlayerGameObject Player { get; set; }
 
     public MapGameScreen(int width, int height) : base(width, height)
     {
@@ -61,17 +59,19 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
 
+        var playerService = RuneforgeInstances.GetService<IPlayerService>();
+
         var playerColoredGlyph = tileSetService.CreateGlyph("player");
 
-        Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.ColoredGlyph);
+        playerService.Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.ColoredGlyph);
 
-        Player.GoRogueComponents.Add(new PlayerFOVController());
+        playerService.Player.GoRogueComponents.Add(new PlayerFOVController());
 
-        currentMap.AddEntity(Player);
+        currentMap.AddEntity(playerService.Player);
 
-        ViewLock = new SurfaceComponentFollowTarget() { Target = Player };
+        ViewLock = new SurfaceComponentFollowTarget() { Target = playerService.Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
-        Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
+        playerService.Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
 
         // var fov = new GoRogue.FOV.RecursiveShadowcastingFOV(currentMap.TransparencyView);
         //
@@ -126,6 +126,8 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
     public override bool ProcessKeyboard(Keyboard keyboard)
     {
+        var playerService = RuneforgeInstances.GetService<IPlayerService>();
+        var Player = playerService.Player;
         if (keyboard.IsKeyPressed(Keys.W))
         {
             Player.MoveTo(Direction.Up);

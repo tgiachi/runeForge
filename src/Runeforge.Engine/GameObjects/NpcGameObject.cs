@@ -12,6 +12,7 @@ public class NpcGameObject : RogueLikeEntity
 
     public bool IsDead { get; set; }
 
+
     public event EventHandler<object> Die;
 
     public void OnDie()

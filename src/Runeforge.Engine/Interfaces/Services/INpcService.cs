@@ -6,6 +6,8 @@ namespace Runeforge.Engine.Interfaces.Services;
 
 public interface INpcService : IRuneforgeService
 {
+
+
     void AddNpc(JsonNpcData npc);
 
     NpcGameObject CreateNpcGameObject(string idCategoryTag);
