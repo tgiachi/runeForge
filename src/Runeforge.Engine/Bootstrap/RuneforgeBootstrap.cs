@@ -9,6 +9,7 @@ using Runeforge.Data.Entities.Items;
 using Runeforge.Data.Entities.Names;
 using Runeforge.Data.Entities.Npcs;
 using Runeforge.Data.Entities.Tileset;
+using Runeforge.Engine.Actions;
 using Runeforge.Engine.Data.Configs;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Events.Engine;
@@ -175,6 +176,11 @@ public class RuneforgeBootstrap
     public async Task ReadyAsync()
     {
         var eventBusService = _container.Resolve<IEventBusService>();
+
+        var actionService = _container.Resolve<IActionService>();
+        var tickSystemService = _container.Resolve<ITickSystemService>();
+
+        DefaultActions.RegisterDefaultActions(actionService, tickSystemService);
 
         await eventBusService.PublishAsync(new EngineReadyEvent());
     }

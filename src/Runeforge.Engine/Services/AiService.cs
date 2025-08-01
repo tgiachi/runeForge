@@ -2,6 +2,7 @@ using Runeforge.Engine.Contexts;
 using Runeforge.Engine.GameObjects;
 using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Services;
+using Runeforge.Engine.TickActions;
 using Serilog;
 
 namespace Runeforge.Engine.Services;
@@ -27,37 +28,37 @@ public class AiService : IAiService
 
         _mapService.NpcAdded += OnNpcAdded;
 
-        _tickSystemService.Tick += OnTick;
+        //_tickSystemService.TickEnded += OnTick;
     }
 
-    private void OnTick(int tickCount)
-    {
-        foreach (var aiComponent in _aiComponents)
-        {
-            if (aiComponent.AiContext == null)
-            {
-                _logger.Warning("AiContext is null for npc {npc}", aiComponent.AiContext.Self.Name);
-                continue;
-            }
-
-            if (_brains.TryGetValue(aiComponent.BrainName, out var brainAction))
-            {
-                try
-                {
-                    brainAction(aiComponent.AiContext);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error(
-                        ex,
-                        "Error executing brain {brain} for npc {npc}",
-                        aiComponent.BrainName,
-                        aiComponent.AiContext.Self.Name
-                    );
-                }
-            }
-        }
-    }
+    // private void OnTick(int tickCount)
+    // {
+    //     foreach (var aiComponent in _aiComponents)
+    //     {
+    //         if (aiComponent.AiContext == null)
+    //         {
+    //             _logger.Warning("AiContext is null for npc {npc}", aiComponent.AiContext.Self.Name);
+    //             continue;
+    //         }
+    //
+    //         if (_brains.TryGetValue(aiComponent.BrainName, out var brainAction))
+    //         {
+    //             try
+    //             {
+    //                 brainAction(aiComponent.AiContext);
+    //             }
+    //             catch (Exception ex)
+    //             {
+    //                 _logger.Error(
+    //                     ex,
+    //                     "Error executing brain {brain} for npc {npc}",
+    //                     aiComponent.BrainName,
+    //                     aiComponent.AiContext.Self.Name
+    //                 );
+    //             }
+    //         }
+    //     }
+    // }
 
     private void OnNpcAdded(NpcGameObject entity)
     {
@@ -72,6 +73,10 @@ public class AiService : IAiService
             aiComponent.AiContext = AiContext.Create(entity, _playerService.Player);
 
             _aiComponents.Add(aiComponent);
+
+           var action = _brains[aiComponent.BrainName];
+
+           _tickSystemService.EnqueueAction(new AiProcessAction(aiComponent, action));
         }
     }
 

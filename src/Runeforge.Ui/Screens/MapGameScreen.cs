@@ -72,33 +72,6 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         ViewLock = new SurfaceComponentFollowTarget() { Target = playerService.Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
         playerService.Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
-
-        // var fov = new GoRogue.FOV.RecursiveShadowcastingFOV(currentMap.TransparencyView);
-        //
-        // var lightPos = new Point(10, 20);
-        //
-        // fov.Calculate(lightPos, 10);
-
-        // foreach (var pos in currentMap.Positions())
-        // {
-        //     var bright = fov.DoubleResultView[pos];
-        //
-        //     var visible = fov.BooleanResultView[pos];
-        //
-        //     var cell = currentMap.TerrainView[pos.X, pos.Y];
-        //     if (visible)
-        //     {
-        //         var fade = (float)Math.Max(0.3, bright);
-        //         cell.Foreground = Color.White * fade;
-        //     }
-        //     else
-        //     {
-        //         cell.Foreground = Color.DarkGray;
-        //     }
-        // }
-
-        // textConsole.PrintFadingText("Dio cano", new Point(Width / 2, Height / 2), TimeSpan.FromSeconds(1), new Blink());
-
         IsFocused = true;
         UseKeyboard = true;
     }
@@ -126,38 +99,36 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
     public override bool ProcessKeyboard(Keyboard keyboard)
     {
-        bool processTick = false;
 
+        var actionService = RuneforgeInstances.GetService<IActionService>();
         var playerService = RuneforgeInstances.GetService<IPlayerService>();
         var Player = playerService.Player;
         if (keyboard.IsKeyPressed(Keys.W))
         {
-            Player.MoveTo(Direction.Up);
-            processTick = true;
+            actionService.ExecuteAction("move_up", Player);
         }
 
         if (keyboard.IsKeyPressed(Keys.S))
         {
-            Player.MoveTo(Direction.Down);
+            actionService.ExecuteAction("move_down", Player);
 
-            processTick = true;
         }
 
         if (keyboard.IsKeyPressed(Keys.A))
         {
-            Player.MoveTo(Direction.Left);
-
-            processTick = true;
+            actionService.ExecuteAction("move_left", Player);
         }
-
 
         if (keyboard.IsKeyPressed(Keys.D))
         {
-            Player.MoveTo(Direction.Right);
-
-            processTick = true;
+            actionService.ExecuteAction("move_right", Player);
         }
 
+
+        if (keyboard.IsKeyPressed(Keys.Space))
+        {
+            actionService.ExecuteAction("execute_tick");
+        }
 
         if (keyboard.IsKeyPressed(Keys.F2))
         {
@@ -188,13 +159,12 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             var npcService = RuneforgeInstances.GetService<INpcService>();
             var mapService = RuneforgeInstances.GetService<IMapService>();
 
-            foreach (var i in Enumerable.Range(1, 50))
+            foreach (var i in Enumerable.Range(1, 150))
             {
                 var randomPosition = new Point(
                     Random.Shared.Next(0, mapService.CurrentMap.Map.Width),
                     Random.Shared.Next(0, mapService.CurrentMap.Map.Height)
                 );
-
 
                 var npc = npcService.CreateNpcGameObject("a_orion");
 
@@ -207,18 +177,7 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             }
         }
 
-        if (keyboard.IsKeyPressed(Keys.Space))
-        {
-            Player.ShowAllMap();
-        }
-
         Player.UpdateFOV();
-
-        if (processTick)
-        {
-            var tickSystemService = RuneforgeInstances.GetService<ITickSystemService>();
-            tickSystemService.ExecuteTick();
-        }
 
         return base.ProcessKeyboard(keyboard);
     }
