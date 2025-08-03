@@ -1,4 +1,4 @@
-using Runeforge.Engine.Types.Map;
+using Runeforge.Data.Types.Map;
 using SadConsole;
 using SadRogue.Integration;
 using SadRogue.Primitives;

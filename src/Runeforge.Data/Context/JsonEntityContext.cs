@@ -3,6 +3,7 @@ using Runeforge.Data.Entities.Base;
 using Runeforge.Data.Entities.Common;
 using Runeforge.Data.Entities.Items;
 using Runeforge.Data.Entities.Keysets;
+using Runeforge.Data.Entities.MapPrefab;
 using Runeforge.Data.Entities.Names;
 using Runeforge.Data.Entities.Npcs;
 using Runeforge.Data.Entities.Tileset;
@@ -26,6 +27,11 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonNpcData))]
 [JsonSerializable(typeof(JsonNpcStat))]
 [JsonSerializable(typeof(JsonNpcInventory))]
+[JsonSerializable(typeof(JsonMapPrefabData))]
+[JsonSerializable(typeof(JsonMapPrefabFloorData))]
+[JsonSerializable(typeof(JsonMapPrefabChance))]
+[JsonSerializable(typeof(JsonMapPrefabChance[]))]
+[JsonSerializable(typeof(JsonMapPrefabStair))]
 public partial class JsonEntityContext : JsonSerializerContext
 {
 }
