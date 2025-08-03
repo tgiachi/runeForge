@@ -1,7 +1,10 @@
 using System.Text.Json.Serialization;
 using Runeforge.Data.Entities.Common;
+using Runeforge.Data.Entities.Items;
 using Runeforge.Data.Entities.Keysets;
+using Runeforge.Data.Entities.MapPrefab;
 using Runeforge.Data.Entities.Names;
+using Runeforge.Data.Entities.Npcs;
 using Runeforge.Data.Entities.Tileset;
 using Runeforge.Data.Interfaces;
 
@@ -12,6 +15,9 @@ namespace Runeforge.Data.Entities.Base;
 [JsonDerivedType(typeof(JsonColorData), "colors")]
 [JsonDerivedType(typeof(JsonKeybindData), "keybinds")]
 [JsonDerivedType(typeof(JsonNameData), "names")]
+[JsonDerivedType(typeof(JsonItemData), "items")]
+[JsonDerivedType(typeof(JsonNpcData), "npcs")]
+[JsonDerivedType(typeof(JsonMapPrefabData), "prefabs")]
 public class BaseJsonEntityData : IJsonEntityData
 {
     public string? Description { get; set; }

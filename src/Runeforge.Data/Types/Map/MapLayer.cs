@@ -1,4 +1,4 @@
-namespace Runeforge.Engine.Types.Map;
+namespace Runeforge.Data.Types.Map;
 
 public enum MapLayer : byte
 {

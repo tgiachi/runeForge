@@ -1,13 +1,21 @@
+using GoRogue.GameFramework;
 using GoRogue.MapGeneration;
 using Runeforge.Engine.Data.Maps;
+using Runeforge.Engine.GameObjects;
 using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Services;
-using SadRogue.Integration.Maps;
+using SadRogue.Integration;
 
 namespace Runeforge.Engine.Services;
 
 public class MapService : IMapService
 {
+    public event IMapService.MapEntityAddedHandler<RogueLikeEntity>? EntityAdded;
+    public event IMapService.MapEntityAddedHandler<RogueLikeEntity>? EntityRemoved;
+    public event IMapService.MapEntityAddedHandler<NpcGameObject>? NpcAdded;
+    public event IMapService.MapEntityAddedHandler<NpcGameObject>? NpcRemoved;
+    public event IMapService.MapEntityAddedHandler<ItemGameObject>? ItemAdded;
+    public event IMapService.MapEntityAddedHandler<ItemGameObject>? ItemRemoved;
     public event IMapService.MapGeneratedHandler? MapGenerated;
     public event IMapService.MapStartGeneratedHandler? MapStartGenerated;
     public MapInfoObject CurrentMap { get; set; }
@@ -45,6 +53,28 @@ public class MapService : IMapService
     public MapInfoObject? GetMapInfo(Guid mapId)
     {
         return _maps.GetValueOrDefault(mapId);
+    }
+
+    public void AddEntityInCurrentMap<TEntity>(TEntity entity) where TEntity : RogueLikeEntity
+    {
+        if (CurrentMap == null)
+        {
+            throw new InvalidOperationException("Current map is not set.");
+        }
+
+        CurrentMap.Map.AddEntity(entity);
+
+        if (entity is NpcGameObject npc)
+        {
+            NpcAdded?.Invoke(npc);
+        }
+
+        if (entity is ItemGameObject item)
+        {
+            ItemAdded?.Invoke(item);
+        }
+
+        EntityAdded?.Invoke(entity);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)

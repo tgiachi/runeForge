@@ -9,7 +9,6 @@ using Runeforge.Ui.Screens.Base;
 using Runeforge.Ui.Utils;
 using SadConsole;
 using SadConsole.Components;
-using SadConsole.Effects;
 using SadConsole.Input;
 using SadRogue.Primitives;
 using SadRogue.Primitives.GridViews;
@@ -21,7 +20,6 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 {
     public readonly SurfaceComponentFollowTarget ViewLock;
 
-    public PlayerGameObject Player { get; set; }
 
     public MapGameScreen(int width, int height) : base(width, height)
     {
@@ -40,8 +38,8 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             new Point(width, height),
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight,
-            RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
-            RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight
+            RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphWidth,
+            RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphHeight
         );
 
         var mapId = mapService.GenerateMapAsync(300, 300, "Test", "Test Map").GetAwaiter().GetResult();
@@ -52,7 +50,7 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         currentMap.DefaultRenderer = currentMap.CreateRenderer(
             viewport,
-            RuneforgeGuiInstance.Instance.DefaultUiFont
+            RuneforgeGuiInstance.Instance.DefaultMapFont
         );
 
         Children.Add(currentMap);
@@ -61,44 +59,19 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
 
+        var playerService = RuneforgeInstances.GetService<IPlayerService>();
+
         var playerColoredGlyph = tileSetService.CreateGlyph("player");
 
-        Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.ColoredGlyph);
+        playerService.Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.ColoredGlyph);
 
-        Player.GoRogueComponents.Add(new PlayerFOVController());
+        playerService.Player.GoRogueComponents.Add(new PlayerFOVController());
 
-        currentMap.AddEntity(Player);
+        currentMap.AddEntity(playerService.Player);
 
-        ViewLock = new SurfaceComponentFollowTarget() { Target = Player };
+        ViewLock = new SurfaceComponentFollowTarget() { Target = playerService.Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
-        Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
-
-        // var fov = new GoRogue.FOV.RecursiveShadowcastingFOV(currentMap.TransparencyView);
-        //
-        // var lightPos = new Point(10, 20);
-        //
-        // fov.Calculate(lightPos, 10);
-
-        // foreach (var pos in currentMap.Positions())
-        // {
-        //     var bright = fov.DoubleResultView[pos];
-        //
-        //     var visible = fov.BooleanResultView[pos];
-        //
-        //     var cell = currentMap.TerrainView[pos.X, pos.Y];
-        //     if (visible)
-        //     {
-        //         var fade = (float)Math.Max(0.3, bright);
-        //         cell.Foreground = Color.White * fade;
-        //     }
-        //     else
-        //     {
-        //         cell.Foreground = Color.DarkGray;
-        //     }
-        // }
-
-        // textConsole.PrintFadingText("Dio cano", new Point(Width / 2, Height / 2), TimeSpan.FromSeconds(1), new Blink());
-
+        playerService.Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
         IsFocused = true;
         UseKeyboard = true;
     }
@@ -126,29 +99,82 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
     public override bool ProcessKeyboard(Keyboard keyboard)
     {
+
+        var actionService = RuneforgeInstances.GetService<IActionService>();
+        var playerService = RuneforgeInstances.GetService<IPlayerService>();
+        var Player = playerService.Player;
         if (keyboard.IsKeyPressed(Keys.W))
         {
-            Player.MoveTo(Direction.Up);
+            actionService.ExecuteAction("move_up", Player);
         }
 
         if (keyboard.IsKeyPressed(Keys.S))
         {
-            Player.MoveTo(Direction.Down);
+            actionService.ExecuteAction("move_down", Player);
+
         }
 
         if (keyboard.IsKeyPressed(Keys.A))
         {
-            Player.MoveTo(Direction.Left);
+            actionService.ExecuteAction("move_left", Player);
         }
 
         if (keyboard.IsKeyPressed(Keys.D))
         {
-            Player.MoveTo(Direction.Right);
+            actionService.ExecuteAction("move_right", Player);
         }
+
 
         if (keyboard.IsKeyPressed(Keys.Space))
         {
-            Player.ShowAllMap();
+            actionService.ExecuteAction("execute_tick");
+        }
+
+        if (keyboard.IsKeyPressed(Keys.F2))
+        {
+            var itemService = RuneforgeInstances.GetService<IItemService>();
+            var mapService = RuneforgeInstances.GetService<IMapService>();
+
+            var potion = itemService.CreateItemGameObject("i_simple_potion");
+
+            potion.Position = Player.Position + Direction.Up;
+
+            mapService.AddEntityInCurrentMap(potion);
+        }
+
+        if (keyboard.IsKeyPressed(Keys.F3))
+        {
+            var npcService = RuneforgeInstances.GetService<INpcService>();
+            var mapService = RuneforgeInstances.GetService<IMapService>();
+
+            var npc = npcService.CreateNpcGameObject("a_orion");
+
+            npc.Position = Player.Position + Direction.Down;
+
+            mapService.AddEntityInCurrentMap(npc);
+        }
+
+        if (keyboard.IsKeyPressed(Keys.F4))
+        {
+            var npcService = RuneforgeInstances.GetService<INpcService>();
+            var mapService = RuneforgeInstances.GetService<IMapService>();
+
+            foreach (var i in Enumerable.Range(1, 150))
+            {
+                var randomPosition = new Point(
+                    Random.Shared.Next(0, mapService.CurrentMap.Map.Width),
+                    Random.Shared.Next(0, mapService.CurrentMap.Map.Height)
+                );
+
+                var npc = npcService.CreateNpcGameObject("a_orion");
+
+                if (mapService.CurrentMap.Map.CanAddEntityAt(npc, randomPosition))
+                {
+                    npc.Position = randomPosition;
+
+                    mapService.AddEntityInCurrentMap(npc);
+                }
+            }
         }
 
         Player.UpdateFOV();

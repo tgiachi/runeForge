@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Interfaces.Ticks;
 using Runeforge.Engine.Ticks;
@@ -45,6 +46,7 @@ public class TickSystemService : ITickSystemService
 
     public void ExecuteTick()
     {
+        var startTime = Stopwatch.GetTimestamp();
         TickCount++;
         TickStarted?.Invoke(TickCount);
 
@@ -56,6 +58,15 @@ public class TickSystemService : ITickSystemService
 
         Tick?.Invoke(TickCount);
         TickEnded?.Invoke(TickCount);
+
+        var elapsedMs = Stopwatch.GetElapsedTime(startTime);
+
+        _logger.Debug(
+            "Tick completed #{TickCount} with {ActionCount} actions elapsed in {ElapsedMs} ms",
+            TickCount,
+            results.Count,
+            elapsedMs.TotalMilliseconds
+        );
     }
 
     /// <summary>
@@ -79,7 +90,7 @@ public class TickSystemService : ITickSystemService
             var continuingAction = _continuingActions.Dequeue();
             _actionQueue.Enqueue(continuingAction);
 
-            _logger.Debug(
+            _logger.Verbose(
                 "Requeued continuing action: {ActionType} (ID: {ActionId})",
                 continuingAction.GetType().Name,
                 continuingAction.Id
@@ -95,7 +106,7 @@ public class TickSystemService : ITickSystemService
             {
                 _continuingActions.Enqueue(result.Action);
 
-                _logger.Debug("Action {ActionId} will continue in next tick", result.ActionId);
+                _logger.Verbose("Action {ActionId} will continue in next tick", result.ActionId);
             }
 
             if (result.Result == ActionResult.Failed)

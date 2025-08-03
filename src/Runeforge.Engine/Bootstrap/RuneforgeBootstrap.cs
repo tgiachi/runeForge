@@ -5,8 +5,11 @@ using Runeforge.Core.Json;
 using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
 using Runeforge.Data.Entities.Common;
+using Runeforge.Data.Entities.Items;
 using Runeforge.Data.Entities.Names;
+using Runeforge.Data.Entities.Npcs;
 using Runeforge.Data.Entities.Tileset;
+using Runeforge.Engine.Actions;
 using Runeforge.Engine.Data.Configs;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Events.Engine;
@@ -22,7 +25,6 @@ using Runeforge.Engine.Json;
 using Runeforge.Engine.Logger.Sink;
 using Runeforge.Engine.Modules;
 using Runeforge.Engine.Services;
-using SadConsole;
 using Serilog;
 using Console = System.Console;
 
@@ -100,6 +102,8 @@ public class RuneforgeBootstrap
         dataLoaderService.AddDataLoader<NamesDataLoader, JsonNameData>();
         dataLoaderService.AddDataLoader<ColorDataLoader, JsonColorData>();
         dataLoaderService.AddDataLoader<TileSetDataLoader, JsonTilesetData>();
+        dataLoaderService.AddDataLoader<ItemDataLoader, JsonItemData>();
+        dataLoaderService.AddDataLoader<NpcDataLoader, JsonNpcData>();
     }
 
     private static void PrintHeader()
@@ -128,6 +132,7 @@ public class RuneforgeBootstrap
             .AddScriptModule(typeof(ActionsModule))
             .AddScriptModule(typeof(RandomModule))
             .AddScriptModule(typeof(NamesModule))
+            .AddScriptModule(typeof(AiModule))
             ;
     }
 
@@ -171,6 +176,11 @@ public class RuneforgeBootstrap
     public async Task ReadyAsync()
     {
         var eventBusService = _container.Resolve<IEventBusService>();
+
+        var actionService = _container.Resolve<IActionService>();
+        var tickSystemService = _container.Resolve<ITickSystemService>();
+
+        DefaultActions.RegisterDefaultActions(actionService, tickSystemService);
 
         await eventBusService.PublishAsync(new EngineReadyEvent());
     }
@@ -279,6 +289,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
             .RegisterService(typeof(IDataLoaderService), typeof(DataLoaderService))
             .RegisterService(typeof(IActionService), typeof(ActionService))
+            .RegisterService(typeof(ITickSystemService), typeof(TickSystemService))
 
             //
             .RegisterService(typeof(INameGeneratorService), typeof(NameGeneratorService))
@@ -286,6 +297,10 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IMapService), typeof(MapService))
             .RegisterService(typeof(IColorService), typeof(ColorService))
             .RegisterService(typeof(ITileSetService), typeof(TileSetService))
+            .RegisterService(typeof(IItemService), typeof(ItemService))
+            .RegisterService(typeof(INpcService), typeof(NpcService))
+            .RegisterService(typeof(IAiService), typeof(AiService))
+            .RegisterService(typeof(IPlayerService), typeof(PlayerService))
             ;
 
         // Register Configs

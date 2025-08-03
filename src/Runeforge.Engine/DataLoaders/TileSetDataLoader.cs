@@ -21,6 +21,11 @@ public class TileSetDataLoader : IDataLoader
             {
                 _tileSetService.AddTile(tileSetData.Id, tile);
             }
+
+            foreach (var animation in tileSetData.Animations)
+            {
+                _tileSetService.AddAnimation(tileSetData.Id, animation);
+            }
         }
     }
 }

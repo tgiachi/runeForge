@@ -1,3 +1,4 @@
+using Runeforge.Engine.Services;
 using SadConsole;
 using SadRogue.Integration;
 using SadRogue.Integration.Components;
@@ -7,11 +8,11 @@ namespace Runeforge.Engine.GameObjects.Components;
 
 public class TileAnimationComponent : RogueLikeComponentBase<RogueLikeEntity>
 {
-    private readonly string _startingSymbol;
+    private readonly string[] _frames;
 
-    private readonly string _endSymbol;
+    private int _currentFrameIndex = 0;
 
-    private const int transitionTime = 500;
+    private readonly int _interval;
 
     private TimeSpan _elapsedTime;
 
@@ -27,16 +28,19 @@ public class TileAnimationComponent : RogueLikeComponentBase<RogueLikeEntity>
 
     private int _currentTime = 0;
 
-    private bool _state = false;
+    public TileAnimationComponent(AnimationData animationData) : base(true, false, false, false)
+    {
+        _frames = animationData.Frames;
+        _interval = animationData.Interval;
+    }
 
     public TileAnimationComponent(
-        string startingSymbol, string endSymbol, Color? startForeground = null, Color? endForeground = null,
+        string[] frames, int interval, Color? startForeground = null, Color? endForeground = null,
         Color? startBackground = null, Color? endBackground = null
     ) : base(true, false, false, false)
     {
-        _startingSymbol = startingSymbol;
-        _endSymbol = endSymbol;
-
+        _frames = frames;
+        _interval = interval;
         _startForeground = startForeground;
         _endForeground = endForeground;
         _startBackground = startBackground;
@@ -97,12 +101,17 @@ public class TileAnimationComponent : RogueLikeComponentBase<RogueLikeEntity>
         _currentTime += delta.Milliseconds;
         _elapsedTime += delta;
 
-        if (_currentTime >= transitionTime)
+        if (_currentTime >= _interval)
         {
-            var glyph = _state ? _startingSymbol[0] : _endSymbol[0];
-            Parent.AppearanceSingle.Appearance.GlyphCharacter = glyph;
+            var glyph = _frames[_currentFrameIndex];
+            Parent.AppearanceSingle.Appearance.GlyphCharacter = glyph[0];
 
-            _state = !_state;
+            _currentFrameIndex++;
+
+            if (_currentFrameIndex >= _frames.Length)
+            {
+                _currentFrameIndex = 0;
+            }
 
             _currentTime = 0;
         }

@@ -1,0 +1,31 @@
+[
+  {
+    "type": "npcs",
+    "id": "a_orion",
+    "name": "Orion",
+    "category": "Animals",
+    "subCategory": "Cats",
+    "gender": "animal",
+    "gold": "0",
+    "tile": {
+      "symbol": "C",
+      "foreground": "default_colors#white",
+      "background": "default_colors#black"
+    },
+    "brainId": "orion"
+  },
+  {
+    "type": "npcs",
+    "id": "a_vega",
+    "name": "Vega",
+    "category": "Animals",
+    "subCategory": "Cats",
+    "gender": "animal",
+    "gold": "0",
+    "tile": {
+      "symbol": "c",
+      "foreground": "default_colors#white",
+      "background": "default_colors#black"
+    }
+  }
+]

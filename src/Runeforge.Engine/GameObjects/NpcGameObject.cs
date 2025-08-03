@@ -1,5 +1,5 @@
 using GoRogue.GameFramework;
-using Runeforge.Engine.Types.Map;
+using Runeforge.Data.Types.Map;
 using SadConsole;
 using SadRogue.Integration;
 using SadRogue.Primitives;
@@ -11,6 +11,7 @@ public class NpcGameObject : RogueLikeEntity
     public string Name { get; set; }
 
     public bool IsDead { get; set; }
+
 
     public event EventHandler<object> Die;
 
@@ -33,6 +34,14 @@ public class NpcGameObject : RogueLikeEntity
         if (this.CanMove(newPosition))
         {
             Position += direction;
+        }
+    }
+
+    public void MoveTo(Point newPosition)
+    {
+        if (this.CanMove(newPosition))
+        {
+            Position = newPosition;
         }
     }
 

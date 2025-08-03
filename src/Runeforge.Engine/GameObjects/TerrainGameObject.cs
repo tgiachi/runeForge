@@ -1,4 +1,4 @@
-using Runeforge.Engine.Types.Map;
+using Runeforge.Data.Types.Map;
 using Runeforge.Engine.Utils;
 using SadConsole;
 using SadRogue.Integration.FieldOfView.Memory;

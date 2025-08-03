@@ -1,9 +1,11 @@
 using System.Reflection;
 using DryIoc;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Loaders;
 using Runeforge.Core.Directories;
 using Runeforge.Core.Types;
 using Runeforge.Engine.Attributes.Scripts;
+using Runeforge.Engine.Contexts;
 using Runeforge.Engine.Data.Configs.Services;
 using Runeforge.Engine.Data.Events.Engine;
 using Runeforge.Engine.Data.Internal.Scripts;
@@ -78,8 +80,6 @@ public class ScriptEngineService : IScriptEngineService
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        //  InitFileWatcher();
-
         EmmyLuaDefinitionGenerator.GenerateDefinitionFile(
             Functions,
             Path.Combine(_scriptEngineConfig.DefinitionPath, "__runeforge.lua"),
@@ -162,6 +162,17 @@ public class ScriptEngineService : IScriptEngineService
             {
                 script.Globals[global.Key] = global.Value;
             }
+
+            var fileLoader = new FileSystemScriptLoader();
+            script.Options.ScriptLoader = fileLoader;
+            fileLoader.ModulePaths =
+            [
+                Path.Combine(_directoriesConfig[DirectoryType.Scripts], "?.lua"),
+                Path.Combine(_directoriesConfig[DirectoryType.Scripts], "?/init.lua"),
+                Path.Combine(_directoriesConfig[DirectoryType.Scripts], "/?.lua"),
+                Path.Combine(_directoriesConfig[DirectoryType.Scripts], "/?/init.lua")
+            ];
+
 
             // Execute script
             script.DoString(scriptContent);
@@ -257,6 +268,10 @@ public class ScriptEngineService : IScriptEngineService
 
     private void RegisterGlobalBindings()
     {
+        UserData.RegisterType<Action>();
+
+        UserData.RegisterType<AiContext>();
+        UserData.RegisterType<Action<AiContext>>();
         foreach (var scriptDef in _scriptDefObjects)
         {
             AddScriptModule(scriptDef.ModuleType);

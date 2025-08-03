@@ -17,6 +17,15 @@ function actions.addAction(name, action) end
 function actions.executeAction(name, parameter) end
 
 
+---@class ai
+ai = {}
+
+--- Add brain
+---@param name string
+---@param action Closure
+function ai.addBrain(name, action) end
+
+
 ---@class logger
 logger = {}
 

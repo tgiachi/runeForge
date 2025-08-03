@@ -1,5 +1,5 @@
 using GoRogue.GameFramework;
-using Runeforge.Engine.Types.Map;
+using Runeforge.Data.Types.Map;
 using SadRogue.Integration.Maps;
 using SadRogue.Primitives;
 
