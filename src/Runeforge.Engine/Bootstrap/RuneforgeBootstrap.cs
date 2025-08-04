@@ -290,6 +290,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(IDataLoaderService), typeof(DataLoaderService))
             .RegisterService(typeof(IActionService), typeof(ActionService))
             .RegisterService(typeof(ITickSystemService), typeof(TickSystemService))
+            .RegisterService(typeof(IMapGeneratorService), typeof(MapGeneratorService))
 
             //
             .RegisterService(typeof(INameGeneratorService), typeof(NameGeneratorService))
