@@ -1,4 +1,3 @@
-using MoonSharp.Interpreter;
 using Runeforge.Engine.Attributes.Scripts;
 using Runeforge.Engine.Interfaces.Services;
 using SadConsole;
@@ -22,7 +21,7 @@ public class TilesModule
         var tile = _tileSetService.CreateGlyph(tileOrTag);
         if (tile == null)
         {
-            throw new ScriptRuntimeException($"Tile '{tileOrTag}' not found in tile set.");
+            throw new Exception($"Tile with tag or ID '{tileOrTag}' not found.");
         }
 
         return tile.ColoredGlyph;

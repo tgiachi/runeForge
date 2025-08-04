@@ -299,7 +299,7 @@ public class RuneforgeBootstrap
             .RegisterService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .RegisterService(typeof(IDiagnosticService), typeof(DiagnosticService))
             .RegisterService(typeof(IEventDispatcherService), typeof(EventDispatcherService))
-            .RegisterService(typeof(IScriptEngineService), typeof(ScriptEngineService))
+            .RegisterService(typeof(IScriptEngineService), typeof(JsScriptEngineService))
             .RegisterService(typeof(IDataLoaderService), typeof(DataLoaderService))
             .RegisterService(typeof(IActionService), typeof(ActionService))
             .RegisterService(typeof(ITickSystemService), typeof(TickSystemService))

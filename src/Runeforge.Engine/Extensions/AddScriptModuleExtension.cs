@@ -1,4 +1,5 @@
 using DryIoc;
+using Runeforge.Engine.Data.Internal.Scripts;
 using Runeforge.Engine.Data.Internal.Services;
 
 namespace Runeforge.Engine.Extensions;
@@ -12,8 +13,7 @@ public static class AddScriptModuleExtension
             throw new ArgumentNullException(nameof(scriptModule), "Script module type cannot be null.");
         }
 
-
-        container.AddToRegisterTypedList(new ScriptDefObject(scriptModule));
+        container.AddToRegisterTypedList(new ScriptModuleData(scriptModule));
 
         container.Register(scriptModule, Reuse.Singleton);
 

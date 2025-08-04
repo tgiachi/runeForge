@@ -1,4 +1,3 @@
-using MoonSharp.Interpreter;
 using Runeforge.Engine.Attributes.Scripts;
 using Runeforge.Engine.Contexts;
 using Runeforge.Engine.Interfaces.Services;
@@ -16,7 +15,7 @@ public class AiModule
     }
 
     [ScriptFunction("Add brain")]
-    public void AddBrain(string name, Closure action)
+    public void AddBrain(string name, Action<AiContext> action)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -28,6 +27,6 @@ public class AiModule
             throw new ArgumentNullException(nameof(action), "Action cannot be null.");
         }
 
-        _aiService.AddBrain(name, context => action.Call(context));
+        _aiService.AddBrain(name, action);
     }
 }
