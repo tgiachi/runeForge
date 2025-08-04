@@ -89,7 +89,7 @@ public class ScriptEngineService : IScriptEngineService
 
         await LoadInitScript();
 
-        InitFileWatcher();
+        //InitFileWatcher();
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
@@ -288,7 +288,6 @@ public class ScriptEngineService : IScriptEngineService
 
         if (!Directory.Exists(scriptsPath))
         {
-            _logger.Warning("Scripts directory not found: {Path}", scriptsPath);
             return;
         }
 

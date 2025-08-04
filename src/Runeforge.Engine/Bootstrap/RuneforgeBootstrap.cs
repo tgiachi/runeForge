@@ -6,6 +6,7 @@ using Runeforge.Core.Resources;
 using Runeforge.Core.Types;
 using Runeforge.Data.Entities.Common;
 using Runeforge.Data.Entities.Items;
+using Runeforge.Data.Entities.MapGen;
 using Runeforge.Data.Entities.Names;
 using Runeforge.Data.Entities.Npcs;
 using Runeforge.Data.Entities.Tileset;
@@ -23,6 +24,7 @@ using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Engine.Interfaces.Services.Base;
 using Runeforge.Engine.Json;
 using Runeforge.Engine.Logger.Sink;
+using Runeforge.Engine.Maps.Generators;
 using Runeforge.Engine.Modules;
 using Runeforge.Engine.Services;
 using Serilog;
@@ -93,7 +95,15 @@ public class RuneforgeBootstrap
         RegisterServices();
         RegisterScriptModules();
         RegisterDefaultDataLoaders();
+        RegisterDefaultMapStepGenerators();
         OnRegisterServices?.Invoke(_container);
+    }
+
+    private void RegisterDefaultMapStepGenerators()
+    {
+        var mapGeneratorService = _container.Resolve<IMapGeneratorService>();
+
+        mapGeneratorService.AddStep("rectangle", typeof(RectangleMapGeneratorStep));
     }
 
     private void RegisterDefaultDataLoaders()
@@ -104,6 +114,7 @@ public class RuneforgeBootstrap
         dataLoaderService.AddDataLoader<TileSetDataLoader, JsonTilesetData>();
         dataLoaderService.AddDataLoader<ItemDataLoader, JsonItemData>();
         dataLoaderService.AddDataLoader<NpcDataLoader, JsonNpcData>();
+        dataLoaderService.AddDataLoader<MapGenDataLoader, JsonMapGenData>();
     }
 
     private static void PrintHeader()

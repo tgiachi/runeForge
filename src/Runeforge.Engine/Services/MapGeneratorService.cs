@@ -1,3 +1,7 @@
+using DryIoc;
+using Runeforge.Data.Entities.MapGen;
+using Runeforge.Engine.Contexts;
+using Runeforge.Engine.Data.Maps;
 using Runeforge.Engine.Interfaces.Maps;
 using Runeforge.Engine.Interfaces.Services;
 using Serilog;
@@ -8,13 +12,68 @@ public class MapGeneratorService : IMapGeneratorService
 {
     private readonly ILogger _logger = Log.ForContext<MapGeneratorService>();
 
-    public void AddStep(string name, IMapGenerator generator)
+    private readonly List<JsonMapGenData> _mapGenData = new();
+
+    private readonly Dictionary<string, IMapGeneratorStep> _generatorsSteps = new();
+
+    private readonly IContainer _container;
+
+    public MapGeneratorService(IContainer container)
     {
-        throw new NotImplementedException();
+        _container = container;
     }
 
-    public Task ExecuteGenerationAsync(string name)
+    public void AddStep(string name, Type generatorType)
     {
-        throw new NotImplementedException();
+        if (!_container.IsRegistered(generatorType))
+        {
+            _container.Register(generatorType, Reuse.Singleton);
+        }
+
+        if (_container.Resolve(generatorType) is not IMapGeneratorStep generator)
+        {
+            _logger.Error("Failed to resolve generator of type {GeneratorType}", generatorType);
+            return;
+        }
+
+        var mapGenerator = _container.Resolve(generatorType) as IMapGeneratorStep;
+
+        _generatorsSteps.Add(name, mapGenerator);
+    }
+
+    public async Task ExecuteGenerationAsync(string name)
+    {
+        var mapGen = _mapGenData.FirstOrDefault(x => x.Id == name);
+
+        if (mapGen == null)
+        {
+            _logger.Error("Map generator with name {Name} not found", name);
+            return;
+        }
+
+        var map = new GameMap(mapGen.Width, mapGen.Height, null);
+
+
+        var stepContext = new MapGeneratorContext()
+        {
+            Width = map.Width,
+            Height = map.Height,
+        };
+
+        foreach (var stepValue in mapGen.Steps)
+        {
+            stepContext.Name = stepValue.StepName;
+
+            var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
+            stepContext = await step.GenerateMapAsync(stepContext);
+
+            stepContext.Step++;
+        }
+    }
+
+    public void AddMapGenerator(JsonMapGenData generator)
+    {
+        _logger.Information("Adding map generator {Generator}", generator.Id);
+        _mapGenData.Add(generator);
     }
 }

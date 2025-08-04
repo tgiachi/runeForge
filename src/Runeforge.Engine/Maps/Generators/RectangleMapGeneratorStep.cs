@@ -3,7 +3,7 @@ using Runeforge.Engine.Interfaces.Maps;
 
 namespace Runeforge.Engine.Maps.Generators;
 
-public class RectangleMapGenerator : IMapGenerator
+public class RectangleMapGeneratorStep : IMapGeneratorStep
 {
     public async Task<MapGeneratorContext> GenerateMapAsync(MapGeneratorContext context)
     {

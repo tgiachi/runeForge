@@ -1,0 +1,14 @@
+[
+  {
+    "type": "mapgens",
+    "id": "default_starting_map",
+    "isDefault": true,
+    "width": 300,
+    "height": 300,
+    "steps:": [
+      {
+        "stepName": "rectangle"
+      }
+    ]
+  }
+]
