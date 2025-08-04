@@ -8,6 +8,13 @@
     "steps:": [
       {
         "stepName": "rectangle"
+      },
+      {
+        "stepName": "terrain_maker",
+        "props": {
+          "wall": "wall",
+          "floor": "floor"
+        }
       }
     ]
   }

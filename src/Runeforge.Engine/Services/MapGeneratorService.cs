@@ -16,6 +16,7 @@ public class MapGeneratorService : IMapGeneratorService
 
     private readonly Dictionary<string, IMapGeneratorStep> _generatorsSteps = new();
 
+
     private readonly IContainer _container;
 
     public MapGeneratorService(IContainer container)
@@ -41,6 +42,23 @@ public class MapGeneratorService : IMapGeneratorService
         _generatorsSteps.Add(name, mapGenerator);
     }
 
+    public void AddStep(string name, IMapGeneratorStep generator)
+    {
+        if (generator == null)
+        {
+            _logger.Error("Generator cannot be null");
+            return;
+        }
+
+        if (_generatorsSteps.ContainsKey(name))
+        {
+            _logger.Warning("Generator step with name {Name} already exists, replacing it", name);
+        }
+
+        _generatorsSteps[name] = generator;
+        _logger.Information("Added map generator step {Name}", name);
+    }
+
     public async Task ExecuteGenerationAsync(string name)
     {
         var mapGen = _mapGenData.FirstOrDefault(x => x.Id == name);
@@ -54,11 +72,7 @@ public class MapGeneratorService : IMapGeneratorService
         var map = new GameMap(mapGen.Width, mapGen.Height, null);
 
 
-        var stepContext = new MapGeneratorContext()
-        {
-            Width = map.Width,
-            Height = map.Height,
-        };
+        var stepContext = new MapGeneratorContext(map);
 
         foreach (var stepValue in mapGen.Steps)
         {
@@ -66,6 +80,7 @@ public class MapGeneratorService : IMapGeneratorService
 
             var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
             stepContext = await step.GenerateMapAsync(stepContext);
+
 
             stepContext.Step++;
         }

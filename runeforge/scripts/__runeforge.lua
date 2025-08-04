@@ -50,6 +50,15 @@ function logger.info(message, ...) end
 function logger.warning(message, ...) end
 
 
+---@class mapGen
+mapGen = {}
+
+--- add step to map generator
+---@param name string
+---@param genFunction DynValue
+function mapGen.addStep(name, genFunction) end
+
+
 ---@class names
 names = {}
 
@@ -76,5 +85,14 @@ function random.int(min, max) end
 ---@param dice string
 ---@return integer
 function random.roll(dice) end
+
+
+---@class tiles
+tiles = {}
+
+--- create tile from tag or tileId
+---@param tileOrTag string
+---@return ColoredGlyph
+function tiles.create(tileOrTag) end
 
 

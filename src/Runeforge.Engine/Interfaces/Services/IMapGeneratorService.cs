@@ -8,6 +8,8 @@ public interface IMapGeneratorService: IRuneforgeService
 {
     void AddStep(string name, Type generatorType);
 
+    void AddStep(string name, IMapGeneratorStep generator);
+
     Task ExecuteGenerationAsync(string name);
 
     void AddMapGenerator(JsonMapGenData generator);

@@ -6,7 +6,7 @@ public class JsonMapGenStep
 {
     public string StepName { get; set; }
 
-    [JsonPropertyName("props")]
-    public Dictionary<string, object> Properties { get; set; } = new();
+    [JsonPropertyName("props")] public Dictionary<string, object> Properties { get; set; } = new();
 
+    public string StepScriptName { get; set; }
 }

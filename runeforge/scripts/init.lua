@@ -1,4 +1,7 @@
 local brains = require("ai")
+local mapGens = require("mapgens")
+
+mapGens.addMapGens()
 
 brains.register()
 
