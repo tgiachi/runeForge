@@ -36,6 +36,8 @@ public class JsScriptEngineService : IScriptEngineService
     private readonly IVersionService _versionService;
 
 
+    public Jint.Engine JsEngine => _jsEngine;
+
     private Func<string, string> _nameResolver;
 
     public JsScriptEngineService(

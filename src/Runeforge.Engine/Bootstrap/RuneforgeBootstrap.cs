@@ -146,6 +146,7 @@ public class RuneforgeBootstrap
             .AddScriptModule(typeof(AiModule))
             .AddScriptModule(typeof(MapGenModule))
             .AddScriptModule(typeof(TilesModule))
+            .AddScriptModule(typeof(EntitiesModule))
             ;
     }
 

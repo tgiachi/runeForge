@@ -1,13 +1,13 @@
 /**
- * Run v0.0.76.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-08-04 12:10:07
+ * Run v0.0.77.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-08-04 14:35:18
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.0.76.0""
+ * ""0.0.77.0""
  */
 declare const VERSION: string;
 
@@ -130,6 +130,23 @@ declare const tiles: {
      * @returns IColoredGlyph
      */
     create(tileOrTag: string): IColoredGlyph;
+};
+
+/**
+ * EntitiesModule module
+ */
+declare const entities: {
+    /**
+     * Create entity terrain
+     * @param x number
+     * @param y number
+     * @param coloredGlyph IColoredGlyph
+     * @param tileId string
+     * @param isWalkable boolean
+     * @param isTransparent boolean
+     * @returns ITerrainGameObject
+     */
+    createTerrain(x: number, y: number, coloredGlyph: IColoredGlyph, tileId: string, isWalkable: boolean, isTransparent: boolean): ITerrainGameObject;
 };
 
 
@@ -257,6 +274,60 @@ interface IColoredGlyph {
      * isDirty
      */
     isDirty: boolean;
+}
+
+/**
+ * Generated interface for Runeforge.Engine.GameObjects.TerrainGameObject
+ */
+interface ITerrainGameObject {
+    /**
+     * darkAppearance
+     */
+    darkAppearance: IColoredGlyph;
+    /**
+     * tileId
+     */
+    tileId: string;
+    /**
+     * trueAppearance
+     */
+    trueAppearance: ITerrainAppearance;
+    /**
+     * lastSeenAppearance
+     */
+    lastSeenAppearance: ITerrainAppearance;
+    /**
+     * appearance
+     */
+    appearance: ITerrainAppearance;
+    /**
+     * position
+     */
+    position: IPoint;
+    /**
+     * isWalkable
+     */
+    isWalkable: boolean;
+    /**
+     * isTransparent
+     */
+    isTransparent: boolean;
+    /**
+     * id
+     */
+    id: any;
+    /**
+     * layer
+     */
+    layer: number;
+    /**
+     * currentMap
+     */
+    currentMap: IMap;
+    /**
+     * goRogueComponents
+     */
+    goRogueComponents: any;
 }
 
 /**
@@ -622,6 +693,50 @@ interface IColor {
 }
 
 /**
+ * Generated interface for SadRogue.Integration.TerrainAppearance
+ */
+interface ITerrainAppearance {
+    /**
+     * decorators
+     */
+    decorators: ICellDecorator[];
+    /**
+     * foreground
+     */
+    foreground: IColor;
+    /**
+     * background
+     */
+    background: IColor;
+    /**
+     * glyph
+     */
+    glyph: number;
+    /**
+     * mirror
+     */
+    mirror: mirror;
+    /**
+     * glyphCharacter
+     */
+    glyphCharacter: any;
+    /**
+     * isVisible
+     */
+    isVisible: boolean;
+    /**
+     * isDirty
+     */
+    isDirty: boolean;
+}
+
+/**
+ * Generated interface for SadRogue.Primitives.Point
+ */
+interface IPoint {
+}
+
+/**
  * Generated interface for SadConsole.Entities.Entity+SingleCell
  */
 interface ISingleCell {
@@ -677,12 +792,6 @@ interface IScreenObjectCollection {
      * item
      */
     item: any;
-}
-
-/**
- * Generated interface for SadRogue.Primitives.Point
- */
-interface IPoint {
 }
 
 /**

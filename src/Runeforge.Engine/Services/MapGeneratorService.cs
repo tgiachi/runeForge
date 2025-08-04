@@ -12,6 +12,8 @@ public class MapGeneratorService : IMapGeneratorService
 {
     private readonly ILogger _logger = Log.ForContext<MapGeneratorService>();
 
+    private readonly JsScriptEngineService _scriptEngineService;
+
     private readonly List<JsonMapGenData> _mapGenData = new();
 
     private readonly Dictionary<string, IMapGeneratorStep> _generatorsSteps = new();
@@ -19,9 +21,10 @@ public class MapGeneratorService : IMapGeneratorService
 
     private readonly IContainer _container;
 
-    public MapGeneratorService(IContainer container)
+    public MapGeneratorService(IContainer container, IScriptEngineService scriptEngineService)
     {
         _container = container;
+        _scriptEngineService = (JsScriptEngineService?)scriptEngineService;
     }
 
     public void AddStep(string name, Type generatorType)
@@ -68,19 +71,21 @@ public class MapGeneratorService : IMapGeneratorService
             _logger.Error("Map generator with name {Name} not found", name);
             return;
         }
-
         var map = new GameMap(mapGen.Width, mapGen.Height, null);
 
 
-        var stepContext = new MapGeneratorContext(map);
+        var stepContext = new MapGeneratorContext(map, _scriptEngineService.JsEngine);
+
+        _logger.Information("Generating map generator {Name}", name);
 
         foreach (var stepValue in mapGen.Steps)
         {
+            _logger.Information("Generating map generator step {Name}", stepValue.StepName);
             stepContext.Name = stepValue.StepName;
+            stepContext.Inputs = stepValue.Properties;
 
             var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
             stepContext = await step.GenerateMapAsync(stepContext);
-
 
             stepContext.Step++;
         }

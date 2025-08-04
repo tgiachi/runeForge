@@ -1,4 +1,6 @@
+using System.Text.Json;
 using GoRogue.GameFramework;
+using Jint.Native;
 using Runeforge.Engine.GameObjects;
 using SadRogue.Primitives;
 
@@ -6,6 +8,7 @@ namespace Runeforge.Engine.Contexts;
 
 public class MapGeneratorContext
 {
+    private readonly Jint.Engine _engine;
     public int Step { get; set; }
     public string Name { get; set; }
     public int Width { get; set; }
@@ -15,12 +18,13 @@ public class MapGeneratorContext
 
     public Map Map { get; set; }
 
-    public MapGeneratorContext(Map map)
+    public MapGeneratorContext(Map map, Jint.Engine engine)
     {
         Outputs = new Dictionary<string, object>();
         Inputs = new Dictionary<string, object>();
 
         Map = map;
+        _engine = engine;
         Width = map.Width;
         Height = map.Height;
     }
@@ -32,12 +36,14 @@ public class MapGeneratorContext
 
     public object GetOutput(string key)
     {
-        if (Outputs.TryGetValue(key, out var value))
-        {
-            return value;
-        }
+        Outputs.TryGetValue(key, out var value);
+        return value;
+    }
 
-        throw new KeyNotFoundException($"Output with key '{key}' not found.");
+
+    public JsValue AsInputs()
+    {
+        return JsValue.FromObject(_engine, Inputs);
     }
 
     public void ApplyTerrain(int x, int y, TerrainGameObject terrain)

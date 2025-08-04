@@ -33,5 +33,4 @@ public static class JsInteropUtils
         return true;
     }
 
-
 }
