@@ -12,5 +12,7 @@ public interface IMapGeneratorService: IRuneforgeService
 
     Task ExecuteGenerationAsync(string name);
 
+    Task ExecuteDefaultGenerationAsync();
+
     void AddMapGenerator(JsonMapGenData generator);
 }

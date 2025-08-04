@@ -34,6 +34,8 @@ namespace Runeforge.Data.Context;
 [JsonSerializable(typeof(JsonMapPrefabChance[]))]
 [JsonSerializable(typeof(JsonMapPrefabStair))]
 [JsonSerializable(typeof(JsonMapGenData))]
+[JsonSerializable(typeof(JsonMapGenStep))]
+[JsonSerializable(typeof(JsonMapGenStep[]))]
 [JsonSerializable(typeof(JsonMapGenData[]))]
 public partial class JsonEntityContext : JsonSerializerContext
 {

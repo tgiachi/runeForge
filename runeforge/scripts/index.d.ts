@@ -1,15 +1,16 @@
 /**
- * Run v0.0.74.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-08-04 11:57:58
+ * Run v0.0.76.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-08-04 12:10:07
  **/
 
 // Constants
 
 /**
- * VERSION constant
- * ""0.0.74.0""
+ * VERSION constant 
+ * ""0.0.76.0""
  */
 declare const VERSION: string;
+
 
 /**
  * LoggerModule module
@@ -131,6 +132,7 @@ declare const tiles: {
     create(tileOrTag: string): IColoredGlyph;
 };
 
+
 /**
  * Generated enum for SadConsole.Mirror
  */
@@ -169,6 +171,7 @@ export enum animationState {
     Activated = 4,
     Deactivated = 5,
 }
+
 
 /**
  * Generated interface for Runeforge.Engine.Contexts.AiContext
@@ -679,7 +682,8 @@ interface IScreenObjectCollection {
 /**
  * Generated interface for SadRogue.Primitives.Point
  */
-interface IPoint {}
+interface IPoint {
+}
 
 /**
  * Generated interface for SadRogue.Primitives.SpatialMaps.LayerMasker

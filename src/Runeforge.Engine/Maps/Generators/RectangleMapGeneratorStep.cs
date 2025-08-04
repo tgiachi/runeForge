@@ -18,7 +18,8 @@ public class RectangleMapGeneratorStep : IMapGeneratorStep
 
 
 
-        context.AddOutput("TerrainGrid", terrainGrid);
+        context.AddOutput("terrain", terrainGrid);
+
 
 
 

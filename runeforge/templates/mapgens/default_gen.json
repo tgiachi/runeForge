@@ -5,7 +5,7 @@
     "isDefault": true,
     "width": 300,
     "height": 300,
-    "steps:": [
+    "steps": [
       {
         "stepName": "rectangle"
       },

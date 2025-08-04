@@ -86,6 +86,26 @@ public class MapGeneratorService : IMapGeneratorService
         }
     }
 
+    public Task ExecuteDefaultGenerationAsync()
+    {
+        _logger.Information("Executing default map generation");
+
+        if (_mapGenData.Count == 0)
+        {
+            _logger.Error("No map generators available");
+            return Task.CompletedTask;
+        }
+
+        var defaultGen = _mapGenData.FirstOrDefault(s => s.IsDefault);
+
+        if (defaultGen == null)
+        {
+            defaultGen = _mapGenData.FirstOrDefault();
+        }
+
+        return ExecuteGenerationAsync(defaultGen.Id);
+    }
+
     public void AddMapGenerator(JsonMapGenData generator)
     {
         _logger.Information("Adding map generator {Generator}", generator.Id);
