@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mapgens",
+    "id": "default_starting_map",
+    "isDefault": true,
+    "width": 300,
+    "height": 300,
+    "steps": [
+      {
+        "stepName": "rectangle"
+      },
+      {
+        "stepName": "terrain_maker",
+        "props": {
+          "wall": "wall",
+          "floor": "floor"
+        }
+      },
+      {
+        "stepName": "player_place",
+        "props": {
+          "playerTile": "player"
+        }
+      }
+    ]
+  }
+]

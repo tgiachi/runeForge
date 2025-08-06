@@ -42,6 +42,10 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
             RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphHeight
         );
 
+        var mapGeneratorService = RuneforgeInstances.GetService<IMapGeneratorService>();
+
+        mapGeneratorService.ExecuteDefaultGenerationAsync().GetAwaiter().GetResult();
+
         var mapId = mapService.GenerateMapAsync(300, 300, "Test", "Test Map").GetAwaiter().GetResult();
 
         var mapObjectInfo = mapService.GetMapInfo(mapId);
@@ -99,7 +103,6 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
     public override bool ProcessKeyboard(Keyboard keyboard)
     {
-
         var actionService = RuneforgeInstances.GetService<IActionService>();
         var playerService = RuneforgeInstances.GetService<IPlayerService>();
         var Player = playerService.Player;
@@ -111,7 +114,6 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         if (keyboard.IsKeyPressed(Keys.S))
         {
             actionService.ExecuteAction("move_down", Player);
-
         }
 
         if (keyboard.IsKeyPressed(Keys.A))
