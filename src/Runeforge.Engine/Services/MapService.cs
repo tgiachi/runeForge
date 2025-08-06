@@ -1,5 +1,6 @@
-using System.ComponentModel;
+using GoRogue.GameFramework;
 using GoRogue.MapGeneration;
+using Runeforge.Data.Types.Map;
 using Runeforge.Engine.Data.Maps;
 using Runeforge.Engine.GameObjects;
 using Runeforge.Engine.GameObjects.Components;
@@ -20,6 +21,8 @@ public class MapService : IMapService
     public event IMapService.MapChangedHandler? MapChanged;
     public event IMapService.MapStartGeneratedHandler? MapStartGenerated;
 
+    private readonly IMapGeneratorService _mapGeneratorService;
+
     public MapInfoObject CurrentMap
     {
         get => _currentMap;
@@ -28,22 +31,50 @@ public class MapService : IMapService
 
     private MapInfoObject _currentMap = null!;
 
-    private readonly Dictionary<Guid, MapInfoObject> _maps = new();
+    private readonly Dictionary<string, MapInfoObject> _maps = new();
+
+    public MapService(IMapGeneratorService mapGeneratorService)
+    {
+        _mapGeneratorService = mapGeneratorService;
+    }
 
     private void ChangeCurrentMap(MapInfoObject newMap)
     {
         var oldMap = _currentMap;
+
+        if (oldMap != null)
+        {
+            DeInitEntitiesHandlers();
+        }
+
         _currentMap = newMap;
+
+        InitEntitiesHandlers();
 
         MapChanged?.Invoke(oldMap, newMap);
     }
 
 
-    public async Task<Guid> GenerateMapAsync(
+    private void InitEntitiesHandlers()
+    {
+        CurrentMap.Map.EntityAdded += MapOnEntityAdded;
+    }
+
+    private void MapOnEntityAdded(IGameObject gameObject, MapLayer layer)
+    {
+    }
+
+    private void DeInitEntitiesHandlers()
+    {
+        CurrentMap.Map.EntityAdded -= MapOnEntityAdded;
+    }
+
+
+    public async Task<string> GenerateMapAsync(
         int width, int height, string name, string description, int level = 1, CancellationToken cancellationToken = default
     )
     {
-        var mapId = Guid.NewGuid();
+        var mapId = Guid.NewGuid().ToString();
 
         MapStartGenerated?.Invoke(mapId);
 
@@ -57,7 +88,7 @@ public class MapService : IMapService
 
         var mapInfo = new MapInfoObject(gameMap, name, description, level);
 
-        await MapGenerated?.Invoke(mapInfo, generator);
+        await MapGenerated?.Invoke(mapInfo);
 
         _maps[mapId] = mapInfo;
 
@@ -67,7 +98,24 @@ public class MapService : IMapService
         return mapId;
     }
 
-    public MapInfoObject? GetMapInfo(Guid mapId)
+    public async Task StartGenerateMapAsync(string generatorName, string mapId = "")
+    {
+        if (string.IsNullOrWhiteSpace(mapId))
+        {
+            mapId = Guid.NewGuid().ToString();
+        }
+
+        MapStartGenerated?.Invoke(mapId);
+
+        var map = await _mapGeneratorService.ExecuteGenerationAsync(generatorName, mapId);
+
+        var mapInfo = new MapInfoObject(map, map.Name, map.Description, map.Level);
+
+        _maps[mapId] = mapInfo;
+        MapGenerated?.Invoke(mapInfo);
+    }
+
+    public MapInfoObject? GetMapInfo(string mapId)
     {
         return _maps.GetValueOrDefault(mapId);
     }

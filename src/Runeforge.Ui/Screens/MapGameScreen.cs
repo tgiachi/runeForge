@@ -80,23 +80,8 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         UseKeyboard = true;
     }
 
-    private Task MapServiceOnMapGenerated(MapInfoObject mapInfo, Generator generator)
+    private Task MapServiceOnMapGenerated(MapInfoObject mapInfo)
     {
-        var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
-
-        var wallFloors = generator.Context.GetFirstOrDefault<ISettableGridView<bool>>("WallFloor");
-
-        //var floorTile = new ColoredGlyph(Color.White, Color.Transparent, 3954);
-        //var wallTile = new ColoredGlyph(Color.Gray, Color.Transparent, 2863);
-        var floorTile = tileSetService.CreateGlyph("floor");
-        var wallTile = tileSetService.CreateGlyph("wall");
-
-        mapInfo.Map.ApplyTerrainOverlay(
-            wallFloors,
-            (point, val) => val
-                ? new TerrainGameObject(point, tileSetService.CreateGlyph("floor").ColoredGlyph, "floor")
-                : new TerrainGameObject(point, tileSetService.CreateGlyph("wall").ColoredGlyph, "wall", false)
-        );
 
         return Task.CompletedTask;
     }
