@@ -1,13 +1,13 @@
 /**
- * Run v0.0.77.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-08-04 14:35:18
+ * Run v0.0.78.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-08-06 09:05:46
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.0.77.0""
+ * ""0.0.78.0""
  */
 declare const VERSION: string;
 

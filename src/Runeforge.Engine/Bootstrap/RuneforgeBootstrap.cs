@@ -104,6 +104,7 @@ public class RuneforgeBootstrap
         var mapGeneratorService = _container.Resolve<IMapGeneratorService>();
 
         mapGeneratorService.AddStep("rectangle", typeof(RectangleMapGeneratorStep));
+        mapGeneratorService.AddStep("player_place", typeof(PlayerPlacementGeneratorStep));
     }
 
     private void RegisterDefaultDataLoaders()
