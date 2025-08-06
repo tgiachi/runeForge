@@ -34,6 +34,7 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         _textConsole.IsVisible = true;
         _textConsole.IsFocused = false;
         _textConsole.UseKeyboard = false;
+        _textConsole.UseMouse = false;
         _textConsole.Clear();
 
 
@@ -68,9 +69,13 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
 
         ViewLock = new SurfaceComponentFollowTarget() { Target = _playerService.Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
+
         _playerService.UpdateFov();
+
         IsFocused = true;
         UseKeyboard = true;
+
+        UseMouse = true;
 
         UpdateMapTitle();
     }
@@ -162,6 +167,15 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         Player.UpdateFOV();
 
         return base.ProcessKeyboard(keyboard);
+    }
+
+
+
+
+    public override bool ProcessMouse(MouseScreenObjectState state)
+    {
+        _textConsole.Print(0,1, $"{state.CellPosition.X},{state.CellPosition.Y}" );
+        return base.ProcessMouse(state);
     }
 
     private void UpdateMapTitle()
