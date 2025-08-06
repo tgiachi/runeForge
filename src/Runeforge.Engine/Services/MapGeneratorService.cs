@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using DryIoc;
 using Runeforge.Data.Entities.MapGen;
 using Runeforge.Engine.Contexts;
 using Runeforge.Engine.Data.Maps;
+using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Maps;
 using Runeforge.Engine.Interfaces.Services;
 using Serilog;
@@ -66,6 +68,7 @@ public class MapGeneratorService : IMapGeneratorService
     {
         var mapGen = _mapGenData.FirstOrDefault(x => x.Id == name);
 
+        var sw = Stopwatch.GetTimestamp();
 
         if (string.IsNullOrWhiteSpace(mapId))
         {
@@ -80,6 +83,8 @@ public class MapGeneratorService : IMapGeneratorService
 
         var map = new GameMap(mapGen.Width, mapGen.Height, null);
 
+        map.AllComponents.Add(new TerrainFOVVisibilityHandler());
+
         map.Id = mapId;
 
 
@@ -89,15 +94,31 @@ public class MapGeneratorService : IMapGeneratorService
 
         foreach (var stepValue in mapGen.Steps)
         {
-            _logger.Information("Generating map generator step {Name}", stepValue.StepName);
-            stepContext.Name = stepValue.StepName;
-            stepContext.Inputs = stepValue.Properties;
+            try
+            {
+                _logger.Information("Generating map generator step {Name}", stepValue.StepName);
+                stepContext.Name = stepValue.StepName;
+                stepContext.Inputs = stepValue.Properties;
 
-            var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
-            stepContext = await step.GenerateMapAsync(stepContext);
+                var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
+                stepContext = await step.GenerateMapAsync(stepContext);
 
-            stepContext.Step++;
+                stepContext.Step++;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error during map generation step {StepName}", stepValue.StepName);
+                throw new InvalidOperationException(
+                    $"Error during map generation step {stepValue.StepName}: {ex.Message}",
+                    ex
+                );
+            }
         }
+
+        _logger.Information(
+            "Map generation completed in {ElapsedMilliseconds} ms",
+            Stopwatch.GetElapsedTime(sw).TotalMilliseconds
+        );
 
         return map;
     }

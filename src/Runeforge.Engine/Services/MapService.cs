@@ -115,6 +115,11 @@ public class MapService : IMapService
         MapGenerated?.Invoke(mapInfo);
     }
 
+    public Task StartGenerateDefaultMapAsync(string mapId = "")
+    {
+        return StartGenerateMapAsync(_mapGeneratorService.GetDefaultGeneratorName(), mapId);
+    }
+
     public MapInfoObject? GetMapInfo(string mapId)
     {
         return _maps.GetValueOrDefault(mapId);

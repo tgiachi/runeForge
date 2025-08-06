@@ -8,4 +8,6 @@ public interface IPlayerService : IRuneforgeService
     PlayerGameObject Player { get; set; }
 
     void CreatePlayer(string tile = "player");
+
+    void UpdateFov();
 }

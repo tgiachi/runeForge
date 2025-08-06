@@ -21,17 +21,13 @@ public interface IMapService : IRuneforgeStartableService
 
     event MapEntityAddedHandler<NpcGameObject>? NpcAdded;
     event MapEntityAddedHandler<NpcGameObject>? NpcRemoved;
-
     event MapEntityAddedHandler<ItemGameObject>? ItemAdded;
-
     event MapEntityAddedHandler<ItemGameObject>? ItemRemoved;
 
     event MapGeneratedHandler? MapGenerated;
 
     event MapChangedHandler? MapChanged;
-
     event MapStartGeneratedHandler? MapStartGenerated;
-
 
     MapInfoObject CurrentMap { get; set; }
 
@@ -41,6 +37,8 @@ public interface IMapService : IRuneforgeStartableService
 
     Task StartGenerateMapAsync(string generatorName, string mapId = "");
 
+
+    Task StartGenerateDefaultMapAsync(string mapId = "");
 
 
     MapInfoObject? GetMapInfo(string mapId);

@@ -3,6 +3,7 @@ using Runeforge.Engine.Contexts;
 using Runeforge.Engine.GameObjects;
 using Runeforge.Engine.Interfaces.Maps;
 using Runeforge.Engine.Interfaces.Services;
+using SadRogue.Primitives;
 using SadRogue.Primitives.GridViews;
 using Serilog;
 
@@ -29,7 +30,7 @@ public class PlayerPlacementGeneratorStep : IMapGeneratorStep
 
 
         _playerService.CreatePlayer();
-
+        _playerService.Player.Position = emptyPositions;
 
         context.Map.AddEntity(_playerService.Player);
 

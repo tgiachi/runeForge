@@ -1,3 +1,4 @@
+using GoRogue.GameFramework;
 using Runeforge.Engine.GameObjects;
 using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Services;
@@ -26,7 +27,17 @@ public class PlayerService : IPlayerService
                 Name = "Player",
             };
 
-            Player.GoRogueComponents.Add(new PlayerFOVController());
+            Player.AddedToMap += PlayerOnAddedToMap;
         }
+    }
+
+    private void PlayerOnAddedToMap(object? sender, GameObjectCurrentMapChanged e)
+    {
+        Player.GoRogueComponents.Add(new PlayerFOVController());
+    }
+
+    public void UpdateFov()
+    {
+        Player.AllComponents.GetFirstOrDefault<PlayerFOVController>()?.CalculateFOV();
     }
 }
