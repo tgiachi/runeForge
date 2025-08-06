@@ -128,17 +128,21 @@ public record TileDataObj(
     Color Foreground,
     Color Background,
     string[] Tags = null,
-    string AnimationId = null
+    string AnimationId = null,
+    string TileId = null
 );
 
-public record TileColoredGlyph(ColoredGlyph ColoredGlyph, bool IsBlocking, bool IsTransparent, AnimationData? Animation)
+public record TileColoredGlyph(ColoredGlyph ColoredGlyph, bool IsBlocking, bool IsTransparent, AnimationData? Animation, string TileId = null)
 {
     public TileColoredGlyph(TileDataObj tileData, AnimationData animation)
         : this(
             new ColoredGlyph(tileData.Foreground, tileData.Background, SymbolParser.ParseTileSymbolAsGlyph(tileData)),
             tileData.IsBlocking,
             tileData.IsTransparent,
-            animation
+            animation,
+            tileData.TileId
+
+
         )
     {
     }

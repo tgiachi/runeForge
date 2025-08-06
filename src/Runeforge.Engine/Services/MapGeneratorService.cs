@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using DryIoc;
 using Runeforge.Data.Entities.MapGen;
 using Runeforge.Engine.Contexts;
 using Runeforge.Engine.Data.Maps;
+using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Interfaces.Maps;
 using Runeforge.Engine.Interfaces.Services;
 using Serilog;
@@ -62,16 +64,28 @@ public class MapGeneratorService : IMapGeneratorService
         _logger.Information("Added map generator step {Name}", name);
     }
 
-    public async Task ExecuteGenerationAsync(string name)
+    public async Task<GameMap> ExecuteGenerationAsync(string name, string mapId = "")
     {
         var mapGen = _mapGenData.FirstOrDefault(x => x.Id == name);
+
+        var sw = Stopwatch.GetTimestamp();
+
+        if (string.IsNullOrWhiteSpace(mapId))
+        {
+            mapId = Guid.NewGuid().ToString();
+        }
 
         if (mapGen == null)
         {
             _logger.Error("Map generator with name {Name} not found", name);
-            return;
+            throw new KeyNotFoundException($"Map generator with name {name} not found.");
         }
+
         var map = new GameMap(mapGen.Width, mapGen.Height, null);
+
+        map.AllComponents.Add(new TerrainFOVVisibilityHandler());
+
+        map.Id = mapId;
 
 
         var stepContext = new MapGeneratorContext(map, _scriptEngineService.JsEngine);
@@ -80,25 +94,44 @@ public class MapGeneratorService : IMapGeneratorService
 
         foreach (var stepValue in mapGen.Steps)
         {
-            _logger.Information("Generating map generator step {Name}", stepValue.StepName);
-            stepContext.Name = stepValue.StepName;
-            stepContext.Inputs = stepValue.Properties;
+            try
+            {
+                _logger.Information("Generating map generator step {Name}", stepValue.StepName);
+                stepContext.Name = stepValue.StepName;
+                stepContext.Inputs = stepValue.Properties;
 
-            var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
-            stepContext = await step.GenerateMapAsync(stepContext);
+                var step = _generatorsSteps.GetValueOrDefault(stepValue.StepName);
+                stepContext = await step.GenerateMapAsync(stepContext);
 
-            stepContext.Step++;
+                stepContext.Step++;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error during map generation step {StepName}", stepValue.StepName);
+                throw new InvalidOperationException(
+                    $"Error during map generation step {stepValue.StepName}: {ex.Message}",
+                    ex
+                );
+            }
         }
+
+        _logger.Information(
+            "Map generation completed in {ElapsedMilliseconds} ms",
+            Stopwatch.GetElapsedTime(sw).TotalMilliseconds
+        );
+
+        return map;
     }
 
-    public Task ExecuteDefaultGenerationAsync()
+    public Task<GameMap> ExecuteDefaultGenerationAsync(string mapId = "")
     {
         _logger.Information("Executing default map generation");
 
         if (_mapGenData.Count == 0)
         {
             _logger.Error("No map generators available");
-            return Task.CompletedTask;
+
+            throw new InvalidOperationException("No map generators available.");
         }
 
         var defaultGen = _mapGenData.FirstOrDefault(s => s.IsDefault);
@@ -108,12 +141,27 @@ public class MapGeneratorService : IMapGeneratorService
             defaultGen = _mapGenData.FirstOrDefault();
         }
 
-        return ExecuteGenerationAsync(defaultGen.Id);
+        return ExecuteGenerationAsync(defaultGen.Id, mapId);
     }
 
     public void AddMapGenerator(JsonMapGenData generator)
     {
         _logger.Information("Adding map generator {Generator}", generator.Id);
         _mapGenData.Add(generator);
+    }
+
+    public string GetDefaultGeneratorName()
+    {
+        _logger.Information("Getting default map generator name");
+
+        if (_mapGenData.Count == 0)
+        {
+            _logger.Error("No map generators available");
+            throw new InvalidOperationException("No map generators available.");
+        }
+
+        var defaultGen = _mapGenData.FirstOrDefault(s => s.IsDefault) ?? _mapGenData.FirstOrDefault();
+
+        return defaultGen?.Id ?? string.Empty;
     }
 }

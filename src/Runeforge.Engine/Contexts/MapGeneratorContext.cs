@@ -1,6 +1,7 @@
 using System.Text.Json;
 using GoRogue.GameFramework;
 using Jint.Native;
+using Runeforge.Engine.Data.Maps;
 using Runeforge.Engine.GameObjects;
 using SadRogue.Primitives;
 
@@ -16,9 +17,9 @@ public class MapGeneratorContext
     public Dictionary<string, object> Outputs { get; set; }
     public Dictionary<string, object> Inputs { get; set; }
 
-    public Map Map { get; set; }
+    public GameMap Map { get; set; }
 
-    public MapGeneratorContext(Map map, Jint.Engine engine)
+    public MapGeneratorContext(GameMap map, Jint.Engine engine)
     {
         Outputs = new Dictionary<string, object>();
         Inputs = new Dictionary<string, object>();
@@ -50,5 +51,20 @@ public class MapGeneratorContext
     {
         terrain.Position = new Point(x, y);
         Map.SetTerrain(terrain);
+    }
+
+    public void SetLevel(int level)
+    {
+        Map.Level = level;
+    }
+
+    public void SetDescription(string description)
+    {
+        Map.Description = description;
+    }
+
+    public void SetName(string name)
+    {
+        Map.Name = name;
     }
 }

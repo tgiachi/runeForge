@@ -10,7 +10,7 @@
         "stepName": "rectangle"
       },
       {
-        "stepName": "terrain_maker",
+        "stepName": "basic_terrain",
         "props": {
           "wall": "wall",
           "floor": "floor"

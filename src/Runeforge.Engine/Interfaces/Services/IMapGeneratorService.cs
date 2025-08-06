@@ -1,4 +1,5 @@
 using Runeforge.Data.Entities.MapGen;
+using Runeforge.Engine.Data.Maps;
 using Runeforge.Engine.Interfaces.Maps;
 using Runeforge.Engine.Interfaces.Services.Base;
 
@@ -10,9 +11,11 @@ public interface IMapGeneratorService: IRuneforgeService
 
     void AddStep(string name, IMapGeneratorStep generator);
 
-    Task ExecuteGenerationAsync(string name);
+    Task<GameMap> ExecuteGenerationAsync(string name, string mapId = "");
 
-    Task ExecuteDefaultGenerationAsync();
+    Task<GameMap> ExecuteDefaultGenerationAsync(string mapId = "");
 
     void AddMapGenerator(JsonMapGenData generator);
+
+    string GetDefaultGeneratorName();
 }

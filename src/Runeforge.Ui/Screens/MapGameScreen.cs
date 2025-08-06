@@ -1,7 +1,4 @@
-using GoRogue.MapGeneration;
 using Runeforge.Engine.Data.Maps;
-using Runeforge.Engine.GameObjects;
-using Runeforge.Engine.GameObjects.Components;
 using Runeforge.Engine.Instance;
 using Runeforge.Engine.Interfaces.Services;
 using Runeforge.Ui.Instances;
@@ -11,93 +8,81 @@ using SadConsole;
 using SadConsole.Components;
 using SadConsole.Input;
 using SadRogue.Primitives;
-using SadRogue.Primitives.GridViews;
 using Console = SadConsole.Console;
 
 namespace Runeforge.UI.Screens;
 
 public class MapGameScreen : BaseRuneforgeScreenSurface
 {
-    public readonly SurfaceComponentFollowTarget ViewLock;
+    public SurfaceComponentFollowTarget ViewLock;
 
+    private readonly IPlayerService _playerService;
+    private readonly IMapService _mapService;
+    private readonly ITileSetService _tileSetService;
+
+    private readonly Console _textConsole;
 
     public MapGameScreen(int width, int height) : base(width, height)
     {
-        var mapService = RuneforgeInstances.GetService<IMapService>();
-        var textConsole = new Console(width, height);
-        textConsole.Font = RuneforgeGuiInstance.Instance.DefaultUiFont;
-        textConsole.IsVisible = true;
-        textConsole.IsFocused = false;
-        textConsole.UseKeyboard = false;
-        textConsole.Clear();
+        _mapService = RuneforgeInstances.GetService<IMapService>();
+        _playerService = RuneforgeInstances.GetService<IPlayerService>();
+        _tileSetService = RuneforgeInstances.GetService<ITileSetService>();
+
+        _textConsole = new Console(width, height);
+
+        _textConsole.Font = RuneforgeGuiInstance.Instance.DefaultUiFont;
+        _textConsole.IsVisible = true;
+        _textConsole.IsFocused = false;
+        _textConsole.UseKeyboard = false;
+        _textConsole.UseMouse = false;
+        _textConsole.Clear();
 
 
-        mapService.MapGenerated += MapServiceOnMapGenerated;
+        _mapService.MapChanged += MapServiceOnMapChanged;
+        _mapService.MapGenerated += MapServiceOnMapGenerated;
+        _mapService.StartGenerateDefaultMapAsync();
+    }
+
+    private void MapServiceOnMapChanged(MapInfoObject oldMap, MapInfoObject newMap)
+    {
+        Children.Clear();
+
+        var currentMap = newMap?.Map;
 
         var viewport = ViewportUtils.CalculateViewport(
-            new Point(width, height),
+            new Point(Width, Height),
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphWidth,
             RuneforgeGuiInstance.Instance.DefaultUiFont.GlyphHeight,
             RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphWidth,
             RuneforgeGuiInstance.Instance.DefaultMapFont.GlyphHeight
         );
 
-        var mapGeneratorService = RuneforgeInstances.GetService<IMapGeneratorService>();
-
-        mapGeneratorService.ExecuteDefaultGenerationAsync().GetAwaiter().GetResult();
-
-        var mapId = mapService.GenerateMapAsync(300, 300, "Test", "Test Map").GetAwaiter().GetResult();
-
-        var mapObjectInfo = mapService.GetMapInfo(mapId);
-
-        var currentMap = mapObjectInfo?.Map;
-
         currentMap.DefaultRenderer = currentMap.CreateRenderer(
             viewport,
             RuneforgeGuiInstance.Instance.DefaultMapFont
         );
 
+
         Children.Add(currentMap);
-        Children.Add(textConsole);
 
+        Children.Add(_textConsole);
 
-        var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
-
-        var playerService = RuneforgeInstances.GetService<IPlayerService>();
-
-        var playerColoredGlyph = tileSetService.CreateGlyph("player");
-
-        playerService.Player = new PlayerGameObject(new Point(30, 30), playerColoredGlyph.ColoredGlyph);
-
-        playerService.Player.GoRogueComponents.Add(new PlayerFOVController());
-
-        currentMap.AddEntity(playerService.Player);
-
-        ViewLock = new SurfaceComponentFollowTarget() { Target = playerService.Player };
+        ViewLock = new SurfaceComponentFollowTarget() { Target = _playerService.Player };
         currentMap.DefaultRenderer.SadComponents.Add(ViewLock);
-        playerService.Player.AllComponents.GetFirstOrDefault<PlayerFOVController>().CalculateFOV();
+
+        _playerService.UpdateFov();
+
         IsFocused = true;
         UseKeyboard = true;
+
+        UseMouse = true;
+
+        UpdateMapTitle();
     }
 
-    private Task MapServiceOnMapGenerated(MapInfoObject mapInfo, Generator generator)
+    private Task MapServiceOnMapGenerated(MapInfoObject mapInfo)
     {
-        var tileSetService = RuneforgeInstances.GetService<ITileSetService>();
-
-        var wallFloors = generator.Context.GetFirstOrDefault<ISettableGridView<bool>>("WallFloor");
-
-        //var floorTile = new ColoredGlyph(Color.White, Color.Transparent, 3954);
-        //var wallTile = new ColoredGlyph(Color.Gray, Color.Transparent, 2863);
-        var floorTile = tileSetService.CreateGlyph("floor");
-        var wallTile = tileSetService.CreateGlyph("wall");
-
-        mapInfo.Map.ApplyTerrainOverlay(
-            wallFloors,
-            (point, val) => val
-                ? new TerrainGameObject(point, tileSetService.CreateGlyph("floor").ColoredGlyph, "floor")
-                : new TerrainGameObject(point, tileSetService.CreateGlyph("wall").ColoredGlyph, "wall", false)
-        );
-
+        _mapService.CurrentMap = mapInfo;
         return Task.CompletedTask;
     }
 
@@ -182,5 +167,21 @@ public class MapGameScreen : BaseRuneforgeScreenSurface
         Player.UpdateFOV();
 
         return base.ProcessKeyboard(keyboard);
+    }
+
+
+
+
+    public override bool ProcessMouse(MouseScreenObjectState state)
+    {
+        _textConsole.Print(0,1, $"{state.CellPosition.X},{state.CellPosition.Y}" );
+        return base.ProcessMouse(state);
+    }
+
+    private void UpdateMapTitle()
+    {
+        var map = _mapService.CurrentMap;
+        _textConsole.Clear();
+        _textConsole.Print(0, 0, $"{map.Name ?? "The city"} - Floor: {map.Level}", Color.White);
     }
 }

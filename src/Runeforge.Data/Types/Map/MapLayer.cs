@@ -1,6 +1,6 @@
 namespace Runeforge.Data.Types.Map;
 
-public enum MapLayer : byte
+public enum MapLayer
 {
     Terrain = 0,
     Objects = 1,

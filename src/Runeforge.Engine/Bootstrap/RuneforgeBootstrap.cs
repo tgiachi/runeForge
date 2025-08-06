@@ -105,6 +105,7 @@ public class RuneforgeBootstrap
 
         mapGeneratorService.AddStep("rectangle", typeof(RectangleMapGeneratorStep));
         mapGeneratorService.AddStep("player_place", typeof(PlayerPlacementGeneratorStep));
+        mapGeneratorService.AddStep("basic_terrain", typeof(BasicTerrainGeneratorStep));
     }
 
     private void RegisterDefaultDataLoaders()
