@@ -9,6 +9,12 @@ public class GameMap : RogueLikeMap
 {
     private readonly Dictionary<MapLayer, List<IGameObject>> _entities = new();
 
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int Level { get; set; } = 0;
+
+
     public GameMap(int width, int height, DefaultRendererParams? defaultRendererParams)
         : base(width, height, defaultRendererParams, Enum.GetValues<MapLayer>().Length, Distance.Euclidean)
     {

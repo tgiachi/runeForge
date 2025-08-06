@@ -1,4 +1,4 @@
-using GoRogue.GameFramework;
+using System.ComponentModel;
 using GoRogue.MapGeneration;
 using Runeforge.Engine.Data.Maps;
 using Runeforge.Engine.GameObjects;
@@ -17,10 +17,27 @@ public class MapService : IMapService
     public event IMapService.MapEntityAddedHandler<ItemGameObject>? ItemAdded;
     public event IMapService.MapEntityAddedHandler<ItemGameObject>? ItemRemoved;
     public event IMapService.MapGeneratedHandler? MapGenerated;
+    public event IMapService.MapChangedHandler? MapChanged;
     public event IMapService.MapStartGeneratedHandler? MapStartGenerated;
-    public MapInfoObject CurrentMap { get; set; }
+
+    public MapInfoObject CurrentMap
+    {
+        get => _currentMap;
+        set => ChangeCurrentMap(value);
+    }
+
+    private MapInfoObject _currentMap = null!;
 
     private readonly Dictionary<Guid, MapInfoObject> _maps = new();
+
+    private void ChangeCurrentMap(MapInfoObject newMap)
+    {
+        var oldMap = _currentMap;
+        _currentMap = newMap;
+
+        MapChanged?.Invoke(oldMap, newMap);
+    }
+
 
     public async Task<Guid> GenerateMapAsync(
         int width, int height, string name, string description, int level = 1, CancellationToken cancellationToken = default
@@ -79,9 +96,6 @@ public class MapService : IMapService
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        var generator = new Generator(300, 300)
-            .ConfigAndGenerateSafe(c => c.AddComponent(DefaultAlgorithms.RectangleMapSteps()))
-            .Generate();
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)

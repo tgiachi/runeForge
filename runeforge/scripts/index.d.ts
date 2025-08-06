@@ -1,13 +1,13 @@
 /**
- * Run v0.0.78.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-08-06 09:05:46
+ * Run v0.0.79.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-08-06 09:45:39
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.0.78.0""
+ * ""0.0.79.0""
  */
 declare const VERSION: string;
 
@@ -235,7 +235,7 @@ interface IMapGeneratorContext {
     /**
      * map
      */
-    map: IMap;
+    map: IGameMap;
 }
 
 /**
@@ -575,9 +575,93 @@ interface INpcGameObject {
 }
 
 /**
- * Generated interface for GoRogue.GameFramework.Map
+ * Generated interface for Runeforge.Engine.Data.Maps.GameMap
  */
-interface IMap {
+interface IGameMap {
+    /**
+     * id
+     */
+    id: string;
+    /**
+     * name
+     */
+    name: string;
+    /**
+     * description
+     */
+    description: string;
+    /**
+     * level
+     */
+    level: number;
+    /**
+     * renderers
+     */
+    renderers: any;
+    /**
+     * allComponents
+     */
+    allComponents: any;
+    /**
+     * defaultRenderer
+     */
+    defaultRenderer: any;
+    /**
+     * sortOrder
+     */
+    sortOrder: any;
+    /**
+     * children
+     */
+    children: IScreenObjectCollection;
+    /**
+     * parent
+     */
+    parent: any;
+    /**
+     * position
+     */
+    position: IPoint;
+    /**
+     * absolutePosition
+     */
+    absolutePosition: IPoint;
+    /**
+     * ignoreParentPosition
+     */
+    ignoreParentPosition: boolean;
+    /**
+     * isVisible
+     */
+    isVisible: boolean;
+    /**
+     * isEnabled
+     */
+    isEnabled: boolean;
+    /**
+     * isFocused
+     */
+    isFocused: boolean;
+    /**
+     * focusedMode
+     */
+    focusedMode: focusBehavior;
+    /**
+     * isExclusiveMouse
+     */
+    isExclusiveMouse: boolean;
+    /**
+     * useKeyboard
+     */
+    useKeyboard: boolean;
+    /**
+     * useMouse
+     */
+    useMouse: boolean;
+    /**
+     * sadComponents
+     */
+    sadComponents: any;
     /**
      * playerFov
      */
@@ -734,6 +818,80 @@ interface ITerrainAppearance {
  * Generated interface for SadRogue.Primitives.Point
  */
 interface IPoint {
+}
+
+/**
+ * Generated interface for GoRogue.GameFramework.Map
+ */
+interface IMap {
+    /**
+     * playerFov
+     */
+    playerFov: any;
+    /**
+     * goRogueComponents
+     */
+    goRogueComponents: any;
+    /**
+     * terrain
+     */
+    terrain: any;
+    /**
+     * entities
+     */
+    entities: any;
+    /**
+     * layerMasker
+     */
+    layerMasker: ILayerMasker;
+    /**
+     * layersBlockingWalkability
+     */
+    layersBlockingWalkability: any;
+    /**
+     * layersBlockingTransparency
+     */
+    layersBlockingTransparency: any;
+    /**
+     * transparencyView
+     */
+    transparencyView: any;
+    /**
+     * walkabilityView
+     */
+    walkabilityView: any;
+    /**
+     * astar
+     */
+    astar: IAStar;
+    /**
+     * distanceMeasurement
+     */
+    distanceMeasurement: IDistance;
+    /**
+     * height
+     */
+    height: number;
+    /**
+     * width
+     */
+    width: number;
+    /**
+     * item
+     */
+    item: IMapObjectsAtEnumerator;
+    /**
+     * count
+     */
+    count: number;
+    /**
+     * item
+     */
+    item: IMapObjectsAtEnumerator;
+    /**
+     * item
+     */
+    item: IMapObjectsAtEnumerator;
 }
 
 /**

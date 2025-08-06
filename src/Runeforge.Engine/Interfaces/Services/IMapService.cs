@@ -15,6 +15,8 @@ public interface IMapService : IRuneforgeStartableService
 
     delegate void MapStartGeneratedHandler(Guid id);
 
+    delegate void MapChangedHandler(MapInfoObject OldMap, MapInfoObject NewMap);
+
     delegate void MapEntityAddedHandler<in TEntity>(TEntity entity) where TEntity : RogueLikeEntity;
 
     event MapEntityAddedHandler<RogueLikeEntity>? EntityAdded;
@@ -29,7 +31,10 @@ public interface IMapService : IRuneforgeStartableService
 
     event MapGeneratedHandler? MapGenerated;
 
+    event MapChangedHandler? MapChanged;
+
     event MapStartGeneratedHandler? MapStartGenerated;
+
 
     MapInfoObject CurrentMap { get; set; }
 
